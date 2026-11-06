@@ -6,14 +6,14 @@ A colourful, animated, mobile-first learning web app and installable PWA for Nur
 - Parent account creation and sign-in without Supabase or any backend.
 - Passwords are salted and hashed in the browser using PBKDF2; password recovery uses the parent recovery code created during sign-up.
 - Guest mode for trying the app without an account.
-- Four early-learning levels and eight learning areas: phonics, numbers, colours/shapes, animals, first words, nature/science, rhymes/stories and thinking games.
+- Four early-learning levels and fourteen learning areas: English phonics, numbers and maths, colours and shapes, animals, first words, nature and science, rhymes and stories, brain games, Telugu letters and words, general knowledge, body and health, safety, transport, and everyday maths.
 - Spoken prompts, randomised quizzes with up to 10 questions, instant feedback, stars and activity history.
 - Finger/mouse letter tracing and short value-based stories.
 - Parent area for learner nickname, class and progress.
 - Responsive mobile/desktop layout, reduced-motion support, installable PWA shell and basic offline app-shell caching.
 
 ## Parent login and privacy
-No Supabase setup, API key or database is needed. Create a parent account from the sign-in screen, use an email address as the local account label, choose a password of at least 8 characters and set a recovery code of at least 6 characters. Keep the recovery code safe.
+Parent login is fully device-local. No external authentication service, backend, database, API key or account configuration is needed. Create a parent account from the sign-in screen, use an email address as the local account label, choose a password of at least 8 characters and set a recovery code of at least 6 characters. Keep the recovery code safe.
 
 **Important limitation:** accounts and progress are stored only in the current browser on the current device. They do not sync to other phones or computers, and clearing browser site data can erase them. Password reset works on that same device using the recovery code. This is a device-local profile system, not a hosted identity service or multi-device cloud account. Do not use it for sensitive data.
 
@@ -30,4 +30,4 @@ Visit `http://localhost:8000`.
 A GitHub Pages workflow is included. Enable **Settings → Pages → Build and deployment → GitHub Actions** if it is not already enabled. On Android, open the HTTPS site in Chrome and choose **Install app** / **Add to Home screen**. On iPhone, use Safari → Share → Add to Home Screen.
 
 ## Learning note
-The current curriculum is an expandable early-learning foundation, not a complete official syllabus or a guarantee of exam results. A parent or teacher should review content and guide the child. Speech playback depends on the device's available voices.
+The current curriculum is an expandable early-learning foundation for Nursery through Class 1, not a complete official syllabus or a guarantee of exam results. Content is organised by class level and includes a mix of language, numeracy, discovery, safety and reasoning topics. A parent or teacher should review content and guide the child. Speech playback depends on the device's available voices.

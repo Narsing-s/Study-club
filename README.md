@@ -7,9 +7,10 @@ A colourful, animated, mobile-first learning web app and installable PWA for Nur
 - Passwords are salted and hashed in the browser using PBKDF2; password recovery uses the parent recovery code created during sign-up.
 - Guest mode for trying the app without an account.
 - Four early-learning levels and fourteen learning areas: English phonics, numbers and maths, colours and shapes, animals, first words, nature and science, rhymes and stories, brain games, Telugu letters and words, general knowledge, body and health, safety, transport, and everyday maths.
-- Spoken prompts, randomised quizzes with up to 10 questions, instant feedback, stars and activity history.
+- Spoken prompts, shuffled quizzes with picture and clue-based questions for every class-appropriate lesson, manual Next control, instant feedback, stars and activity history. Questions do not repeat within a round; a fresh shuffled round is available after completion.
 - Finger/mouse letter tracing and short value-based stories.
 - Parent area for learner nickname, class and progress.
+- Animated feedback screen with 1–5 star rating, feedback categories, message form and thank-you state. Feedback is stored locally on the current device only; it is not transmitted to the developers.
 - Responsive mobile/desktop layout, reduced-motion support, installable PWA shell and basic offline app-shell caching.
 
 ## Parent login and privacy

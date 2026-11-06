@@ -1,0 +1,12 @@
+{
+  "name": "Study Club — Little Learners",
+  "short_name": "Study Club",
+  "description": "A joyful learning playground for Nursery, LKG, UKG and Class 1.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff8ef",
+  "theme_color": "#fff8ef",
+  "orientation": "portrait",
+  "icons": []
+}

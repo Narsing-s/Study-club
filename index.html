@@ -108,22 +108,38 @@ function itemsForGrade(id){const limits={nursery:5,lkg:8,ukg:12,class1:99};const
 function openSubject(id){currentSubject=id;let s=subjects.find(x=>x.id===id);$('subjectTitle').textContent=s.name;$('subjectDesc').textContent=s.desc;$('levelLabel').textContent=grades.find(g=>g.id===state.grade).name+' • '+state.name;let items=itemsForGrade(id);$('lessonCards').innerHTML=items.map((it,i)=>'<article class="lesson-card"><span class="pic">'+it[0]+'</span><b>'+it[1]+'</b><small>'+it[2]+'</small><button class="play" onclick="learnItem('+i+')">▶ Learn</button></article>').join('')+'<article class="lesson-card" style="background:#fff5d9"><span class="pic">🎯</span><b>Quick quiz</b><small>Show what you know!</small><button class="play" onclick="startQuiz()">Play quiz</button></article>'+(id==='letters'?'<article class="lesson-card" style="background:#e8f6ff"><span class="pic">✍️</span><b>Trace letters</b><small>Practise with your finger</small><button class="play" onclick="openTrace()">Start tracing</button></article>':'')+(id==='rhymes'?'<article class="lesson-card" style="background:#f1eaff"><span class="pic">📖</span><b>Story corner</b><small>Listen and learn values</small><button class="play" onclick="openStory()">Read story</button></article>':'');showScreen('subjects')}
 function learnItem(i){let item=content[currentSubject][i],speech=item[1]+'. '+(item[2]||'');$('gameBox').innerHTML='<div class="eyebrow">LET\'S LEARN</div><div style="font-size:100px;margin:12px;animation:float 2s infinite">'+item[0]+'</div><h2>'+item[1]+'</h2><p style="font-size:20px">'+(item[2]||'Say it with me!')+'</p><div class="game-controls"><button class="primary" onclick="say('+JSON.stringify(speech).replace(/</g,'\\u003c')+')">🔊 Listen again</button><button class="mini-btn" onclick="showScreen(\'subjects\')">More to learn</button></div>';showScreen('game');say(speech)}
 function startQuiz(){let all=itemsForGrade(currentSubject);quizItems=[...all].sort(()=>Math.random()-.5).slice(0,Math.min(10,all.length));quizIndex=0;quizScore=0;renderQuestion();showScreen('game')}
-let quizAdvanceTimer=null;
+let quizAdvanceTimer=null,quizAnswered=false;
 function renderQuestion(){
  if(quizAdvanceTimer){clearTimeout(quizAdvanceTimer);quizAdvanceTimer=null}
+ quizAnswered=false;
  let item=quizItems[quizIndex],correct=item[1],pool=[...new Set(Object.values(content).flat().filter(x=>x[1]!==correct).map(x=>x[1]))],prompts=['What is this?','Choose the correct answer.','Which word matches the picture?','Can you find the right name?'],prompt=prompts[(quizIndex+quizScore)%prompts.length],choices=[correct,...pool.sort(()=>Math.random()-.5).slice(0,3)].sort(()=>Math.random()-.5);
  $('gameBox').innerHTML='<div class="pill">Question '+(quizIndex+1)+' of '+quizItems.length+'</div><div class="quiz-progress"><span style="width:'+((quizIndex/quizItems.length)*100)+'%"></span></div><div class="game-prompt">'+prompt+'</div><div class="quiz-picture" aria-label="Question picture">'+item[0]+'</div><div class="choice-grid">'+choices.map(c=>'<button class="choice" onclick="answer(this,'+JSON.stringify(c).replace(/</g,'\\u003c')+','+JSON.stringify(correct).replace(/</g,'\\u003c')+')">'+c+'</button>').join('')+'</div><div class="feedback" id="feedback" aria-live="polite"></div><div class="game-controls"><button class="primary" id="nextBtn" style="display:none" onclick="nextQuestion()">Next ➜</button><small id="autoNextHint" class="auto-next-hint" aria-live="polite"></small></div>';
 }
 function answer(btn,choice,correct){
- if(document.querySelector('.choice.correct,.choice.wrong'))return;
- let ok=choice===correct;btn.classList.add(ok?'correct':'wrong');
+ if(quizAnswered)return;
+ quizAnswered=true;
+ const answeredIndex=quizIndex,ok=choice===correct;
+ btn.classList.add(ok?'correct':'wrong');
  $('feedback').textContent=ok?'🌟 Amazing! That is right!':'💛 Good try! The answer is '+correct;
  if(ok){quizScore++;say('Amazing! Correct!')}else say('Good try. '+correct);
  document.querySelectorAll('.choice').forEach(b=>{b.disabled=true;b.classList.add('answered')});
- $('nextBtn').style.display='inline-block';$('autoNextHint').textContent='Next question coming up…';
- quizAdvanceTimer=setTimeout(()=>{quizAdvanceTimer=null;nextQuestion()},1450);
+ $('nextBtn').style.display='inline-block';
+ $('autoNextHint').textContent='Next question…';
+ quizAdvanceTimer=setTimeout(()=>{quizAdvanceTimer=null;if(quizAnswered&&quizIndex===answeredIndex)nextQuestion()},700);
 }
-function nextQuestion(){quizIndex++;if(quizIndex<quizItems.length){renderQuestion();return}let earned=quizScore*2;state.stars+=earned;state.done.push({key:currentSubject+'-'+Date.now(),subject:subjects.find(s=>s.id===currentSubject).name,score:quizScore,total:quizItems.length,grade:state.grade,date:new Date().toISOString()});save();$('gameBox').innerHTML='<div style="font-size:90px;animation:float 2s infinite">🏆</div><h2>Quiz complete!</h2><p>You got '+quizScore+' out of '+quizItems.length+' correct.</p><h2>⭐ +'+earned+' stars</h2><div class="game-controls"><button class="primary" onclick="openSubject(\''+currentSubject+'\')">Play again</button><button class="mini-btn" onclick="showScreen(\'home\')">Home</button></div>';say('You did it! You earned '+earned+' stars!')}
+function nextQuestion(){
+ if(quizAdvanceTimer){clearTimeout(quizAdvanceTimer);quizAdvanceTimer=null}
+ if(!quizAnswered)return;
+ quizAnswered=false;
+ quizIndex++;
+ if(quizIndex<quizItems.length){renderQuestion();return}
+ let earned=quizScore*2;
+ state.stars+=earned;
+ state.done.push({key:currentSubject+'-'+Date.now(),subject:subjects.find(s=>s.id===currentSubject).name,score:quizScore,total:quizItems.length,grade:state.grade,date:new Date().toISOString()});
+ save();
+ $('gameBox').innerHTML='<div style="font-size:90px;animation:float 2s infinite">🏆</div><h2>Quiz complete!</h2><p>You got '+quizScore+' out of '+quizItems.length+' correct.</p><h2>⭐ +'+earned+' stars</h2><div class="game-controls"><button class="primary" onclick="openSubject(\''+currentSubject+'\')">Play again</button><button class="mini-btn" onclick="showScreen(\'home\')">Home</button></div>';
+ say('You did it! You earned '+earned+' stars!');
+}
 function updateProgress(){let n=state.done.length;$('progressText').textContent=n+' activities completed · Keep going!';$('progressFill').style.width=Math.min(100,n*7)+'%';$('starCount').textContent='⭐ '+state.stars;$('achieveCount').textContent=state.stars+' stars collected';$('progressFill2').style.width=Math.min(100,state.stars/2)+'%';$('streakTitle').textContent=n?'You are a learning star!':'Your adventure starts today!'}
 function renderHistory(){$('historyGrid').innerHTML=state.done.length?state.done.slice().reverse().map(d=>'<article class="lesson-card"><span class="pic">🌟</span><b>'+d.subject+'</b><small>'+d.score+'/'+d.total+' correct · '+(d.grade||'')+'</small></article>').join(''):'<div class="daily" style="grid-column:1/-1"><h3>Your adventure is waiting!</h3><p>Finish a mini quiz to see your achievements here.</p></div>'}
 function saveName(){let v=$('nickname').value.trim();if(v){state.name=v;save();$('welcomeLine').textContent='Welcome, '+v+'! Ready for a little adventure?';toast('Name saved! Hello, '+v+' 💛')}}

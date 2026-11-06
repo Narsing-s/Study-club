@@ -22,15 +22,14 @@ Visit `http://localhost:8000`. Guest progress is stored in that browser only.
 ## Enable real parent login and cloud progress
 1. Create a Supabase project.
 2. In Supabase SQL Editor, run the contents of `supabase/schema.sql`.
-3. Copy `config.js.example` to `config.js` and fill in the Project URL and anon/publishable key from Supabase project settings.
-4. Add `<script src="./config.js"></script>` before the Supabase client script in `index.html` (or configure your static host to inject the same public config).
-5. Configure Supabase Auth email confirmation and your deployed site's redirect URL in Supabase Authentication settings.
-6. Deploy over HTTPS.
+3. Open the existing `config.js` and replace the two placeholder values with the Project URL and anon/publishable key from Supabase project settings. (The `config.js.example` file is a reference template.)
+4. Configure Supabase Auth email confirmation and your deployed site's redirect URL in Supabase Authentication settings.
+5. Deploy over HTTPS.
 
 The browser uses only the public anon/publishable key. Never put a Supabase service-role key in frontend code. Row Level Security in the supplied SQL restricts each parent account to its own progress row.
 
 ## Deploy as web + app
-Deploy the static repository to GitHub Pages, Netlify or Vercel. On Android, open the HTTPS site in Chrome and choose **Install app** / **Add to Home screen**. On iPhone, use Safari → Share → Add to Home Screen. Service workers and installation require HTTPS (or localhost).
+Deploy the static repository to GitHub Pages, Netlify or Vercel. A GitHub Pages workflow is included; enable **Settings → Pages → Build and deployment → GitHub Actions** once to allow it to publish. On Android, open the HTTPS site in Chrome and choose **Install app** / **Add to Home screen**. On iPhone, use Safari → Share → Add to Home Screen. Service workers and installation require HTTPS (or localhost).
 
 ## Important product notes
 - If Supabase is not configured, the sign-in screen explains that online sign-in needs setup; **Explore as guest** remains available.

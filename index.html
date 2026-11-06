@@ -119,8 +119,8 @@ let quizAnswered=false;
 function renderQuestion(){
  quizAnswered=false;
  const question=quizItems[quizIndex],item=question.item,correct=item[1];
- const allNames=[...new Set(Object.values(content).flat().map(x=>x[1]).filter(Boolean))];
- const distractors=shuffleQuiz(allNames.filter(name=>name!==correct)).slice(0,3);
+ const subjectNames=[...new Set(itemsForGrade(currentSubject).map(x=>x[1]).filter(Boolean))];
+ const distractors=shuffleQuiz(subjectNames.filter(name=>name!==correct)).slice(0,3);
  const choices=shuffleQuiz([...new Set([correct,...distractors])]);
  const prompt=question.mode==='picture'?'Look at the picture. What is it?':(item[2]?'Which one matches this clue: '+item[2]:'Choose the correct name.');
  $('gameBox').innerHTML='<div class="pill">Question '+(quizIndex+1)+' of '+quizItems.length+'</div><div class="quiz-progress"><span style="width:'+(quizIndex/quizItems.length*100)+'%"></span></div><div class="game-prompt">'+prompt+'</div><div class="quiz-picture" aria-label="Question picture">'+(question.mode==='picture'?item[0]:'💡')+'</div><div class="choice-grid">'+choices.map(c=>'<button class="choice" onclick="answer(this,'+JSON.stringify(c).replace(/</g,'\\u003c')+','+JSON.stringify(correct).replace(/</g,'\\u003c')+')">'+c+'</button>').join('')+'</div><div class="feedback" id="feedback" aria-live="polite"></div><div class="game-controls"><button class="primary" id="nextBtn" style="display:none" onclick="nextQuestion()">Next question ➜</button></div>';

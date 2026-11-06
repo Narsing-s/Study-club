@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#fff8ef"><meta name="description" content="A joyful animated learning playground for Nursery, LKG, UKG and Class 1.">
+<meta name="theme-color" content="#fff8ef"><link rel="manifest" href="manifest.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="A joyful animated learning playground for Nursery, LKG, UKG and Class 1.">
 <title>Study Club â€” Little Learners</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap');
@@ -69,4 +69,4 @@ $('soundToggle').onclick=()=>{sound=!sound;$('soundToggle').textContent=sound?'ð
 $('profileBtn').onclick=()=>showScreen('parent');
 renderGrades();renderSubjects();updateProgress();
 </script>
-</body></html>
+<script>if("serviceWorker" in navigator && location.protocol!=="file:"){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}))}</script>\n</body></html>

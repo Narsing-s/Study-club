@@ -134,7 +134,9 @@ function answer(btn,choice,correct){
  if(ok){quizScore++;say('Amazing! Correct!')}else say('Good try. '+correct);
  document.querySelectorAll('#gameBox .choice').forEach(b=>{b.disabled=true;b.classList.add('answered')});
  const next=$('nextBtn');
- if(next){next.textContent=quizIndex===quizItems.length-1?'See my result 🏆':'Next question ➜';next.style.display='inline-block';next.focus()}
+ if(next){next.textContent=quizIndex===quizItems.length-1?'See my result 🏆':'Next question ➜';next.style.display='inline-block'}
+ // Give the learner a moment to see the feedback, then move forward automatically.
+ setTimeout(()=>{if(quizAnswered)nextQuestion()},1000);
 }
 function nextQuestion(){
  if(!quizAnswered)return;

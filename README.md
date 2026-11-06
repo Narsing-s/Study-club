@@ -1,28 +1,39 @@
 # Study Club — Little Learners
 
-A colourful, animated, mobile-first learning playground for **Nursery, LKG, UKG and Class 1**.
+A mobile-first, animated learning web app / installable PWA for Nursery, LKG, UKG and Class 1.
 
-## Included in this starter release
-- Class selection for four early-learning levels
-- Eight learning areas: letters & phonics, numbers & maths, colours & shapes, animals, first words, nature, rhymes & stories, and brain games
-- Tap-to-learn cards with optional spoken prompts using the browser's speech synthesis
-- Quick quizzes with instant feedback and star rewards
-- Learner nickname, activity history and progress saved in the browser
-- Responsive layouts, motion-reduction support, and an installable/offline app shell (PWA)
+## Included
+- Parent sign-in, account creation, sign-out and password reset using Supabase Auth (optional configuration).
+- Guest mode for trying the app without an account.
+- Four early-learning levels and eight learning areas: phonics, numbers, colours/shapes, animals, first words, nature/science, rhymes/stories and thinking games.
+- Alphabet and number learning cards with spoken prompts using device/browser speech synthesis.
+- Randomised short quizzes, instant feedback, stars and activity history.
+- Finger/mouse letter tracing canvas and short value-based stories.
+- Parent area for learner nickname, class and progress.
+- Responsive mobile/desktop layout, motion-reduction support, installable PWA shell and basic offline app-shell caching.
 
-## Run locally
-Open `index.html` in a browser, or serve the folder over HTTP:
-
+## Run without login
+Open `index.html` in a browser, or serve this folder over HTTP:
 ```bash
 python -m http.server 8000
 ```
+Visit `http://localhost:8000`. Guest progress is stored in that browser only.
 
-Then visit `http://localhost:8000`.
+## Enable real parent login and cloud progress
+1. Create a Supabase project.
+2. In Supabase SQL Editor, run the contents of `supabase/schema.sql`.
+3. Copy `config.js.example` to `config.js` and fill in the Project URL and anon/publishable key from Supabase project settings.
+4. Add `<script src="./config.js"></script>` before the Supabase client script in `index.html` (or configure your static host to inject the same public config).
+5. Configure Supabase Auth email confirmation and your deployed site's redirect URL in Supabase Authentication settings.
+6. Deploy over HTTPS.
 
-## Deploy
-The app is static and has no required backend or secret keys. It can be deployed to GitHub Pages, Netlify or Vercel. For service-worker/offline and install support, open it over HTTPS (or localhost).
+The browser uses only the public anon/publishable key. Never put a Supabase service-role key in frontend code. Row Level Security in the supplied SQL restricts each parent account to its own progress row.
 
-## Notes
-- Progress is stored locally in the current browser using localStorage; it does not sync between devices.
-- Speech playback depends on browser/device speech support and may use installed system voices.
-- The first release intentionally avoids collecting children's personal information or requiring accounts.
+## Deploy as web + app
+Deploy the static repository to GitHub Pages, Netlify or Vercel. On Android, open the HTTPS site in Chrome and choose **Install app** / **Add to Home screen**. On iPhone, use Safari → Share → Add to Home Screen. Service workers and installation require HTTPS (or localhost).
+
+## Important product notes
+- If Supabase is not configured, the sign-in screen explains that online sign-in needs setup; **Explore as guest** remains available.
+- Guest progress stays on the device. Signed-in progress can sync to Supabase after the SQL and config steps are completed.
+- This is an early-learning starter curriculum, not a guarantee of school rank or exam results. Teachers/parents should review lessons for local syllabus fit and support children's learning.
+- Speech playback depends on the device's available voices. The app does not collect a child's name beyond the nickname entered by the parent.

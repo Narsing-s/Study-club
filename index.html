@@ -107,37 +107,44 @@ function renderSubjects(){$('subjectCards').innerHTML=subjects.filter(s=>(conten
 function itemsForGrade(id){const limits={nursery:5,lkg:8,ukg:12,class1:99};const letterLimits={nursery:5,lkg:10,ukg:20,class1:26};const source=content[id]||[];return source.slice(0,id==='letters'?letterLimits[state.grade]:limits[state.grade]);}
 function openSubject(id){currentSubject=id;let s=subjects.find(x=>x.id===id);$('subjectTitle').textContent=s.name;$('subjectDesc').textContent=s.desc;$('levelLabel').textContent=grades.find(g=>g.id===state.grade).name+' • '+state.name;let items=itemsForGrade(id);$('lessonCards').innerHTML=items.map((it,i)=>'<article class="lesson-card"><span class="pic">'+it[0]+'</span><b>'+it[1]+'</b><small>'+it[2]+'</small><button class="play" onclick="learnItem('+i+')">▶ Learn</button></article>').join('')+'<article class="lesson-card" style="background:#fff5d9"><span class="pic">🎯</span><b>Quick quiz</b><small>Show what you know!</small><button class="play" onclick="startQuiz()">Play quiz</button></article>'+(id==='letters'?'<article class="lesson-card" style="background:#e8f6ff"><span class="pic">✍️</span><b>Trace letters</b><small>Practise with your finger</small><button class="play" onclick="openTrace()">Start tracing</button></article>':'')+(id==='rhymes'?'<article class="lesson-card" style="background:#f1eaff"><span class="pic">📖</span><b>Story corner</b><small>Listen and learn values</small><button class="play" onclick="openStory()">Read story</button></article>':'');showScreen('subjects')}
 function learnItem(i){let item=content[currentSubject][i],speech=item[1]+'. '+(item[2]||'');$('gameBox').innerHTML='<div class="eyebrow">LET\'S LEARN</div><div style="font-size:100px;margin:12px;animation:float 2s infinite">'+item[0]+'</div><h2>'+item[1]+'</h2><p style="font-size:20px">'+(item[2]||'Say it with me!')+'</p><div class="game-controls"><button class="primary" onclick="say('+JSON.stringify(speech).replace(/</g,'\\u003c')+')">🔊 Listen again</button><button class="mini-btn" onclick="showScreen(\'subjects\')">More to learn</button></div>';showScreen('game');say(speech)}
-function startQuiz(){let all=itemsForGrade(currentSubject);quizItems=[...all].sort(()=>Math.random()-.5).slice(0,Math.min(10,all.length));quizIndex=0;quizScore=0;renderQuestion();showScreen('game')}
-let quizAdvanceTimer=null,quizAnswered=false;
+function shuffleQuiz(list){const copy=[...list];for(let i=copy.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]]}return copy}
+function startQuiz(){
+ const all=itemsForGrade(currentSubject);
+ const unique=all.filter((item,i)=>all.findIndex(x=>x[1]===item[1]&&x[0]===item[0])===i);
+ quizItems=shuffleQuiz(unique.flatMap(item=>[{item,mode:'picture'},{item,mode:'clue'}]));
+ quizIndex=0;quizScore=0;quizAnswered=false;renderQuestion();showScreen('game');
+}
+let quizAnswered=false;
 function renderQuestion(){
- if(quizAdvanceTimer){clearTimeout(quizAdvanceTimer);quizAdvanceTimer=null}
  quizAnswered=false;
- let item=quizItems[quizIndex],correct=item[1],pool=[...new Set(Object.values(content).flat().filter(x=>x[1]!==correct).map(x=>x[1]))],prompts=['What is this?','Choose the correct answer.','Which word matches the picture?','Can you find the right name?'],prompt=prompts[(quizIndex+quizScore)%prompts.length],choices=[correct,...pool.sort(()=>Math.random()-.5).slice(0,3)].sort(()=>Math.random()-.5);
- $('gameBox').innerHTML='<div class="pill">Question '+(quizIndex+1)+' of '+quizItems.length+'</div><div class="quiz-progress"><span style="width:'+((quizIndex/quizItems.length)*100)+'%"></span></div><div class="game-prompt">'+prompt+'</div><div class="quiz-picture" aria-label="Question picture">'+item[0]+'</div><div class="choice-grid">'+choices.map(c=>'<button class="choice" onclick="answer(this,'+JSON.stringify(c).replace(/</g,'\\u003c')+','+JSON.stringify(correct).replace(/</g,'\\u003c')+')">'+c+'</button>').join('')+'</div><div class="feedback" id="feedback" aria-live="polite"></div><div class="game-controls"><button class="primary" id="nextBtn" style="display:none" onclick="nextQuestion()">Next ➜</button><small id="autoNextHint" class="auto-next-hint" aria-live="polite"></small></div>';
+ const question=quizItems[quizIndex],item=question.item,correct=item[1];
+ const allNames=[...new Set(Object.values(content).flat().map(x=>x[1]).filter(Boolean))];
+ const distractors=shuffleQuiz(allNames.filter(name=>name!==correct)).slice(0,3);
+ const choices=shuffleQuiz([...new Set([correct,...distractors])]);
+ const prompt=question.mode==='picture'?'Look at the picture. What is it?':(item[2]?'Which one matches this clue: '+item[2]:'Choose the correct name.');
+ $('gameBox').innerHTML='<div class="pill">Question '+(quizIndex+1)+' of '+quizItems.length+'</div><div class="quiz-progress"><span style="width:'+(quizIndex/quizItems.length*100)+'%"></span></div><div class="game-prompt">'+prompt+'</div><div class="quiz-picture" aria-label="Question picture">'+(question.mode==='picture'?item[0]:'💡')+'</div><div class="choice-grid">'+choices.map(c=>'<button class="choice" onclick="answer(this,'+JSON.stringify(c).replace(/</g,'\\u003c')+','+JSON.stringify(correct).replace(/</g,'\\u003c')+')">'+c+'</button>').join('')+'</div><div class="feedback" id="feedback" aria-live="polite"></div><div class="game-controls"><button class="primary" id="nextBtn" style="display:none" onclick="nextQuestion()">Next question ➜</button></div>';
 }
 function answer(btn,choice,correct){
- if(quizAnswered)return;
+ if(quizAnswered||!btn||btn.disabled)return;
  quizAnswered=true;
- const answeredIndex=quizIndex,ok=choice===correct;
+ const ok=choice===correct;
  btn.classList.add(ok?'correct':'wrong');
  $('feedback').textContent=ok?'🌟 Amazing! That is right!':'💛 Good try! The answer is '+correct;
  if(ok){quizScore++;say('Amazing! Correct!')}else say('Good try. '+correct);
- document.querySelectorAll('.choice').forEach(b=>{b.disabled=true;b.classList.add('answered')});
- $('nextBtn').style.display='inline-block';
- $('autoNextHint').textContent='Next question…';
- quizAdvanceTimer=setTimeout(()=>{quizAdvanceTimer=null;if(quizAnswered&&quizIndex===answeredIndex)nextQuestion()},700);
+ document.querySelectorAll('#gameBox .choice').forEach(b=>{b.disabled=true;b.classList.add('answered')});
+ const next=$('nextBtn');
+ if(next){next.textContent=quizIndex===quizItems.length-1?'See my result 🏆':'Next question ➜';next.style.display='inline-block';next.focus()}
 }
 function nextQuestion(){
- if(quizAdvanceTimer){clearTimeout(quizAdvanceTimer);quizAdvanceTimer=null}
  if(!quizAnswered)return;
  quizAnswered=false;
  quizIndex++;
  if(quizIndex<quizItems.length){renderQuestion();return}
- let earned=quizScore*2;
+ const earned=quizScore*2;
  state.stars+=earned;
  state.done.push({key:currentSubject+'-'+Date.now(),subject:subjects.find(s=>s.id===currentSubject).name,score:quizScore,total:quizItems.length,grade:state.grade,date:new Date().toISOString()});
  save();
- $('gameBox').innerHTML='<div style="font-size:90px;animation:float 2s infinite">🏆</div><h2>Quiz complete!</h2><p>You got '+quizScore+' out of '+quizItems.length+' correct.</p><h2>⭐ +'+earned+' stars</h2><div class="game-controls"><button class="primary" onclick="openSubject(\''+currentSubject+'\')">Play again</button><button class="mini-btn" onclick="showScreen(\'home\')">Home</button></div>';
+ $('gameBox').innerHTML='<div style="font-size:90px;animation:float 2s infinite">🏆</div><h2>Quiz complete!</h2><p>You got '+quizScore+' out of '+quizItems.length+' correct.</p><h2>⭐ +'+earned+' stars</h2><p>Great job! Start another shuffled round when you are ready.</p><div class="game-controls"><button class="primary" onclick="startQuiz()">Play another round 🔁</button><button class="mini-btn" onclick="openSubject(currentSubject)">Back to lessons</button></div>';
  say('You did it! You earned '+earned+' stars!');
 }
 function updateProgress(){let n=state.done.length;$('progressText').textContent=n+' activities completed · Keep going!';$('progressFill').style.width=Math.min(100,n*7)+'%';$('starCount').textContent='⭐ '+state.stars;$('achieveCount').textContent=state.stars+' stars collected';$('progressFill2').style.width=Math.min(100,state.stars/2)+'%';$('streakTitle').textContent=n?'You are a learning star!':'Your adventure starts today!'}

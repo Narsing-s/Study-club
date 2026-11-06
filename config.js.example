@@ -1,6 +1,0 @@
-// Copy this file to config.js and add your Supabase project details.
-// The anon/publishable key is intended for browser use. Never put a service-role key here.
-window.STUDY_CLUB_CONFIG = {
-  SUPABASE_URL: "https://YOUR_PROJECT_ID.supabase.co",
-  SUPABASE_ANON_KEY: "YOUR_SUPABASE_ANON_OR_PUBLISHABLE_KEY"
-};

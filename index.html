@@ -153,7 +153,8 @@ button:not(:disabled){touch-action:manipulation}
 <section id="story" class="screen"><button class="back" onclick="showScreen('home')">← Home</button><div class="game-box"><div style="font-size:75px;animation:float 3s infinite" id="storyArt">🐢</div><div class="eyebrow">STORY TIME</div><h2 id="storyTitle">Tara the Tiny Turtle</h2><div class="story-line" id="storyLine"></div><div class="game-controls"><button class="mini-btn" onclick="storyStep(-1)">← Back</button><button class="primary" onclick="storyStep(1)">Next part ✨</button><button class="mini-btn" onclick="sayStory()">🔊 Listen</button></div><p class="tiny" id="storyLesson">Little lesson: steady effort matters.</p></div></section>
 </main><nav class="bottom-nav" id="bottomNav" aria-label="Main navigation"><button class="nav-btn active" data-screen="home" onclick="showScreen('home')"><span>🏠</span>Home</button><button class="nav-btn" data-screen="grades" onclick="showScreen('grades')"><span>📚</span>Learn</button><button class="nav-btn" data-screen="progress" onclick="showScreen('progress')"><span>🏅</span>My stars</button><button class="nav-btn" data-screen="parent" onclick="showScreen('parent')"><span>👨‍👩‍👧</span>Grown-ups</button><button class="nav-btn" data-screen="feedbackScreen" onclick="showScreen('feedbackScreen')"><span>💌</span>Feedback</button></nav></div>
 <div class="toast" id="toast" role="status"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
 /* Study Club mini-game playground — additive module; existing lesson and quiz logic remains untouched. */
 let miniGameMode='memory',memoryDeck=[],memoryOpen=[],memoryMatched=[],memoryMoves=0,memoryBusy=false;
 let shapeRound=0,shapeScore=0,shapeCurrent=null,colorFirst=null;

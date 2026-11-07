@@ -158,7 +158,7 @@ function challengeItemsForGrade(){
   ['🪁','kites'],['🐠','fish'],['📚','books'],['🍊','oranges'],['🧁','cupcakes'],
   ['🧩','puzzle pieces'],['🚲','bicycles'],['🎈','balloons'],['🥭','mangoes'],['🪙','coins']
  ];
- const places=['garden','classroom','playground','market','library','picnic','farm','beach','birthday party','toy shop','park','kitchen','school fair','tree house','art room','sports day','rainy day',' sunny morning','story corner','music room','flower shop','bus ride','camp','zoo visit','space station','bakery','museum','train trip','science fair','festival'];
+ const places=['garden','classroom','playground','market','library','picnic','farm','beach','birthday party','toy shop','park','kitchen','school fair','tree house','art room','sports day','rainy day','sunny morning','story corner','music room','flower shop','bus ride','camp','zoo visit','space station','bakery','museum','train trip','science fair','festival'];
  const add=(emoji,answer,question)=>{
   const key=question.toLowerCase();
   if(bank.length<10000&&!seen.has(key)){seen.add(key);bank.push([emoji,String(answer),question]);}
@@ -184,7 +184,7 @@ function challengeItemsForGrade(){
      const mode=scene%3,total=n+b;
      if(mode===0)add('➕',total,'A stall at the '+place+' has '+n+' '+noun+' and receives '+b+' more. How many now?');
      else if(mode===1)add('➖',n,'There are '+total+' '+noun+' at the '+place+'. '+b+' are taken away. How many are left?');
-     else add('✖️',b*2,'At the '+place+' there are '+b+' pairs of '+noun+'. How many '+noun+' are there in all?');
+     else add('✖️',n*2,'At the '+place+' there are '+n+' pairs of '+noun+'. How many '+noun+' are there in all?');
     }else{
      const mode=scene%4,total=n+b,factor=(j%9)+2;
      if(mode===0)add('➕',total,'A library at the '+place+' has '+n+' '+noun+' and receives '+b+' more. How many now?');

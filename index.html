@@ -135,7 +135,16 @@ async function resetPassword(){
  }catch(err){$('authError').textContent=err.message||'Password reset failed.'}
 }
 function continueGuest(){isGuest=true;session=null;state=JSON.parse(localStorage.getItem('studyClubGuestProgress')||'{}');state.stars??=0;state.done??=[];state.grade??='nursery';state.name??='Little Star';enterApp(false)}
-async function enterApp(loadRemote){$('loginScreen').classList.add('hide');$('appShell').classList.remove('hide');$('bottomNav').style.display='flex';if(loadRemote&&session)await loadCloud();$('accountLabel').textContent=session?'Signed in: '+session.user.email:'Guest mode · This device only';$('welcomeLine').textContent='Welcome, '+state.name+'! Choose your class to begin exploring.';renderGrades();renderSubjects();updateProgress();showScreen('grades')}
+async function enterApp(loadRemote){$('loginScreen').classList.add('hide');$('appShell').classList.remove('hide');$('bottomNav').style.display='flex';if(loadRemote&&session)await loadCloud();$('accountLabel').textContent=session?'Signed in: '+session.user.email:'Guest mode · This device only';$('welcomeLine').textContent='Welcome, '+state.name+'! Choose your class to begin exploring.';// Restore a valid cloud session after refresh without changing guest/local progress.
+if(studyClubSupabase){
+ studyClubSupabase.auth.getSession().then(async({data,error})=>{
+  if(error||!data?.session)return;
+  session=data.session;isGuest=false;
+  try{await loadCloud();await enterApp(false)}
+  catch(err){console.warn('Cloud session restore:',err);toast('Signed in, but cloud data could not load: '+cloudError(err))}
+ }).catch(error=>console.warn('Supabase session restore failed:',error));
+}
+renderGrades();renderSubjects();updateProgress();showScreen('grades')}
 async function syncCloud(){const key=isGuest?'studyClubGuestProgress':session?'studyClubProgress:'+session.user.email:'studyClubProgress';localStorage.setItem(key,JSON.stringify(state));if(session){const accounts=JSON.parse(localStorage.getItem('studyClubAccounts')||'{}');if(accounts[session.user.email]){accounts[session.user.email].progress=state;localStorage.setItem('studyClubAccounts',JSON.stringify(accounts))}}}
 async function loadCloud(){}
 async function signOut(){session=null;isGuest=false;$('appShell').classList.add('hide');$('bottomNav').style.display='none';$('loginScreen').classList.remove('hide');setAuthMode('login');toast('Signed out safely.')}
@@ -515,8 +524,15 @@ async function renderAdminFeedback(){
  }catch(error){$('adminFeedbackList').textContent=cloudError(error)}
 }
 async function toggleFeedbackReviewed(id){
- try{const {error}=await cloudReady().from('study_club_feedback').update({reviewed:true}).eq('id',id);if(error)throw error;await renderAdminFeedback()}catch(error){toast(cloudError(error))}
+ try{
+  const db=cloudReady(),{data,error}=await db.from('study_club_feedback').select('reviewed').eq('id',id).single();
+  if(error)throw error;
+  const {error:updateError}=await db.from('study_club_feedback').update({reviewed:!data.reviewed}).eq('id',id);
+  if(updateError)throw updateError;await renderAdminFeedback()
+ }catch(error){toast(cloudError(error))}
 }
+async function adminSignOut(){isAdmin=false;await signOut()}
+
 async function deleteFeedbackEntry(id){
  if(!confirm('Delete this feedback entry from the cloud?'))return;
  try{const {error}=await cloudReady().from('study_club_feedback').delete().eq('id',id);if(error)throw error;await renderAdminFeedback()}catch(error){toast(cloudError(error))}

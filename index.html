@@ -102,6 +102,9 @@ button:not(:disabled){touch-action:manipulation}
 @media(max-width:520px){.memory-grid{gap:7px}.memory-card{min-height:76px;border-radius:14px}.shape-options,.color-options{gap:8px}.shape-option{padding:12px;font-size:16px}.game-studio-tabs button{flex:1;padding:10px 8px;font-size:12px}}
 @media(prefers-reduced-motion:reduce){.game-studio-panel,.memory-card,.color-option,.game-launch-card .game-launch-art{animation:none!important;transition:none!important}}
 
+
+/* New learning studios */
+#artCanvas{background:#fff;touch-action:none;cursor:crosshair;max-width:100%}#mathChoices .choice{min-height:70px;font-size:27px}.lesson-head{gap:10px}.lesson-head>div:first-child{min-width:0}
 </style>
 </head>
 <body>
@@ -122,6 +125,13 @@ button:not(:disabled){touch-action:manipulation}
 </div>
 <div class="section-head"><h2>🎮 Mini-game playground</h2><span>Play, think & discover</span></div>
 <div class="game-launch-card"><div class="game-launch-art">🧩</div><div><b>Three playful brain games</b><small class="tiny" style="display:block;margin-top:3px">Memory match · Shape hunt · Colour lab</small></div><button class="primary" type="button" onclick="showMiniGameStudio()">Play now ✨</button></div>
+<div class="section-head"><h2>✨ More ways to learn</h2><span>Explore, create & speak</span></div>
+<div class="subjects">
+ <button class="subject blue" type="button" onclick="openMathLab()"><span class="sub-emoji">🧮</span><b>Smart Maths Lab</b><small>Adaptive counting and sums</small></button>
+ <button class="subject pink" type="button" onclick="openColorStudio()"><span class="sub-emoji">🖍️</span><b>Draw & Colour</b><small>Create your own pictures</small></button>
+ <button class="subject green" type="button" onclick="openExplorer()"><span class="sub-emoji">🔎</span><b>Little Explorer</b><small>Discover nature and science</small></button>
+ <button class="subject purple" type="button" onclick="openSpeakPractice()"><span class="sub-emoji">🎤</span><b>Speak & Practise</b><small>Say letters and simple words</small></button>
+</div>
 <div class="section-head"><h2>Today's fun</h2><span>Little steps, big smiles</span></div><div class="daily daily-mission"><div class="daily-row"><div class="daily-badge">🎯</div><div class="mission-copy"><h3 style="margin:0 0 4px">Daily Brain Challenge</h3><p id="dailyChallengeStatus" style="margin:0">Try 10 fun questions and earn stars!</p></div><button class="primary" id="dailyChallengeButton" type="button" onclick="startDailyChallenge()">Start today's challenge 🚀</button></div></div><div class="activities"><div class="daily"><h3>🎯 Your mini mission</h3><p>Complete one tiny activity today.</p><div class="daily-row"><div class="daily-badge">✍️</div><div><b>Letter tracing</b><small>Practise writing with your finger</small></div><button class="mini-btn" onclick="openTrace()">Start</button></div><div class="daily-row"><div class="daily-badge">📖</div><div><b>Story time</b><small>A tiny story with a big idea</small></div><button class="mini-btn" onclick="openStory()">Read</button></div></div><div class="streak"><div class="big">🔥</div><div><b id="streakTitle">You're doing great!</b><p>Every day is a new chance to shine.</p></div></div></div><div class="footer-note">Play kindly • Learn bravely • Shine brightly 💛</div>
 </section>
 <section id="voiceLearning" class="screen">
@@ -152,6 +162,10 @@ button:not(:disabled){touch-action:manipulation}
 <section id="feedbackScreen" class="screen"><button class="back" onclick="showScreen('home')">← Home</button><div class="lesson-head feedback-hero"><div><div class="eyebrow">HELP US GROW</div><h2>Make Study Club even better! 💛</h2><p>Your ideas help us create happier learning adventures.</p></div><div class="lesson-mascot">💌</div></div><form class="feedback-card" id="feedbackForm" onsubmit="submitFeedback(event)"><h3>How was your experience?</h3><p class="feedback-sub">Tap a star to rate Study Club.</p><div class="rating-stars" role="group" aria-label="Rate your experience"><button type="button" class="rating-star" data-rating="1" aria-label="1 star" onclick="setFeedbackRating(1)">★</button><button type="button" class="rating-star" data-rating="2" aria-label="2 stars" onclick="setFeedbackRating(2)">★</button><button type="button" class="rating-star" data-rating="3" aria-label="3 stars" onclick="setFeedbackRating(3)">★</button><button type="button" class="rating-star" data-rating="4" aria-label="4 stars" onclick="setFeedbackRating(4)">★</button><button type="button" class="rating-star" data-rating="5" aria-label="5 stars" onclick="setFeedbackRating(5)">★</button></div><label class="feedback-label" for="feedbackType">What is your feedback about?</label><select id="feedbackType" class="feedback-input"><option>Overall experience</option><option>Lessons and subjects</option><option>Quiz and questions</option><option>Animations and design</option><option>Login and profile</option><option>Bug or problem</option><option>New feature idea</option></select><label class="feedback-label" for="feedbackMessage">Tell us what you think</label><textarea id="feedbackMessage" class="feedback-input feedback-textarea" maxlength="1000" oninput="updateFeedbackCount()" placeholder="What did you enjoy? What should we improve? Share your idea…" required></textarea><div class="feedback-count"><span>Every idea matters!</span><span id="feedbackCharCount">0 / 1000</span></div><button class="primary feedback-submit" type="submit">Send feedback ✨</button><p class="feedback-privacy">Feedback is saved in this browser only. It appears in the local admin inbox on this same device; it is not uploaded to a server.</p></form><div class="feedback-thanks hide" id="feedbackThanks"><div class="thanks-art">🌈</div><h2>Thank you, superstar!</h2><p>Your feedback has been saved on this device.</p><button class="primary" onclick="resetFeedbackForm()">Send another idea</button><button class="mini-btn" onclick="showScreen('home')">Back to learning</button></div></section>
 <section id="trace" class="screen"><button class="back" onclick="showScreen('home')">← Home</button><div class="game-box"><div class="eyebrow">FINGER WRITING STUDIO</div><h2>Let's trace a letter! ✍️</h2><p>Follow the big dotted letter with your finger or mouse.</p><div style="display:flex;justify-content:center;gap:10px;align-items:center"><button class="mini-btn" onclick="changeTrace(-1)">← Previous</button><strong id="traceLabel" style="font:800 32px 'Baloo 2'">A</strong><button class="mini-btn" onclick="changeTrace(1)">Next →</button></div><canvas id="traceCanvas" class="trace-pad" width="660" height="315"></canvas><div class="game-controls"><button class="mini-btn" onclick="clearTrace()">Clear</button><button class="primary" onclick="say('Well done! Keep practising your letter.')">🔊 Encouragement</button></div><p class="tiny">Trace gently. There is no timer and no score — practise at your own pace.</p></div></section>
 <section id="story" class="screen"><button class="back" onclick="showScreen('home')">← Home</button><div class="game-box"><div style="font-size:75px;animation:float 3s infinite" id="storyArt">🐢</div><div class="eyebrow">STORY TIME</div><h2 id="storyTitle">Tara the Tiny Turtle</h2><div class="story-line" id="storyLine"></div><div class="game-controls"><button class="mini-btn" onclick="storyStep(-1)">← Back</button><button class="primary" onclick="storyStep(1)">Next part ✨</button><button class="mini-btn" onclick="sayStory()">🔊 Listen</button></div><p class="tiny" id="storyLesson">Little lesson: steady effort matters.</p></div></section>
+<section id="mathLab" class="screen"><button class="back" onclick="showScreen('home')">← Home</button><div class="lesson-head"><div><div class="eyebrow">THINK • COUNT • SOLVE</div><h2>Smart Maths Lab 🧮</h2><p id="mathLevel">Practice made for your class</p></div><div class="lesson-mascot">🔢</div></div><div class="game-box"><div class="pill" id="mathProgress">Question 1 · Score 0</div><div class="quiz-picture" id="mathPicture">🍎🍎</div><div class="game-prompt" id="mathQuestion">How many apples?</div><div class="choice-grid" id="mathChoices"></div><div class="feedback" id="mathFeedback" aria-live="polite"></div><button class="primary" id="mathNext" type="button" onclick="nextMathQuestion()" disabled>Next question ➜</button></div></section>
+<section id="colorStudio" class="screen"><button class="back" onclick="showScreen('home')">← Home</button><div class="lesson-head"><div><div class="eyebrow">MAKE • DRAW • IMAGINE</div><h2>My Art Studio 🎨</h2><p>Draw with your finger or mouse. Your art stays on this screen.</p></div><div class="lesson-mascot">🖍️</div></div><div class="game-box"><div class="game-controls" id="artPalette"><button class="mini-btn" data-color="#28304b" style="background:#28304b;color:white" onclick="setArtColor('#28304b')">Ink</button><button class="mini-btn" style="background:#ff8fb1" onclick="setArtColor('#ff8fb1')">Pink</button><button class="mini-btn" style="background:#8ed8ff" onclick="setArtColor('#8ed8ff')">Blue</button><button class="mini-btn" style="background:#9ee6c0" onclick="setArtColor('#9ee6c0')">Green</button><button class="mini-btn" style="background:#ffd66b" onclick="setArtColor('#ffd66b')">Yellow</button><button class="mini-btn" onclick="setArtColor('#ffffff')">Eraser</button></div><canvas id="artCanvas" class="trace-pad" width="900" height="430" aria-label="Drawing canvas"></canvas><div class="game-controls"><button class="mini-btn" onclick="clearArt()">Clear canvas</button><button class="primary" onclick="saveArt()">Save my picture ↓</button></div><p class="tiny">Ask a grown-up before sharing your artwork online.</p></div></section>
+<section id="explorer" class="screen"><button class="back" onclick="showScreen('home')">← Home</button><div class="lesson-head"><div><div class="eyebrow">LOOK • LEARN • WONDER</div><h2>Little Explorer 🌍</h2><p>Discover something wonderful about our world.</p></div><div class="lesson-mascot">🔎</div></div><div class="lesson-grid" id="explorerCards"></div></section>
+<section id="speakPractice" class="screen"><button class="back" onclick="showScreen('home')">← Home</button><div class="lesson-head"><div><div class="eyebrow">LISTEN • SPEAK • PRACTISE</div><h2>Speak & Practise 🎤</h2><p>Listen first, then try saying the word.</p></div><div class="lesson-mascot">🗣️</div></div><div class="game-box"><div class="quiz-picture" id="speakPicture">🍎</div><h2 id="speakWord">Apple</h2><p id="speakPrompt">Say: Apple</p><div class="game-controls"><button class="mini-btn" onclick="say($('speakWord').textContent)">🔊 Hear word</button><button class="primary" onclick="startSpeakRecognition()">🎤 Try saying it</button><button class="mini-btn" onclick="nextSpeakWord()">Next word ➜</button></div><div class="feedback" id="speakFeedback" aria-live="polite">Microphone practice needs browser permission and speech-recognition support.</div></div></section>
 </main><nav class="bottom-nav" id="bottomNav" aria-label="Main navigation"><button class="nav-btn active" data-screen="home" onclick="showScreen('home')"><span>🏠</span>Home</button><button class="nav-btn" data-screen="grades" onclick="showScreen('grades')"><span>📚</span>Learn</button><button class="nav-btn" data-screen="progress" onclick="showScreen('progress')"><span>🏅</span>My stars</button><button class="nav-btn" data-screen="parent" onclick="showScreen('parent')"><span>👨‍👩‍👧</span>Grown-ups</button><button class="nav-btn" data-screen="feedbackScreen" onclick="showScreen('feedbackScreen')"><span>💌</span>Feedback</button></nav></div>
 <div class="toast" id="toast" role="status"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -495,6 +509,69 @@ function renderHistory(){
 }
 function saveName(){let v=$('nickname').value.trim();if(v){state.name=v;save();$('welcomeLine').textContent='Welcome, '+v+'! Ready for a little adventure?';toast('Name saved! Hello, '+v+' 💛')}}
 function saveGrade(){state.grade=$('parentGrade').value;save();renderGrades();toast('Learning class updated!')}
+
+// Additive learning studios: separate from the existing lesson, quiz and account flows.
+let mathQuestionIndex=0,mathScore=0,mathCurrent=null,mathAnswered=false,artColor='#28304b',artDrawingReady=false,speakIndex=0,speakRecognition=null;
+const speakWords=[['🍎','Apple'],['🐶','Dog'],['☀️','Sun'],['🐱','Cat'],['🚗','Car'],['🌸','Flower'],['🐟','Fish'],['🏠','House']];
+const explorerTopics=[
+ ['🐝','Bees','Bees visit flowers and help plants make seeds.','Bees help nature.'],
+ ['🌱','Plants','Plants need sunlight, water and air to grow.','Water a plant gently.'],
+ ['🌈','Rainbows','A rainbow can appear when sunlight shines through water drops.','Rainbows have many colours.'],
+ ['🪐','Space','Earth is the planet where we live. The Sun gives us light and warmth.','We live on planet Earth.'],
+ ['🐬','Ocean','Many amazing animals live in the ocean, including dolphins and turtles.','Keep oceans clean.'],
+ ['🦴','Our body','Bones support our body and help us stand and move.','Eat healthy food and play.']
+];
+function openMathLab(){mathQuestionIndex=0;mathScore=0;mathAnswered=false;showScreen('mathLab');nextMathQuestion(true)}
+function nextMathQuestion(first=false){
+ if(!first&&mathCurrent&&!mathAnswered){return}
+ mathAnswered=false;
+ const level=({nursery:5,lkg:10,ukg:20,class1:50})[state.grade]||5;
+ const max=Math.max(5,level);
+ const a=1+Math.floor(Math.random()*max),b=1+Math.floor(Math.random()*Math.min(max,10));
+ const op=state.grade==='nursery'?'count':state.grade==='lkg'?(mathQuestionIndex%2?'add':'count'):(mathQuestionIndex%3===2?'subtract':'add');
+ let answer,question,picture;
+ if(op==='count'){answer=a;question='How many stars can you count?';picture='⭐ '.repeat(a)}
+ else if(op==='subtract'){const x=Math.max(a,b),y=Math.min(a,b);answer=x-y;question='What is '+x+' − '+y+'?';picture='🍎 '.repeat(Math.min(x,12))+'<br><small>Take away '+y+'</small>'}
+ else{answer=a+b;question='What is '+a+' + '+b+'?';picture='🍎 '.repeat(Math.min(a,10))+' + '+'🍎 '.repeat(Math.min(b,10))}
+ mathCurrent={answer,question};$('mathLevel').textContent=grades.find(g=>g.id===state.grade).name+' · Questions adjust to your level';$('mathQuestion').textContent=question;$('mathPicture').innerHTML=picture;$('mathProgress').textContent='Question '+(mathQuestionIndex+1)+' · Score '+mathScore;
+ const options=new Set([answer]);while(options.size<4){const delta=Math.floor(Math.random()*5)+1;options.add(Math.max(0,answer+(Math.random()<.5?-delta:delta)))}
+ $('mathChoices').innerHTML=shuffleQuiz([...options]).map(n=>'<button class="choice" type="button" onclick="answerMath('+n+',this)">'+n+'</button>').join('');
+ $('mathFeedback').textContent='Choose your answer!';$('mathNext').disabled=true;
+}
+function answerMath(value,button){
+ if(mathAnswered||!mathCurrent)return;mathAnswered=true;
+ const correct=value===mathCurrent.answer;
+ if(correct){mathScore++;button.classList.add('correct');$('mathFeedback').textContent='Brilliant! That is right 🌟';say('Well done!')}
+ else{$('mathFeedback').textContent='Good try! The answer is '+mathCurrent.answer+'. 💛';button.classList.add('wrong');$('mathChoices').querySelectorAll('.choice').forEach(el=>{if(Number(el.textContent)===mathCurrent.answer)el.classList.add('correct')})}
+ $('mathChoices').querySelectorAll('button').forEach(el=>el.disabled=true);$('mathNext').disabled=false;$('mathNext').textContent='Next question ➜';$('mathProgress').textContent='Question '+(mathQuestionIndex+1)+' · Score '+mathScore;mathQuestionIndex++;
+ if(mathQuestionIndex%5===0){$('mathNext').textContent='Finish round · '+mathScore+'/5';}
+}
+function setArtColor(color){artColor=color}
+function openColorStudio(){showScreen('colorStudio');setupArtCanvas()}
+function setupArtCanvas(){
+ const c=$('artCanvas');if(!c||artDrawingReady)return;const ctx=c.getContext('2d');ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=12;ctx.fillStyle='#ffffff';ctx.fillRect(0,0,c.width,c.height);
+ let drawing=false,last=null;const point=e=>{const r=c.getBoundingClientRect();return{x:(e.clientX-r.left)*c.width/r.width,y:(e.clientY-r.top)*c.height/r.height}};
+ c.addEventListener('pointerdown',e=>{drawing=true;last=point(e);c.setPointerCapture(e.pointerId)});
+ c.addEventListener('pointermove',e=>{if(!drawing)return;const p=point(e);ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(p.x,p.y);ctx.strokeStyle=artColor;ctx.lineWidth=artColor==='#ffffff'?28:12;ctx.stroke();last=p});
+ ['pointerup','pointercancel','pointerleave'].forEach(type=>c.addEventListener(type,()=>drawing=false));artDrawingReady=true;
+}
+function clearArt(){const c=$('artCanvas');if(!c)return;const ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#ffffff';ctx.fillRect(0,0,c.width,c.height)}
+function saveArt(){const c=$('artCanvas');if(!c)return;const a=document.createElement('a');a.download='my-study-club-picture.png';a.href=c.toDataURL('image/png');a.click();toast('Your picture is ready! 🎨')}
+function openExplorer(){showScreen('explorer');$('explorerCards').innerHTML=explorerTopics.map((item,i)=>'<article class="lesson-card"><span class="pic">'+item[0]+'</span><b>'+item[1]+'</b><small>'+item[2]+'</small><button class="play" type="button" onclick="say('+JSON.stringify(item[2]).replace(/</g,'\\u003c')+')">🔊 Listen</button><button class="mini-btn" style="margin-top:8px" onclick="toast('+JSON.stringify(item[3]).replace(/</g,'\\u003c')+')">Fun fact</button></article>').join('')}
+function openSpeakPractice(){speakIndex=0;showScreen('speakPractice');renderSpeakWord()}
+function renderSpeakWord(){const item=speakWords[speakIndex%speakWords.length];$('speakPicture').textContent=item[0];$('speakWord').textContent=item[1];$('speakPrompt').textContent='Say: '+item[1];$('speakFeedback').textContent='Listen to the word, then try saying it.'}
+function nextSpeakWord(){if(speakRecognition){try{speakRecognition.abort()}catch(e){}speakRecognition=null} speakIndex=(speakIndex+1)%speakWords.length;renderSpeakWord()}
+function startSpeakRecognition(){
+ const API=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!API){$('speakFeedback').textContent='Speech recognition is not supported in this browser. Try listening and repeating with a grown-up.';return}
+ if(speakRecognition){try{speakRecognition.abort()}catch(e){}}
+ const target=speakWords[speakIndex%speakWords.length][1].toLowerCase();const recognition=new API();speakRecognition=recognition;recognition.lang='en-IN';recognition.interimResults=false;recognition.maxAlternatives=3;
+ $('speakFeedback').textContent='Listening… Say '+target+' now.';
+ recognition.onresult=event=>{const heard=Array.from(event.results[0]||[]).map(x=>x.transcript.toLowerCase().trim());const match=heard.some(x=>x===target||x.includes(target));$('speakFeedback').textContent=match?'Wonderful speaking! You said '+target+' 🎉':'Nice try! I heard '+(heard[0]||'something')+'. Listen once more and try again.';if(match){say('Excellent speaking!');state.stars=(Number(state.stars)||0)+1;save()}};
+ recognition.onerror=event=>{$('speakFeedback').textContent=event.error==='not-allowed'?'Microphone permission was blocked. Allow microphone access in your browser settings.':'I could not hear that clearly. Please try again.'};
+ recognition.onend=()=>{if(speakRecognition===recognition)speakRecognition=null};try{recognition.start()}catch(error){$('speakFeedback').textContent='Microphone is busy. Please try again.'}
+}
+
 function openTrace(){traceLetter=0;showScreen('trace');drawTrace()}
 function changeTrace(n){traceLetter=(traceLetter+n+26)%26;drawTrace()}
 function drawTrace(){let c=$('traceCanvas'),ctx=c.getContext('2d');$('traceLabel').textContent=String.fromCharCode(65+traceLetter);ctx.clearRect(0,0,c.width,c.height);ctx.save();ctx.font='bold 235px Nunito';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#e6d9f2';ctx.fillText(String.fromCharCode(65+traceLetter),c.width/2,c.height/2+8);ctx.restore()}

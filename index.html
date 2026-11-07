@@ -36,6 +36,8 @@ button:not(:disabled){touch-action:manipulation}
 @keyframes softPulse{50%{box-shadow:0 0 0 7px #ffb5ca20,0 7px 16px #ffb5bb55}}
 @keyframes choiceEnter{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 @media(prefers-reduced-motion:reduce){body:before,.hero:after,.brand-mark,.choice-grid .choice{animation:none!important}}
+
+.admin-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px}.admin-stats .daily b{font:900 23px 'Baloo 2';display:block}.admin-stats .daily small{color:var(--muted);font-weight:800}.admin-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}.admin-tools h3{margin:0}.admin-feedback-list{display:grid;gap:12px;margin-top:14px}.admin-feedback-item{border:1px solid #eee8f2;border-radius:17px;padding:14px;background:#fff;animation:cardIn .35s both}.admin-feedback-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.admin-feedback-item p{white-space:pre-wrap;overflow-wrap:anywhere;font-weight:800;color:var(--ink);line-height:1.5}.feedback-empty{text-align:center;padding:28px 12px;color:var(--muted)}@media(max-width:520px){.admin-stats{grid-template-columns:1fr}.admin-tools{align-items:stretch}.admin-tools>*{max-width:100%}}@media(prefers-reduced-motion:reduce){.admin-feedback-item{animation:none}}
 </style>
 </head>
 <body>
@@ -279,9 +281,66 @@ function finishQuiz(){
  $('gameBox').innerHTML='<div class="confetti-layer" aria-hidden="true">'+confetti+'</div><div class="quiz-result" style="animation:cardIn .5s both;text-align:center;padding:12px"><div style="font-size:96px;animation:float 2s infinite">🏆</div><div class="pill">'+(quizMode==='challenge'?'BRAIN CHALLENGE COMPLETE':'QUIZ COMPLETED')+'</div><h2>Your score</h2><div style="font-size:54px;font-weight:1000;color:var(--purple)">'+quizScore+' / '+total+'</div><p style="font-size:23px;font-weight:900">'+percent+'% correct</p><div class="quiz-progress"><span style="width:100%"></span></div><h2>⭐ +'+earned+' stars</h2><p>Personal best: '+state.quizBest[bestKey]+'%'+(percent>previousBest?' · New best!':'')+'</p><p>'+(percent>=80?'Amazing work! You are a superstar!':percent>=50?'Great effort! Keep practising!':'Good try! Practise again and you will improve!')+'</p>'+review+'<div class="game-controls"><button class="primary" onclick="quizMode===&#39;challenge&#39;?startChallengeQuiz(quizRoundSize):startQuiz()">Play again 🔁</button><button class="mini-btn" onclick="openSubject(currentSubject)">Back to lessons</button><button class="mini-btn" onclick="showScreen(\'progress\')">View my progress ⭐</button></div></div>';
  say('Quiz complete! You scored '+quizScore+' out of '+total+'. You earned '+earned+' stars!');
 }
+
+function readFeedbackEntries(){try{const value=JSON.parse(localStorage.getItem('studyClubFeedback')||'[]');return Array.isArray(value)?value:[]}catch(error){return []}}
+function openAdminLogin(){
+ adminReturnTo=$('appShell').classList.contains('hide')?'login':'app';
+ $('appShell').classList.add('hide');$('bottomNav').style.display='none';$('loginScreen').classList.add('hide');$('adminLoginScreen').classList.remove('hide');
+ adminModeSetup=!localStorage.getItem('studyClubAdmin');
+ $('adminConfirmField').classList.toggle('hide',!adminModeSetup);
+ $('adminSubmitButton').textContent=adminModeSetup?'Create local admin account':'Sign in to admin dashboard';
+ $('adminSetupNote').textContent=adminModeSetup?'First-time setup creates an administrator on this browser only. This is not secure hosted authentication. Feedback from other devices will not sync.':'Admin credentials and feedback remain on this browser. Multi-device administration requires a protected backend.';
+ $('adminAuthError').textContent='';
+}
+function closeAdminLogin(){
+ $('adminLoginScreen').classList.add('hide');
+ if(adminReturnTo==='app'){$('appShell').classList.remove('hide');$('bottomNav').style.display='flex';showScreen('parent')}
+ else $('loginScreen').classList.remove('hide');
+}
+async function adminSubmit(event){
+ event.preventDefault();$('adminAuthError').textContent='';
+ const email=$('adminEmail').value.trim().toLowerCase(),password=$('adminPassword').value;
+ try{
+  let admin=null;
+  if(adminModeSetup){
+   if(password.length<10)throw new Error('Use an admin password with at least 10 characters.');
+   if(password!==$('adminConfirm').value)throw new Error('Admin passwords do not match.');
+   if(localStorage.getItem('studyClubAdmin'))throw new Error('An admin account already exists on this browser. Please sign in.');
+   const salt=Array.from(crypto.getRandomValues(new Uint8Array(16))).map(v=>v.toString(16).padStart(2,'0')).join('');
+   admin={email:email,salt:salt,passwordHash:await localPasswordHash(password,salt),createdAt:new Date().toISOString()};
+   localStorage.setItem('studyClubAdmin',JSON.stringify(admin));
+  }else{
+   admin=JSON.parse(localStorage.getItem('studyClubAdmin')||'null');
+   if(!admin||admin.email!==email||admin.passwordHash!==await localPasswordHash(password,admin.salt))throw new Error('Admin email or password is incorrect.');
+  }
+  isAdmin=true;$('adminLoginScreen').classList.add('hide');$('loginScreen').classList.add('hide');$('appShell').classList.remove('hide');$('bottomNav').style.display='none';
+  $('adminAccountLabel').textContent='Signed in as '+admin.email;renderAdminFeedback();showScreen('adminDashboard');
+ }catch(error){$('adminAuthError').textContent=error.message||'Admin sign-in failed.'}
+}
+function adminSignOut(){isAdmin=false;$('appShell').classList.add('hide');$('bottomNav').style.display='none';$('loginScreen').classList.remove('hide');setAuthMode('login')}
+function renderAdminFeedback(){
+ if(!isAdmin)return;
+ const entries=readFeedbackEntries(),filter=$('adminFeedbackFilter').value;
+ const visible=entries.filter(item=>filter==='new'?!item.reviewed:filter==='reviewed'?!!item.reviewed:true).slice().reverse();
+ $('adminFeedbackTotal').textContent=entries.length;
+ $('adminFeedbackNew').textContent=entries.filter(item=>!item.reviewed).length;
+ $('adminFeedbackAverage').textContent=entries.length?(entries.reduce((sum,item)=>sum+(Number(item.rating)||0),0)/entries.length).toFixed(1)+' / 5':'—';
+ $('adminFeedbackList').innerHTML=visible.length?visible.map(item=>{
+  const id=String(item.id||''),date=item.createdAt?new Date(item.createdAt).toLocaleString():'Date unavailable';
+  return '<article class="admin-feedback-item"><div class="admin-feedback-top"><span class="tag">'+escapeHTML(item.type||'General')+'</span><span class="tag">'+('⭐'.repeat(Math.max(0,Math.min(5,Number(item.rating)||0))))+'</span><span class="tiny">'+escapeHTML(date)+'</span></div><p>'+escapeHTML(item.message||'')+'</p><div class="tiny">Learner: '+escapeHTML(item.learner||'Not provided')+' · Class: '+escapeHTML(item.grade||'—')+' · From: '+escapeHTML(item.submitter||'Guest')+'</div><div class="game-controls" style="justify-content:flex-start;margin-top:10px"><button class="mini-btn" onclick="toggleFeedbackReviewed(&quot;'+escapeHTML(id)+'&quot;)">'+(item.reviewed?'Mark as new':'Mark reviewed')+'</button><button class="mini-btn" onclick="deleteFeedbackEntry(&quot;'+escapeHTML(id)+'&quot;)">Delete</button></div></article>';
+ }).join(''):'<div class="feedback-empty"><div style="font-size:42px">📭</div><b>No feedback in this view yet</b><p class="tiny">New feedback submitted in this browser will appear here.</p></div>';
+}
+function toggleFeedbackReviewed(id){const entries=readFeedbackEntries().map(item=>String(item.id||'')===id?{...item,reviewed:!item.reviewed}:item);localStorage.setItem('studyClubFeedback',JSON.stringify(entries));renderAdminFeedback()}
+function deleteFeedbackEntry(id){if(!confirm('Delete this feedback entry from this browser?'))return;const entries=readFeedbackEntries().filter(item=>String(item.id||'')!==id);localStorage.setItem('studyClubFeedback',JSON.stringify(entries));renderAdminFeedback()}
+function exportFeedbackCSV(){
+ const rows=[['Date','Rating','Category','Message','Learner','Class','Submitter','Reviewed'],...readFeedbackEntries().map(item=>[item.createdAt||'',item.rating||'',item.type||'',item.message||'',item.learner||'',item.grade||'',item.submitter||'',item.reviewed?'Yes':'No'])];
+ const csv=rows.map(row=>row.map(value=>'"'+String(value).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+ const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})),link=document.createElement('a');link.href=url;link.download='study-club-feedback.csv';link.click();URL.revokeObjectURL(url);
+}
+
 function setFeedbackRating(value){feedbackRating=value;document.querySelectorAll('.rating-star').forEach(btn=>{const active=Number(btn.dataset.rating)<=value;btn.classList.toggle('selected',active);btn.setAttribute('aria-pressed',String(Number(btn.dataset.rating)===value))});}
 function updateFeedbackCount(){$('feedbackCharCount').textContent=$('feedbackMessage').value.length+' / 1000';}
-function submitFeedback(event){if(event)event.preventDefault();const message=$('feedbackMessage').value.trim();if(!feedbackRating){toast('Please choose a star rating first ⭐');return}if(!message){toast('Please write a little feedback 💛');$('feedbackMessage').focus();return}const entries=JSON.parse(localStorage.getItem('studyClubFeedback')||'[]');entries.push({rating:feedbackRating,type:$('feedbackType').value,message,grade:state.grade,learner:state.name,createdAt:new Date().toISOString()});localStorage.setItem('studyClubFeedback',JSON.stringify(entries.slice(-50)));$('feedbackForm').classList.add('hide');$('feedbackThanks').classList.remove('hide');say('Thank you for helping Study Club grow!');}
+function submitFeedback(event){if(event)event.preventDefault();const message=$('feedbackMessage').value.trim();if(!feedbackRating){toast('Please choose a star rating first ⭐');return}if(!message){toast('Please write a little feedback 💛');$('feedbackMessage').focus();return}const entries=readFeedbackEntries();entries.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+'-'+Math.random().toString(36).slice(2),rating:feedbackRating,type:$('feedbackType').value,message:message,grade:state.grade,learner:state.name,submitter:session?.user?.email||(isGuest?'Guest':'Local parent'),reviewed:false,createdAt:new Date().toISOString()});localStorage.setItem('studyClubFeedback',JSON.stringify(entries.slice(-500)));$('feedbackForm').classList.add('hide');$('feedbackThanks').classList.remove('hide');say('Thank you for helping Study Club grow!');}
 function resetFeedbackForm(){$('feedbackForm').reset();$('feedbackForm').classList.remove('hide');$('feedbackThanks').classList.add('hide');feedbackRating=0;setFeedbackRating(0);updateFeedbackCount();}
 function updateProgress(){let n=state.done.length;$('progressText').textContent=n+' activities completed · Keep going!';$('progressFill').style.width=Math.min(100,n*7)+'%';$('starCount').textContent='⭐ '+state.stars;$('achieveCount').textContent=state.stars+' stars collected';$('progressFill2').style.width=Math.min(100,state.stars/2)+'%';$('streakTitle').textContent=n?'You are a learning star!':'Your adventure starts today!'}
 function renderHistory(){

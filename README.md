@@ -73,3 +73,11 @@ The current curriculum is an expandable early-learning foundation for Nursery th
 - Added an optional 10-question Daily Brain Challenge using the existing challenge quiz flow; it marks as completed for the current local calendar day after the round is finished.
 - Added a local learning insights view with study streak, quiz accuracy, activity totals, a seven-day activity chart and a suggested subject to practise based on quiz history.
 - These additions reuse existing learner progress records and do not change login, lesson, quiz progression, feedback or account storage formats. No cloud sync is implied.
+
+
+## Cloud backend foundation (Supabase)
+- Added `supabase/migrations/20261107000100_cloud_accounts_progress_feedback.sql` for parent accounts, learner profiles, JSON learning progress and feedback.
+- Row Level Security is enabled for every cloud table. Parents can manage only their own learner profiles and progress; only a confirmed Supabase Auth identity for `narsingbeesetti22@gmail.com` can read/manage the feedback inbox and use owner-level access.
+- Setup steps and key-safety guidance are in [supabase/SETUP.md](supabase/SETUP.md).
+- **Not yet connected:** the live app still uses its existing local-browser login, progress and feedback storage. The SQL migration must be applied and the Supabase Project URL + publishable key connected in the app before cloud accounts, cross-device progress or shared feedback become active. No service-role/secret key belongs in browser code.
+- Existing local data is not deleted or migrated by this backend foundation.

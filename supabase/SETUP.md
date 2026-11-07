@@ -35,7 +35,7 @@ Save the settings. New sign-up confirmation emails explicitly redirect to the Gi
 
 ## 3. Configure owner admin
 
-Create the Supabase Auth user `narsingbeesetti22@gmail.com` and complete email confirmation. Use that same confirmed account in **Admin login**. The owner check is enforced in the database function `public.is_study_club_owner()`; changing the email typed in the browser cannot grant admin access.
+Create the Supabase Auth user `narsingbeesetti22@gmail.com` in **Authentication → Users → Add user → Create new user**. Set a strong password that you keep private, and use the dashboard's **Auto Confirm User** option for this owner account only (or confirm it through the normal email flow after SMTP is working). This avoids depending on the currently blocked test-email sender for the site owner; it does not turn off email confirmation for other users. Then use that same email and password in **Admin login**. The owner check is enforced by `public.is_study_club_owner()` and requires the exact email to be confirmed; changing the email typed in the browser cannot grant admin access. If the owner user already exists, do not create a duplicate—check its confirmation status and reset/set its password from the dashboard.
 
 ## 4. Configure email delivery for multiple users
 

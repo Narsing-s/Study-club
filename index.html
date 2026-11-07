@@ -113,13 +113,16 @@ function itemsForGrade(id){const limits={nursery:5,lkg:8,ukg:12,class1:99};const
 function openSubject(id){currentSubject=id;let s=subjects.find(x=>x.id===id);$('subjectTitle').textContent=s.name;$('subjectDesc').textContent=s.desc;$('levelLabel').textContent=grades.find(g=>g.id===state.grade).name+' • '+state.name;let items=itemsForGrade(id);$('lessonCards').innerHTML=items.map((it,i)=>'<article class="lesson-card"><span class="pic">'+it[0]+'</span><b>'+it[1]+'</b><small>'+it[2]+'</small><button class="play" onclick="learnItem('+i+')">▶ Learn</button></article>').join('')+'<article class="lesson-card" style="background:#fff5d9"><span class="pic">🎯</span><b>Quick quiz</b><small>Show what you know!</small><button class="play" onclick="startQuiz()">Play quiz</button></article>'+(id==='letters'?'<article class="lesson-card" style="background:#e8f6ff"><span class="pic">✍️</span><b>Trace letters</b><small>Practise with your finger</small><button class="play" onclick="openTrace()">Start tracing</button></article>':'')+(id==='rhymes'?'<article class="lesson-card" style="background:#f1eaff"><span class="pic">📖</span><b>Story corner</b><small>Listen and learn values</small><button class="play" onclick="openStory()">Read story</button></article>':'');showScreen('subjects')}
 function learnItem(i){let item=content[currentSubject][i],speech=item[1]+'. '+(item[2]||'');$('gameBox').innerHTML='<div class="eyebrow">LET\'S LEARN</div><div style="font-size:100px;margin:12px;animation:float 2s infinite">'+item[0]+'</div><h2>'+item[1]+'</h2><p style="font-size:20px">'+(item[2]||'Say it with me!')+'</p><div class="game-controls"><button class="primary" onclick="say('+JSON.stringify(speech).replace(/</g,'\\u003c')+')">🔊 Listen again</button><button class="mini-btn" onclick="showScreen(\'subjects\')">More to learn</button></div>';showScreen('game');say(speech)}
 function shuffleQuiz(list){const copy=[...list];for(let i=copy.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]]}return copy}
+let quizAnswered=false,quizAdvanceTimer=null,quizRoundId=0;
 function startQuiz(){
+ if(quizAdvanceTimer){clearTimeout(quizAdvanceTimer);quizAdvanceTimer=null}
  const all=itemsForGrade(currentSubject);
  const unique=all.filter((item,i)=>all.findIndex(x=>x[1]===item[1]&&x[0]===item[0])===i);
+ if(!unique.length){toast('No quiz questions are available for this lesson yet.');return}
+ quizRoundId++;
  quizItems=shuffleQuiz(unique.flatMap(item=>[{item,mode:'picture'},{item,mode:'clue'}]));
  quizIndex=0;quizScore=0;quizAnswered=false;renderQuestion();showScreen('game');
 }
-let quizAnswered=false;
 function renderQuestion(){
  quizAnswered=false;
  const question=quizItems[quizIndex],item=question.item,correct=item[1];
@@ -136,22 +139,29 @@ function answer(btn,choice,correct){
  btn.classList.add(ok?'correct':'wrong');
  $('feedback').textContent=ok?'🌟 Amazing! That is right!':'💛 Good try! The answer is '+correct;
  if(ok){quizScore++;say('Amazing! Correct!')}else say('Good try. '+correct);
- document.querySelectorAll('#gameBox .choice').forEach(b=>{b.disabled=true;b.classList.add('answered')});
+ document.querySelectorAll('#gameBox .choice').forEach(b=>{b.disabled=true;b.classList.add('answered');if(b.textContent.trim()===correct)b.classList.add('correct')});
  const next=$('nextBtn');
- if(next){next.textContent=quizIndex===quizItems.length-1?'See my result 🏆':'Next question ➜';next.style.display='inline-block'}
- // Learners control the pace: the next question opens only after Next is pressed.
+ if(next){next.textContent=quizIndex===quizItems.length-1?'Show my score 🏆':'Next question now ➜';next.style.display='inline-block'}
+ // Automatically continue after feedback; the child can also tap Next now.
+ const thisRound=quizRoundId;
+ if(quizAdvanceTimer)clearTimeout(quizAdvanceTimer);
+ quizAdvanceTimer=setTimeout(()=>{if(thisRound===quizRoundId&&quizAnswered)nextQuestion()},1200);
 }
 function nextQuestion(){
  if(!quizAnswered)return;
+ if(quizAdvanceTimer){clearTimeout(quizAdvanceTimer);quizAdvanceTimer=null}
  quizAnswered=false;
  quizIndex++;
  if(quizIndex<quizItems.length){renderQuestion();return}
- const earned=quizScore*2;
+ finishQuiz();
+}
+function finishQuiz(){
+ const total=quizItems.length,earned=quizScore*2,percent=Math.round(quizScore/total*100);
  state.stars+=earned;
- state.done.push({key:currentSubject+'-'+Date.now(),subject:subjects.find(s=>s.id===currentSubject).name,score:quizScore,total:quizItems.length,grade:state.grade,date:new Date().toISOString()});
+ state.done.push({key:currentSubject+'-'+Date.now(),subject:subjects.find(s=>s.id===currentSubject).name,score:quizScore,total,grade:state.grade,date:new Date().toISOString()});
  save();
- $('gameBox').innerHTML='<div style="font-size:90px;animation:float 2s infinite">🏆</div><h2>Quiz complete!</h2><p>You got '+quizScore+' out of '+quizItems.length+' correct.</p><h2>⭐ +'+earned+' stars</h2><p>Great job! Start another shuffled round when you are ready.</p><div class="game-controls"><button class="primary" onclick="startQuiz()">Play another round 🔁</button><button class="mini-btn" onclick="openSubject(currentSubject)">Back to lessons</button></div>';
- say('You did it! You earned '+earned+' stars!');
+ $('gameBox').innerHTML='<div class="quiz-result" style="animation:cardIn .5s both;text-align:center;padding:12px"><div style="font-size:96px;animation:float 2s infinite">🏆</div><div class="pill">QUIZ COMPLETED</div><h2>Your score</h2><div style="font-size:54px;font-weight:1000;color:var(--purple)">'+quizScore+' / '+total+'</div><p style="font-size:23px;font-weight:900">'+percent+'% correct</p><div class="quiz-progress"><span style="width:100%"></span></div><h2>⭐ +'+earned+' stars</h2><p>'+(percent>=80?'Amazing work! You are a superstar!':percent>=50?'Great effort! Keep practising!':'Good try! Practise again and you will improve!')+'</p><div class="game-controls"><button class="primary" onclick="startQuiz()">Play again 🔁</button><button class="mini-btn" onclick="openSubject(currentSubject)">Back to lessons</button><button class="mini-btn" onclick="showScreen(\'progress\')">View my progress ⭐</button></div></div>';
+ say('Quiz complete! You scored '+quizScore+' out of '+total+'. You earned '+earned+' stars!');
 }
 let feedbackRating=0;
 function setFeedbackRating(value){feedbackRating=value;document.querySelectorAll('.rating-star').forEach(btn=>{const active=Number(btn.dataset.rating)<=value;btn.classList.toggle('selected',active);btn.setAttribute('aria-pressed',String(Number(btn.dataset.rating)===value))});}

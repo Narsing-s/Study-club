@@ -7,13 +7,13 @@ Study Club is deployed as a static web app on Vercel (with GitHub Pages retained
 - Supabase project URL: `https://wozvcabjepdjkcuasqko.supabase.co`
 - Primary live URL: `https://study-club-lemon.vercel.app/`
 - Alternate GitHub Pages URL: `https://narsing-s.github.io/Study-club/`
-- Owner/admin email: `narsingbeesetti006@gmail.com`
+- Owner/admin email: `narsingbeesetti22@gmail.com`
 
 ## 1. Apply the database migration
 
 In the Supabase dashboard for the project above, open **SQL Editor** and run the complete file:
 
-`supabase/migrations/20261107000100_cloud_accounts_progress_feedback.sql` and then `supabase/migrations/20261107000200_update_study_club_owner_email.sql`
+`supabase/migrations/20261107000100_cloud_accounts_progress_feedback.sql`
 
 This creates:
 - `parent_profiles`: one parent identity per Supabase Auth user
@@ -37,7 +37,7 @@ Save the settings. New sign-up confirmation emails explicitly redirect to the Ve
 
 ## 3. Configure owner admin
 
-Create the Supabase Auth user `narsingbeesetti006@gmail.com` in **Authentication → Users → Add user → Create new user**. Set a strong password that you keep private, and use the dashboard's **Auto Confirm User** option for this owner account only (or confirm it through the normal email flow after SMTP is working). This avoids depending on the currently blocked test-email sender for the site owner; it does not turn off email confirmation for other users. Then use that same email and password in **Admin login**. The owner check is enforced by `public.is_study_club_owner()` and requires the exact email to be confirmed; changing the email typed in the browser cannot grant admin access. If the owner user already exists, do not create a duplicate—check its confirmation status and reset/set its password from the dashboard.
+Create the Supabase Auth user `narsingbeesetti22@gmail.com` in **Authentication → Users → Add user → Create new user**. Set a strong password that you keep private, and use the dashboard's **Auto Confirm User** option for this owner account only (or confirm it through the normal email flow after SMTP is working). This avoids depending on the currently blocked test-email sender for the site owner; it does not turn off email confirmation for other users. Then use that same email and password in **Admin login**. The owner check is enforced by `public.is_study_club_owner()` and requires the exact email to be confirmed; changing the email typed in the browser cannot grant admin access. If the owner user already exists, do not create a duplicate—check its confirmation status and reset/set its password from the dashboard.
 
 ## 4. Configure email delivery for multiple users
 

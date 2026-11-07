@@ -16,7 +16,27 @@
 .screen.active{animation:screenEnter .38s cubic-bezier(.2,.8,.2,1)}@keyframes screenEnter{from{opacity:.35;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}.feedback-hero{background:linear-gradient(120deg,#ffe4ef,#e8e4ff 58%,#e0f6ff)}.feedback-card,.feedback-thanks{background:#fff;border-radius:26px;padding:clamp(18px,4vw,30px);box-shadow:var(--shadow);max-width:720px;margin:0 auto;text-align:left;animation:cardIn .45s both}.feedback-card h3,.feedback-thanks h2{font:800 25px 'Baloo 2';margin:0}.feedback-sub{color:var(--muted);font-weight:700;margin:5px 0 12px}.rating-stars{display:flex;gap:8px;justify-content:center;padding:8px 0 22px}.rating-star{background:#f5f1fa;color:#d1cbdc;border-radius:15px;width:52px;height:52px;font-size:34px;transition:transform .18s,background .18s,color .18s}.rating-star.selected{color:#f4ae27;background:#fff4d5;transform:translateY(-4px) rotate(-5deg);animation:twinkle .35s}.feedback-label{display:block;font-weight:900;font-size:14px;margin:13px 0 6px}.feedback-input{display:block;width:100%;border:2px solid #eeeaf3;border-radius:14px;padding:13px;background:#fff;color:var(--ink);font:700 15px Nunito,system-ui,sans-serif}.feedback-textarea{min-height:130px;resize:vertical}.feedback-count{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12px;font-weight:800;margin:7px 2px 16px}.feedback-submit{width:100%;justify-content:center}.feedback-privacy{font-size:11px;color:var(--muted);text-align:center;margin:12px 0 0}.feedback-thanks{text-align:center;padding:35px 20px}.thanks-art{font-size:76px;animation:float 2.2s infinite}.feedback-thanks p{color:var(--muted);font-weight:800}.feedback-thanks .mini-btn{margin-left:8px}@media(max-width:520px){.bottom-nav{gap:2px;justify-content:space-around}.nav-btn{min-width:0;font-size:10px}.nav-btn span{font-size:19px}.rating-star{width:46px;height:48px;font-size:30px}}@media(prefers-reduced-motion:reduce){.screen.active,.rating-star.selected,.thanks-art{animation:none!important}}@keyframes quizPop{0%{opacity:0;transform:translateY(18px) scale(.94)}65%{transform:translateY(-3px) scale(1.02)}100%{opacity:1;transform:translateY(0) scale(1)}}.quiz-picture{font-size:clamp(68px,13vw,100px);margin:16px auto;animation:quizPop .55s cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 10px 12px #6d5bc522)}.quiz-progress{height:9px;background:#eeeaf8;border-radius:99px;overflow:hidden;margin:12px auto 20px;max-width:440px}.quiz-progress span{display:block;height:100%;background:linear-gradient(90deg,#ffbd59,#ff7da7,#8d83f6);border-radius:inherit;transition:width .45s ease}.auto-next-hint{display:block;margin-top:8px;color:#796c9d;animation:fade .3s ease}.choice{transition:transform .18s ease,box-shadow .18s ease,background .18s ease}.choice:not(:disabled):hover{transform:translateY(-3px) scale(1.025);box-shadow:0 8px 20px #51408c22}.choice:disabled{opacity:.82}.choice.correct{animation:quizPop .35s ease}@media(prefers-reduced-motion:reduce){.quiz-picture,.choice.correct{animation:none!important}}\n.challenge-rounds{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:8px}.challenge-rounds .play{padding:8px 11px;font-size:12px}.challenge-card small{margin-bottom:7px}
 /* study-club-advanced-controls */
 .subject-search{animation:cardIn .35s both}.subject-search input::-webkit-search-cancel-button{cursor:pointer}
-.quiz-review{max-width:560px;margin:18px auto;text-align:left;background:#fff8e8;border-radius:16px;padding:13px 16px}.quiz-review summary{font-weight:900;cursor:pointer}.quiz-review-list p{padding:10px 0;border-bottom:1px solid #eee5d8;margin:0}.confetti-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none}.game-box{position:relative;overflow:hidden}.confetti-layer span{position:absolute;top:-12%;left:calc(var(--i)*5%);font-size:22px;color:#f0a84a;animation:confettiDrop 1.9s ease-in calc(var(--i)*.035s) both}.confetti-layer span:nth-child(3n){color:#e77fa6}.confetti-layer span:nth-child(3n + 1){color:#8b83d9}@keyframes confettiDrop{to{transform:translateY(520px) rotate(540deg);opacity:0}}@media(prefers-reduced-motion:reduce){.confetti-layer{display:none!important}}.choice{touch-action:manipulation;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,background .18s ease}.choice:active{transform:scale(.97)}.choice:focus-visible,.game-controls button:focus-visible{outline:4px solid #6b5bd2;outline-offset:3px}.choice.correct{animation:answerPop .32s ease}.choice.wrong{animation:answerShake .32s ease}@keyframes answerPop{50%{transform:scale(1.045)}}@keyframes answerShake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}.quiz-progress span{transition:width .45s cubic-bezier(.2,.8,.2,1)}@media(prefers-reduced-motion:reduce){.choice,.quiz-progress span{transition:none}.choice.correct,.choice.wrong{animation:none}}.challenge-card{background:linear-gradient(135deg,#f1eaff,#e7f7ff);border:2px solid #d9c8ff;animation:challengeGlow 3s ease-in-out infinite alternate}.challenge-card .pic{animation:float 2.2s ease-in-out infinite}@keyframes challengeGlow{from{box-shadow:0 5px 16px rgba(122,91,210,.08)}to{box-shadow:0 10px 24px rgba(122,91,210,.2)}}.quiz-result .pill{animation:cardIn .45s both}@media(prefers-reduced-motion:reduce){.challenge-card,.challenge-card .pic,.quiz-result .pill{animation:none}}</style>
+.quiz-review{max-width:560px;margin:18px auto;text-align:left;background:#fff8e8;border-radius:16px;padding:13px 16px}.quiz-review summary{font-weight:900;cursor:pointer}.quiz-review-list p{padding:10px 0;border-bottom:1px solid #eee5d8;margin:0}.confetti-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none}.game-box{position:relative;overflow:hidden}.confetti-layer span{position:absolute;top:-12%;left:calc(var(--i)*5%);font-size:22px;color:#f0a84a;animation:confettiDrop 1.9s ease-in calc(var(--i)*.035s) both}.confetti-layer span:nth-child(3n){color:#e77fa6}.confetti-layer span:nth-child(3n + 1){color:#8b83d9}@keyframes confettiDrop{to{transform:translateY(520px) rotate(540deg);opacity:0}}@media(prefers-reduced-motion:reduce){.confetti-layer{display:none!important}}.choice{touch-action:manipulation;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,background .18s ease}.choice:active{transform:scale(.97)}.choice:focus-visible,.game-controls button:focus-visible{outline:4px solid #6b5bd2;outline-offset:3px}.choice.correct{animation:answerPop .32s ease}.choice.wrong{animation:answerShake .32s ease}@keyframes answerPop{50%{transform:scale(1.045)}}@keyframes answerShake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}.quiz-progress span{transition:width .45s cubic-bezier(.2,.8,.2,1)}@media(prefers-reduced-motion:reduce){.choice,.quiz-progress span{transition:none}.choice.correct,.choice.wrong{animation:none}}.challenge-card{background:linear-gradient(135deg,#f1eaff,#e7f7ff);border:2px solid #d9c8ff;animation:challengeGlow 3s ease-in-out infinite alternate}.challenge-card .pic{animation:float 2.2s ease-in-out infinite}@keyframes challengeGlow{from{box-shadow:0 5px 16px rgba(122,91,210,.08)}to{box-shadow:0 10px 24px rgba(122,91,210,.2)}}.quiz-result .pill{animation:cardIn .45s both}@media(prefers-reduced-motion:reduce){.challenge-card,.challenge-card .pic,.quiz-result .pill{animation:none}}
+/* Study Club motion polish: playful, responsive and motion-preference aware */
+body:before{content:'✦　　✧　　 ✦　　 ✧　　✦';position:fixed;z-index:0;top:13%;left:-10%;width:120%;pointer-events:none;color:#efb8ca;opacity:.22;font-size:clamp(18px,3vw,30px);letter-spacing:clamp(12px,4vw,48px);white-space:nowrap;animation:skyDrift 28s linear infinite}
+#appShell,.login-wrap{position:relative;z-index:1}
+.grade,.subject,.lesson-card,.daily,.streak,.icon-btn,.primary,.mini-btn,.play,.nav-btn{transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s ease,filter .22s ease}
+.grade:hover,.subject:hover,.lesson-card:hover{box-shadow:0 16px 30px #4a41601c}
+button:not(:disabled){touch-action:manipulation}
+.primary:hover,.mini-btn:hover,.play:hover,.icon-btn:hover{filter:brightness(1.035);transform:translateY(-2px)}
+.hero{isolation:isolate}
+.hero:after{content:' ';position:absolute;inset:-40% auto -40% -35%;width:25%;background:linear-gradient(90deg,transparent,#ffffff70,transparent);transform:rotate(18deg);animation:heroShimmer 8s ease-in-out infinite;pointer-events:none;z-index:-1}
+.brand-mark{animation:wiggle 4s infinite,softPulse 3s ease-in-out infinite}
+.challenge-card{position:relative;isolation:isolate;overflow:hidden}
+.challenge-card:after{content:'✦';position:absolute;right:18px;top:10px;font-size:32px;color:#a78bfa;opacity:.35;animation:twinkle 2.5s infinite;pointer-events:none}
+.choice-grid .choice{animation:choiceEnter .42s both}
+.choice-grid .choice:nth-child(2){animation-delay:.05s}.choice-grid .choice:nth-child(3){animation-delay:.1s}.choice-grid .choice:nth-child(4){animation-delay:.15s}
+@keyframes skyDrift{from{transform:translateX(-3%)}to{transform:translateX(3%)}}
+@keyframes heroShimmer{0%,65%,100%{left:-35%;opacity:0}75%{opacity:1}90%{left:125%;opacity:0}}
+@keyframes softPulse{50%{box-shadow:0 0 0 7px #ffb5ca20,0 7px 16px #ffb5bb55}}
+@keyframes choiceEnter{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(prefers-reduced-motion:reduce){body:before,.hero:after,.brand-mark,.choice-grid .choice{animation:none!important}}
+</style>
 </head>
 <body>
 <div id="loginScreen" class="login-wrap"><div class="login-card"><div class="login-logo">🦊🌈</div><h1>Welcome to Study Club!</h1><p>A happy place to learn, play and shine ✨</p><div class="tabs"><button id="loginTab" class="active" onclick="setAuthMode('login')">Sign in</button><button id="signupTab" onclick="setAuthMode('signup')">Create account</button></div><form id="authForm"><label class="field"><span>Parent email</span><input id="authEmail" type="email" autocomplete="email" placeholder="parent@example.com" required></label><label class="field"><span>Password</span><input id="authPassword" type="password" minlength="8" autocomplete="current-password" placeholder="At least 8 characters" required></label><label id="confirmField" class="field hide"><span>Confirm password</span><input id="authConfirm" type="password" minlength="8" autocomplete="new-password" placeholder="Type password again"></label><label id="recoveryField" class="field hide"><span>Parent recovery code</span><input id="authRecovery" type="password" minlength="6" placeholder="Create a recovery code (6+ characters)"></label><button class="login-submit" id="authSubmit" type="submit">Sign in and start learning 🚀</button><div class="error" id="authError" role="status"></div></form><div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap"><button class="link-btn" onclick="resetPassword()">Forgot password?</button><button class="link-btn" onclick="continueGuest()">Explore as guest</button></div><div class="login-note">A parent or guardian should create and manage the account. Children should use their learner profile with an adult's help. Guest progress stays on this device.</div></div></div>
@@ -131,50 +151,55 @@ function challengeItemsForGrade(){
  const grade=state.grade||'nursery';
  if(challengeBankCache[grade])return challengeBankCache[grade];
  const bank=(challengeBank[grade]||challengeBank.nursery).map(item=>item.slice());
- const seen=new Set(bank.map(item=>item[2].toLowerCase()));
+ const seen=new Set(bank.map(item=>(item[2]||'').toLowerCase()));
  const objects=[
   ['🍎','apples'],['⚽','balls'],['⭐','stars'],['🐚','shells'],['🌼','flowers'],
   ['🧸','toys'],['🍪','cookies'],['🚗','cars'],['🖍️','crayons'],['🍌','bananas'],
   ['🪁','kites'],['🐠','fish'],['📚','books'],['🍊','oranges'],['🧁','cupcakes'],
   ['🧩','puzzle pieces'],['🚲','bicycles'],['🎈','balloons'],['🥭','mangoes'],['🪙','coins']
  ];
+ const places=['garden','classroom','playground','market','library','picnic','farm','beach','birthday party','toy shop','park','kitchen','school fair','tree house','art room','sports day','rainy day',' sunny morning','story corner','music room','flower shop','bus ride','camp','zoo visit','space station','bakery','museum','train trip','science fair','festival'];
  const add=(emoji,answer,question)=>{
   const key=question.toLowerCase();
-  if(bank.length<1000&&!seen.has(key)){seen.add(key);bank.push([emoji,String(answer),question]);}
+  if(bank.length<10000&&!seen.has(key)){seen.add(key);bank.push([emoji,String(answer),question]);}
  };
- const addLimit=grade==='nursery'?20:grade==='lkg'?20:grade==='ukg'?50:100;
- for(let n=1;n<=addLimit&&bank.length<1000;n++){
-  for(let j=0;j<objects.length&&bank.length<1000;j++){
-   const [emoji,noun]=objects[j],b=(j%5)+1;
-   if(grade==='nursery'){
-    const count=((n-1)%20)+1;
-    add(emoji,count,'There are '+count+' '+noun+' in the basket. How many are there?');
-    add('🔢',count+1,'The number of '+noun+' is '+count+'. What number comes next?');
-    if(count>1)add('🔢',count-1,'A card shows '+count+' '+noun+'. What number comes just before '+count+'?');
-   }else if(grade==='lkg'){
-    const a=((n-1)%20)+1,total=a+b;
-    add('➕',total,'You have '+a+' '+noun+' and get '+b+' more. How many altogether?');
-    add('➖',a,'There are '+total+' '+noun+'. You give away '+b+'. How many remain?');
-    add('🔢',a+1,'Count '+a+' '+noun+'. What number comes after '+a+'?');
-   }else if(grade==='ukg'){
-    const a=((n-1)%50)+1,total=a+b;
-    add('➕',total,'A shop has '+a+' '+noun+' and receives '+b+' more. How many are there now?');
-    add('➖',a,'There are '+total+' '+noun+'. '+b+' are taken away. How many are left?');
-    add('✖️',b*2,'There are '+b+' groups of 2 '+noun+'. How many '+noun+' are there in all?');
-   }else{
-    const a=((n-1)%100)+1,total=a+b,factor=(j%9)+2;
-    add('➕',total,'A library has '+a+' '+noun+' and receives '+b+' more. How many does it have now?');
-    add('➖',a,'A box contains '+total+' '+noun+'. '+b+' are used. How many are left?');
-    add('✖️',a*factor,'There are '+a+' rows with '+factor+' '+noun+' in each row. How many altogether?');
-    add('➗',a,'Share '+(a*factor)+' '+noun+' equally into '+factor+' groups. How many are in each group?');
+ const sceneCount=grade==='nursery'?30:grade==='lkg'?25:grade==='ukg'?10:5;
+ const numberLimit=grade==='nursery'||grade==='lkg'?20:grade==='ukg'?50:100;
+ for(let scene=0;scene<sceneCount&&bank.length<10000;scene++){
+  for(let n=1;n<=numberLimit&&bank.length<10000;n++){
+   for(let j=0;j<objects.length&&bank.length<10000;j++){
+    const [emoji,noun]=objects[j],b=(j%5)+1,place=places[scene];
+    if(grade==='nursery'){
+     const mode=scene%3;
+     if(mode===0)add(emoji,n,'Count '+n+' '+noun+' at the '+place+'. How many can you see?');
+     else if(mode===1)add('🔢',n+1,'You counted '+n+' '+noun+' at the '+place+'. What number comes next?');
+     else if(n>1)add('🔢',n-1,'At the '+place+' there are '+n+' '+noun+'. What number comes just before '+n+'?');
+     else add(emoji,n,'Find '+n+' '+noun+' at the '+place+'. How many are there?');
+    }else if(grade==='lkg'){
+     const mode=scene%3,total=n+b;
+     if(mode===0)add('➕',total,'You have '+n+' '+noun+' at the '+place+' and get '+b+' more. How many altogether?');
+     else if(mode===1)add('➖',n,'There are '+total+' '+noun+' at the '+place+'. You give away '+b+'. How many remain?');
+     else add('🔢',n+1,'Count '+n+' '+noun+' at the '+place+'. What number comes after '+n+'?');
+    }else if(grade==='ukg'){
+     const mode=scene%3,total=n+b;
+     if(mode===0)add('➕',total,'A stall at the '+place+' has '+n+' '+noun+' and receives '+b+' more. How many now?');
+     else if(mode===1)add('➖',n,'There are '+total+' '+noun+' at the '+place+'. '+b+' are taken away. How many are left?');
+     else add('✖️',b*2,'At the '+place+' there are '+b+' pairs of '+noun+'. How many '+noun+' are there in all?');
+    }else{
+     const mode=scene%4,total=n+b,factor=(j%9)+2;
+     if(mode===0)add('➕',total,'A library at the '+place+' has '+n+' '+noun+' and receives '+b+' more. How many now?');
+     else if(mode===1)add('➖',n,'A box at the '+place+' contains '+total+' '+noun+'. '+b+' are used. How many remain?');
+     else if(mode===2)add('✖️',n*factor,'There are '+n+' rows of '+noun+' at the '+place+', with '+factor+' in each row. How many altogether?');
+     else add('➗',n,'Share '+(n*factor)+' '+noun+' equally into '+factor+' groups at the '+place+'. How many are in each group?');
+    }
    }
   }
  }
- if(bank.length<1000)throw new Error('Could not build the complete question bank for '+grade);
- challengeBankCache[grade]=bank.slice(0,1000);
+ if(bank.length<10000)throw new Error('Could not build 10,000 unique questions for '+grade+'; generated '+bank.length);
+ challengeBankCache[grade]=bank.slice(0,10000);
  return challengeBankCache[grade];
 }
-function openSubject(id){currentSubject=id;let s=subjects.find(x=>x.id===id);$('subjectTitle').textContent=s.name;$('subjectDesc').textContent=s.desc;$('levelLabel').textContent=grades.find(g=>g.id===state.grade).name+' • '+state.name;let items=itemsForGrade(id);$('lessonCards').innerHTML=items.map((it,i)=>'<article class="lesson-card"><span class="pic">'+it[0]+'</span><b>'+it[1]+'</b><small>'+it[2]+'</small><button class="play" onclick="learnItem('+i+')">▶ Learn</button></article>').join('')+'<article class="lesson-card" style="background:#fff5d9"><span class="pic">🎯</span><b>Quick quiz</b><small>Show what you know!</small><button class="play" onclick="startQuiz()">Play quiz</button></article><article class="lesson-card challenge-card"><span class="pic">🧠</span><b>Brain challenge · 1,000 questions</b><small>Choose a practice round for your class</small><div class="challenge-rounds"><button class="play" onclick="startChallengeQuiz(10)">10</button><button class="play" onclick="startChallengeQuiz(20)">20</button><button class="play" onclick="startChallengeQuiz(50)">50</button><button class="play" onclick="startChallengeQuiz(100)">100</button><button class="play" onclick="startChallengeQuiz(1000)">All 1,000</button></div></article>'+(id==='letters'?'<article class="lesson-card" style="background:#e8f6ff"><span class="pic">✍️</span><b>Trace letters</b><small>Practise with your finger</small><button class="play" onclick="openTrace()">Start tracing</button></article>':'')+(id==='rhymes'?'<article class="lesson-card" style="background:#f1eaff"><span class="pic">📖</span><b>Story corner</b><small>Listen and learn values</small><button class="play" onclick="openStory()">Read story</button></article>':'');showScreen('subjects')}
+function openSubject(id){currentSubject=id;let s=subjects.find(x=>x.id===id);$('subjectTitle').textContent=s.name;$('subjectDesc').textContent=s.desc;$('levelLabel').textContent=grades.find(g=>g.id===state.grade).name+' • '+state.name;let items=itemsForGrade(id);$('lessonCards').innerHTML=items.map((it,i)=>'<article class="lesson-card"><span class="pic">'+it[0]+'</span><b>'+it[1]+'</b><small>'+it[2]+'</small><button class="play" onclick="learnItem('+i+')">▶ Learn</button></article>').join('')+'<article class="lesson-card" style="background:#fff5d9"><span class="pic">🎯</span><b>Quick quiz</b><small>Show what you know!</small><button class="play" onclick="startQuiz()">Play quiz</button></article><article class="lesson-card challenge-card"><span class="pic">🧠</span><b>Brain challenge · 10,000 questions</b><small>Choose a practice round for your class</small><div class="challenge-rounds"><button class="play" onclick="startChallengeQuiz(10)">10</button><button class="play" onclick="startChallengeQuiz(20)">20</button><button class="play" onclick="startChallengeQuiz(50)">50</button><button class="play" onclick="startChallengeQuiz(100)">100</button><button class="play" onclick="startChallengeQuiz(250)">250</button><button class="play" onclick="startChallengeQuiz(500)">500</button><button class="play" onclick="startChallengeQuiz(1000)">1,000</button><button class="play" onclick="startChallengeQuiz(5000)">5,000</button><button class="play" onclick="startChallengeQuiz(10000)">All 10,000</button></div></article>'+(id==='letters'?'<article class="lesson-card" style="background:#e8f6ff"><span class="pic">✍️</span><b>Trace letters</b><small>Practise with your finger</small><button class="play" onclick="openTrace()">Start tracing</button></article>':'')+(id==='rhymes'?'<article class="lesson-card" style="background:#f1eaff"><span class="pic">📖</span><b>Story corner</b><small>Listen and learn values</small><button class="play" onclick="openStory()">Read story</button></article>':'');showScreen('subjects')}
 function learnItem(i){
  const item=itemsForGrade(currentSubject)[i];
  if(!item){toast('This lesson is not available for this class yet.');return}
@@ -193,7 +218,7 @@ let quizAnswered=false,quizAdvanceTimer=null,quizRoundId=0,quizFinishedRound=0,q
 function startChallengeQuiz(count=10){
  if(quizAdvanceTimer){clearTimeout(quizAdvanceTimer);quizAdvanceTimer=null}
  const bank=challengeItemsForGrade();if(!bank.length){toast('Challenge questions are being prepared.');return}
- quizRoundSize=Math.max(1,Math.min(1000,Number(count)||10));
+ quizRoundSize=Math.max(1,Math.min(10000,Number(count)||10));
  quizMode='challenge';quizLabel='Brain challenge · '+quizRoundSize+' questions';quizRoundId++;quizFinishedRound=0;quizMissed=[];
  quizItems=shuffleQuiz(bank).slice(0,quizRoundSize).map(item=>({item,mode:'clue'}));quizIndex=0;quizScore=0;quizAnswered=false;renderQuestion();showScreen('game');
 }

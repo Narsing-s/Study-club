@@ -73,6 +73,7 @@ button:not(:disabled){touch-action:manipulation}
 .number-tools input{width:145px;max-width:45vw;border:2px solid #eeeaf3;border-radius:12px;padding:10px;font-weight:900}
 .number-tools button{background:#f2edff;border-radius:12px;padding:10px 12px;font-weight:900}
 .voice-note{font-size:12px;color:var(--muted);font-weight:700;line-height:1.5;margin:18px 2px}
+.voice-tabs{display:none!important}
 @media(max-width:650px){.voice-launch-grid{grid-template-columns:1fr}.voice-launch{min-height:100px}.voice-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.voice-tile{min-height:98px}}
 @media(prefers-reduced-motion:reduce){.voice-launch,.voice-tile{transition:none}}
 
@@ -154,108 +155,6 @@ button:not(:disabled){touch-action:manipulation}
 </main><nav class="bottom-nav" id="bottomNav" aria-label="Main navigation"><button class="nav-btn active" data-screen="home" onclick="showScreen('home')"><span>🏠</span>Home</button><button class="nav-btn" data-screen="grades" onclick="showScreen('grades')"><span>📚</span>Learn</button><button class="nav-btn" data-screen="progress" onclick="showScreen('progress')"><span>🏅</span>My stars</button><button class="nav-btn" data-screen="parent" onclick="showScreen('parent')"><span>👨‍👩‍👧</span>Grown-ups</button><button class="nav-btn" data-screen="feedbackScreen" onclick="showScreen('feedbackScreen')"><span>💌</span>Feedback</button></nav></div>
 <div class="toast" id="toast" role="status"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-/* Study Club mini-game playground — additive module; existing lesson and quiz logic remains untouched. */
-let miniGameMode='memory',memoryDeck=[],memoryOpen=[],memoryMatched=[],memoryMoves=0,memoryBusy=false;
-let shapeRound=0,shapeScore=0,shapeCurrent=null,colorFirst=null;
-const memoryPairs=[
- {emoji:'🍎',word:'Apple'},{emoji:'🐶',word:'Dog'},{emoji:'☀️',word:'Sun'},{emoji:'🚗',word:'Car'},
- {emoji:'🐟',word:'Fish'},{emoji:'🌸',word:'Flower'},{emoji:'⭐',word:'Star'},{emoji:'🏠',word:'House'}
-];
-const shapeBank=[
- {name:'Circle',glyph:'⚪',clue:'No corners and perfectly round.'},
- {name:'Square',glyph:'🟦',clue:'Four equal sides and four corners.'},
- {name:'Triangle',glyph:'🔺',clue:'Three sides and three corners.'},
- {name:'Rectangle',glyph:'▭',clue:'Four corners; opposite sides match.'},
- {name:'Star',glyph:'⭐',clue:'A bright shape with points.'},
- {name:'Heart',glyph:'❤️',clue:'A shape often used for love.'}
-];
-const colorBank=[
- {name:'Red',hex:'#ef6474'},{name:'Yellow',hex:'#ffd34f'},{name:'Blue',hex:'#6ab9f4'},
- {name:'White',hex:'#ffffff'},{name:'Black',hex:'#303449'}
-];
-const colorMixes={
- 'Red|Yellow':{name:'Orange',hex:'#ff9b45',note:'Red + yellow makes orange.'},
- 'Blue|Yellow':{name:'Green',hex:'#68c98a',note:'Blue + yellow makes green.'},
- 'Blue|Red':{name:'Purple',hex:'#a78be8',note:'Blue + red makes purple.'},
- 'Red|White':{name:'Pink',hex:'#ffabc5',note:'Red + white makes pink.'},
- 'Black|White':{name:'Grey',hex:'#a6a6ad',note:'Black + white makes grey.'},
- 'Blue|White':{name:'Sky blue',hex:'#9edaf5',note:'Blue + white makes a lighter blue.'},
- 'Black|Red':{name:'Dark red',hex:'#9d3446',note:'Black makes red darker.'},
- 'Black|Yellow':{name:'Olive',hex:'#9b9650',note:'Black makes yellow darker.'}
-};
-function showMiniGameStudio(){startMiniGame('memory');showScreen('gameStudio')}
-function miniGameTabs(){
- ['memory','shapes','colors'].forEach(mode=>{const el=$('miniTab'+mode[0].toUpperCase()+mode.slice(1));if(el)el.classList.toggle('active',miniGameMode===mode)});
-}
-function startMiniGame(mode){
- miniGameMode=['memory','shapes','colors'].includes(mode)?mode:'memory';
- miniGameTabs();
- if(miniGameMode==='memory'){
-  memoryDeck=shuffleQuiz(memoryPairs.flatMap((pair,id)=>[{...pair,id,side:0},{...pair,id,side:1}]));
-  memoryOpen=[];memoryMatched=[];memoryMoves=0;memoryBusy=false;renderMemoryGame();
- }else if(miniGameMode==='shapes'){
-  shapeRound=0;shapeScore=0;shapeCurrent=null;renderShapeGame();
- }else{colorFirst=null;renderColorGame()}
-}
-function renderMemoryGame(){
- const root=$('miniGameContent');if(!root)return;
- const complete=memoryMatched.length===memoryDeck.length;
- root.innerHTML='<div style="text-align:center"><div class="eyebrow">MEMORY MATCH</div><h2 style="font:800 25px Baloo 2;margin:5px">Find all the matching pairs!</h2><p class="tiny">Turn over two cards. Match the same picture and word.</p><div class="mini-game-stats"><span class="pill">Moves: '+memoryMoves+'</span><span class="pill">Pairs: '+(memoryMatched.length/2)+' / 8</span></div></div><div class="memory-grid">'+memoryDeck.map((card,index)=>{const open=memoryOpen.includes(index)||memoryMatched.includes(index);return '<button type="button" class="memory-card '+(memoryMatched.includes(index)?'matched':open?'revealed':'')+'" aria-label="'+(open?escapeHTML(card.word):'Hidden card')+'" '+(open?'disabled':'onclick="flipMemoryCard('+index+')"')+'>'+(open?'<div>'+card.emoji+'<span>'+escapeHTML(card.word)+'</span></div>':'❔')+'</button>'}).join('')+'</div>'+(complete?'<div class="mini-game-result"><div style="font-size:42px">🏆</div><h3 style="font:800 23px Baloo 2;margin:5px">All pairs found!</h3><p>You matched all 8 pairs in '+memoryMoves+' moves.</p><button class="primary" onclick="startMiniGame(\'memory\')">Play again ↻</button></div>':'<div style="text-align:center"><button class="mini-btn" onclick="startMiniGame(\'memory\')">Restart game ↻</button></div>');
- if(complete)awardMiniGame('memory');
-}
-function flipMemoryCard(index){
- if(memoryBusy||memoryOpen.length>=2||memoryOpen.includes(index)||memoryMatched.includes(index))return;
- memoryOpen.push(index);renderMemoryGame();
- if(memoryOpen.length===2){
-  memoryMoves++;const [a,b]=memoryOpen;
-  if(memoryDeck[a].id===memoryDeck[b].id){
-   memoryMatched.push(a,b);memoryOpen=[];say('Great match!');
-   window.setTimeout(renderMemoryGame,180);
-  }else{
-   memoryBusy=true;window.setTimeout(()=>{memoryOpen=[];memoryBusy=false;renderMemoryGame()},850);
-  }
- }
-}
-function renderShapeGame(){
- const root=$('miniGameContent');if(!root)return;
- if(shapeRound>=5){
-  root.innerHTML='<div class="mini-game-result"><div style="font-size:48px">🌟</div><h2 style="font:800 25px Baloo 2">Shape explorer complete!</h2><p>You found '+shapeScore+' out of 5 shapes.</p><button class="primary" onclick="startMiniGame(\'shapes\')">Play again ↻</button></div>';
-  awardMiniGame('shapes');return;
- }
- const item=shapeBank[(shapeRound*2+Math.floor(Math.random()*shapeBank.length))%shapeBank.length];shapeCurrent=item;
- const options=shuffleQuiz([item,...shuffleQuiz(shapeBank.filter(x=>x.name!==item.name)).slice(0,3)]);
- root.innerHTML='<div style="text-align:center"><div class="eyebrow">SHAPE HUNT · ROUND '+(shapeRound+1)+' OF 5</div><h2 style="font:800 25px Baloo 2;margin:5px">Which shape am I?</h2><p>'+escapeHTML(item.clue)+'</p><div class="quiz-picture">'+item.glyph+'</div><div class="shape-options">'+options.map(option=>'<button class="shape-option" onclick="answerShape(\''+option.name+'\')"><span>'+option.glyph+'</span>'+option.name+'</button>').join('')+'</div><div class="mini-game-stats"><span class="pill">Score: '+shapeScore+' / 5</span></div></div>';
-}
-function answerShape(name){
- if(!shapeCurrent)return;
- const correct=name===shapeCurrent.name;if(correct){shapeScore++;say('Brilliant shape spotting!')}else say('Good try. The answer is '+shapeCurrent.name);
- const root=$('miniGameContent');root.innerHTML='<div class="mini-game-result"><div style="font-size:44px">'+(correct?'🎉':'💛')+'</div><h3 style="font:800 23px Baloo 2">'+(correct?'That is correct!':'Good try!')+'</h3><p>The answer is '+shapeCurrent.name+'. '+escapeHTML(shapeCurrent.clue)+'</p><button class="primary" onclick="nextShapeRound()">'+(shapeRound===4?'See my result':'Next shape ➜')+'</button></div>';
- shapeRound++;shapeCurrent=null;
-}
-function nextShapeRound(){renderShapeGame()}
-function renderColorGame(){
- const root=$('miniGameContent');if(!root)return;
- root.innerHTML='<div style="text-align:center"><div class="eyebrow">COLOUR LAB</div><h2 style="font:800 25px Baloo 2;margin:5px">Become a colour scientist!</h2><p>Choose two colours and discover what they make.</p><div class="mini-game-stats"><span class="pill">'+(colorFirst?'First colour: '+colorFirst.name:'Choose your first colour')+'</span><span class="pill">'+(colorFirst?'Now choose a second':'Mix two colours')+'</span></div><div class="color-options">'+colorBank.map(c=>'<button class="color-option" onclick="pickMixColor(\''+c.name+'\')" aria-label="Choose '+c.name+'"><span class="color-swatch" style="background:'+c.hex+'"></span>'+c.name+'</button>').join('')+'</div>'+(colorFirst?'<div class="mini-game-stats"><button class="mini-btn" onclick="colorFirst=null;renderColorGame()">Start over</button></div>':'')+'<div id="colorMixResult"></div></div>';
-}
-function pickMixColor(name){
- const picked=colorBank.find(c=>c.name===name);if(!picked)return;
- if(!colorFirst){colorFirst=picked;renderColorGame();return}
- const names=[colorFirst.name,picked.name].sort();const key=names.join('|');
- const result=colorMixes[key]||{name:'A new shade',hex:'#b8a6d9',note:'Mixing colours can create many different shades. Keep experimenting!'};
- $('colorMixResult').innerHTML='<div class="mini-game-result"><div style="display:flex;align-items:center;justify-content:center;gap:14px"><span class="color-swatch" style="background:'+colorFirst.hex+'"></span><span style="font-size:25px">+</span><span class="color-swatch" style="background:'+picked.hex+'"></span><span style="font-size:25px">=</span><span class="color-swatch" style="background:'+result.hex+'"></span></div><h3 style="font:800 23px Baloo 2;margin:8px">'+escapeHTML(result.name)+'</h3><p>'+escapeHTML(result.note)+'</p><button class="primary" onclick="colorFirst=null;renderColorGame()">Mix again 🎨</button></div>';
- if(result.name!=='A new shade')awardMiniGame('colors');
-}
-function awardMiniGame(gameId){
- const today=typeof localDayKey==='function'?localDayKey():new Date().toISOString().slice(0,10);
- state.miniGameRewards??={};
- if(state.miniGameRewards[gameId]===today)return;
- state.miniGameRewards[gameId]=today;state.stars=(Number(state.stars)||0)+3;state.done??=[];
- state.done.push({key:'mini-'+gameId+'-'+Date.now(),type:'game',subject:'Mini-game playground'});
- save();say('You earned three stars!');toast('Amazing work! +3 stars ⭐');
-}
-
-</script>
 <script>
 let session=null,authMode='login',isGuest=false,feedbackRating=0,isAdmin=false,adminModeSetup=false,adminReturnTo='login';
 const grades=[{id:'nursery',name:'Nursery',age:'Ages 3–4',emoji:'🐣',color:'pink'},{id:'lkg',name:'LKG',age:'Ages 4–5',emoji:'🧸',color:'yellow'},{id:'ukg',name:'UKG',age:'Ages 5–6',emoji:'🦋',color:'blue'},{id:'class1',name:'Class 1',age:'Ages 6–7',emoji:'🚀',color:'green'}];
@@ -359,7 +258,7 @@ async function signOut(){session=null;isGuest=false;$('appShell').classList.add(
 function showScreen(id){
  const target=$(id);if(!target){toast('This section is not available yet.');return}
  if(id!=='game'&&quizAdvanceTimer){clearTimeout(quizAdvanceTimer);quizAdvanceTimer=null}
-  if(id!=='voiceLearning'&&'speechSynthesis'in window)window.speechSynthesis.cancel();
+  if(id!=='voiceLearning')stopVoiceLearningAudio();
  document.querySelectorAll('.screen').forEach(screen=>screen.classList.remove('active'));
  target.classList.add('active');
  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.screen===id));
@@ -794,7 +693,32 @@ if('serviceWorker'in navigator&&location.protocol!=='file:')window.addEventListe
 
 /* Study Club voice-learning studio. Kept separate from existing lesson and quiz flows. */
 const voiceEnglishLetters=[
- ['A','Apple','/a/'],['B','Ball','/b/'],['C','Cat','/k/'],['D','Dog','/d/'],['E','Egg','/e/'],['F','Fish','/f/'],['G','Goat','/g/'],['H','Hat','/h/'],['I','Ink','/i/'],['J','Jam','/j/'],['K','Kite','/k/'],['L','Lion','/l/'],['M','Mango','/m/'],['N','Nest','/n/'],['O','Orange','/o/'],['P','Pen','/p/'],['Q','Queen','/kw/'],['R','Rabbit','/r/'],['S','Sun','/s/'],['T','Tiger','/t/'],['U','Umbrella','/u/'],['V','Van','/v/'],['W','Watch','/w/'],['X','Box','/ks/'],['Y','Yak','/y/'],['Z','Zebra','/z/']
+ ['A','Apple'],
+ ['B','Ball'],
+ ['C','Cat'],
+ ['D','Dog'],
+ ['E','Egg'],
+ ['F','Fish'],
+ ['G','Goat'],
+ ['H','Hat'],
+ ['I','Ink'],
+ ['J','Jam'],
+ ['K','Kite'],
+ ['L','Lion'],
+ ['M','Mango'],
+ ['N','Nest'],
+ ['O','Orange'],
+ ['P','Pen'],
+ ['Q','Queen'],
+ ['R','Rabbit'],
+ ['S','Sun'],
+ ['T','Tiger'],
+ ['U','Umbrella'],
+ ['V','Van'],
+ ['W','Watch'],
+ ['X','Box'],
+ ['Y','Yak'],
+ ['Z','Zebra']
 ];
 const voiceTeluguVowels=[
  ['అ','అమ్మ','amma','Mother'],['ఆ','ఆవు','aavu','Cow'],['ఇ','ఇల్లు','illu','House'],['ఈ','ఈగ','eega','Fly'],['ఉ','ఉడుత','uduta','Squirrel'],['ఊ','ఊయల','uyala','Cradle'],['ఋ','ఋషి','rushi','Sage'],['ౠ','ౠ','ruu','Rare vowel'],['ఌ','ఌ','lu','Rare vowel'],['ౡ','ౡ','luu','Rare vowel'],['ఎ','ఎలుక','eluka','Mouse'],['ఏ','ఏనుగు','enugu','Elephant'],['ఐ','ఐదు','aidu','Five'],['ఒ','ఒంటె','onte','Camel'],['ఓ','ఓడ','oda','Boat'],['ఔ','ఔషధం','aushadham','Medicine'],['అం','అంకె','anke','Number'],['అః','అః','aha','Visarga']
@@ -804,21 +728,28 @@ const voiceTeluguConsonants=[
 ];
 let voiceLearningMode='english',voiceSelectedIndex=0,voiceNumberStart=1;
 function openVoiceLearning(mode){
- if('speechSynthesis'in window)window.speechSynthesis.cancel();
+ stopVoiceLearningAudio();
  voiceLearningMode=['english','telugu','numbers'].includes(mode)?mode:'english';
  voiceSelectedIndex=0;renderVoiceLearning();showScreen('voiceLearning');
+}
+let voiceSpeakTimer=null,voiceSpeakToken=0;
+function stopVoiceLearningAudio(){
+ voiceSpeakToken++;
+ if(voiceSpeakTimer!==null){clearTimeout(voiceSpeakTimer);voiceSpeakTimer=null}
+ if('speechSynthesis'in window)window.speechSynthesis.cancel();
 }
 function speakVoiceLearning(text,lang){
  if(!sound){toast('Turn sound on to hear the pronunciation 🔊');return}
  if(!('speechSynthesis'in window)||!('SpeechSynthesisUtterance'in window)){toast('Voice playback is not supported in this browser.');return}
  try{
-  window.speechSynthesis.cancel();
+  stopVoiceLearningAudio();
+  const token=voiceSpeakToken;
   const utterance=new SpeechSynthesisUtterance(String(text));
   utterance.lang=lang;utterance.rate=lang==='te-IN'?.78:.82;utterance.pitch=1.12;
   const voices=window.speechSynthesis.getVoices();
   const voice=voices.find(item=>item.lang?.toLowerCase()===lang.toLowerCase())||voices.find(item=>item.lang?.toLowerCase().startsWith(lang.slice(0,2).toLowerCase()));
   if(voice)utterance.voice=voice;
-  window.speechSynthesis.speak(utterance);
+  voiceSpeakTimer=window.setTimeout(()=>{voiceSpeakTimer=null;if(token===voiceSpeakToken)window.speechSynthesis.speak(utterance)},100);
  }catch(error){console.warn('Voice playback unavailable:',error);toast('Could not start voice playback on this device.')}
 }
 function voiceNumberWords(value){
@@ -835,7 +766,7 @@ function voiceNumberWords(value){
  return parts.join(' ')||'zero';
 }
 function playVoiceLetter(index){
- if('speechSynthesis'in window)window.speechSynthesis.cancel();
+ stopVoiceLearningAudio();
  voiceSelectedIndex=index;
  const item=voiceLearningMode==='english'?voiceEnglishLetters[index]:[...voiceTeluguVowels,...voiceTeluguConsonants][index];
  if(!item)return;
@@ -882,6 +813,109 @@ function renderVoiceLearning(){
   content.innerHTML='<div class="number-tools"><button type="button" onclick="shiftVoiceNumbers(-20)">← Previous 20</button><label for="voiceNumberStartInput" class="tiny">Start at</label><input id="voiceNumberStartInput" type="number" min="1" step="1" value="'+voiceNumberStart+'"><button type="button" onclick="goToVoiceNumber()">Go</button><button type="button" onclick="shiftVoiceNumbers(20)">Next 20 →</button></div><div class="voice-selected"><div><div class="tiny">YOUR NUMBER JOURNEY</div><strong class="voice-big">'+voiceNumberStart+' – '+numbers[numbers.length-1]+'</strong><div>Tap a number to hear how it is spoken.</div></div><span style="font-size:38px">🔢</span></div><div class="voice-grid">'+numbers.map(n=>'<button class="voice-tile" type="button" onclick="playVoiceNumber('+n+')"><span class="voice-glyph">'+n+'</span><span class="voice-word">'+voiceNumberWords(n)+'</span><span class="voice-hint">🔊 Listen</span></button>').join('')+'</div>';
  }
 }
+
+</script>
+<script>
+/* Study Club mini-game playground — additive module; existing lesson and quiz logic remains untouched. */
+let miniGameMode='memory',memoryDeck=[],memoryOpen=[],memoryMatched=[],memoryMoves=0,memoryBusy=false;
+let shapeRound=0,shapeScore=0,shapeCurrent=null,colorFirst=null;
+const memoryPairs=[
+ {emoji:'🍎',word:'Apple'},{emoji:'🐶',word:'Dog'},{emoji:'☀️',word:'Sun'},{emoji:'🚗',word:'Car'},
+ {emoji:'🐟',word:'Fish'},{emoji:'🌸',word:'Flower'},{emoji:'⭐',word:'Star'},{emoji:'🏠',word:'House'}
+];
+const shapeBank=[
+ {name:'Circle',glyph:'⚪',clue:'No corners and perfectly round.'},
+ {name:'Square',glyph:'🟦',clue:'Four equal sides and four corners.'},
+ {name:'Triangle',glyph:'🔺',clue:'Three sides and three corners.'},
+ {name:'Rectangle',glyph:'▭',clue:'Four corners; opposite sides match.'},
+ {name:'Star',glyph:'⭐',clue:'A bright shape with points.'},
+ {name:'Heart',glyph:'❤️',clue:'A shape often used for love.'}
+];
+const colorBank=[
+ {name:'Red',hex:'#ef6474'},{name:'Yellow',hex:'#ffd34f'},{name:'Blue',hex:'#6ab9f4'},
+ {name:'White',hex:'#ffffff'},{name:'Black',hex:'#303449'}
+];
+const colorMixes={
+ 'Red|Yellow':{name:'Orange',hex:'#ff9b45',note:'Red + yellow makes orange.'},
+ 'Blue|Yellow':{name:'Green',hex:'#68c98a',note:'Blue + yellow makes green.'},
+ 'Blue|Red':{name:'Purple',hex:'#a78be8',note:'Blue + red makes purple.'},
+ 'Red|White':{name:'Pink',hex:'#ffabc5',note:'Red + white makes pink.'},
+ 'Black|White':{name:'Grey',hex:'#a6a6ad',note:'Black + white makes grey.'},
+ 'Blue|White':{name:'Sky blue',hex:'#9edaf5',note:'Blue + white makes a lighter blue.'},
+ 'Black|Red':{name:'Dark red',hex:'#9d3446',note:'Black makes red darker.'},
+ 'Black|Yellow':{name:'Olive',hex:'#9b9650',note:'Black makes yellow darker.'}
+};
+function showMiniGameStudio(){showScreen('gameStudio');try{startMiniGame('memory')}catch(error){console.error('Mini-game launch failed:',error);const root=$('miniGameContent');if(root)root.innerHTML='<div class="mini-game-result"><h3>Let’s try that again 💛</h3><p>The game could not start. Please tap Play again.</p><button class="primary" type="button" onclick="showMiniGameStudio()">Play again</button></div>'}}
+function miniGameTabs(){
+ ['memory','shapes','colors'].forEach(mode=>{const el=$('miniTab'+mode[0].toUpperCase()+mode.slice(1));if(el)el.classList.toggle('active',miniGameMode===mode)});
+}
+function startMiniGame(mode){
+ miniGameMode=['memory','shapes','colors'].includes(mode)?mode:'memory';
+ miniGameTabs();
+ if(miniGameMode==='memory'){
+  memoryDeck=shuffleQuiz(memoryPairs.flatMap((pair,id)=>[{...pair,id,side:0},{...pair,id,side:1}]));
+  memoryOpen=[];memoryMatched=[];memoryMoves=0;memoryBusy=false;renderMemoryGame();
+ }else if(miniGameMode==='shapes'){
+  shapeRound=0;shapeScore=0;shapeCurrent=null;renderShapeGame();
+ }else{colorFirst=null;renderColorGame()}
+}
+function renderMemoryGame(){
+ const root=$('miniGameContent');if(!root)return;
+ const complete=memoryMatched.length===memoryDeck.length;
+ root.innerHTML='<div style="text-align:center"><div class="eyebrow">MEMORY MATCH</div><h2 style="font:800 25px Baloo 2;margin:5px">Find all the matching pairs!</h2><p class="tiny">Turn over two cards. Match the same picture and word.</p><div class="mini-game-stats"><span class="pill">Moves: '+memoryMoves+'</span><span class="pill">Pairs: '+(memoryMatched.length/2)+' / 8</span></div></div><div class="memory-grid">'+memoryDeck.map((card,index)=>{const open=memoryOpen.includes(index)||memoryMatched.includes(index);return '<button type="button" class="memory-card '+(memoryMatched.includes(index)?'matched':open?'revealed':'')+'" aria-label="'+(open?escapeHTML(card.word):'Hidden card')+'" '+(open?'disabled':'onclick="flipMemoryCard('+index+')"')+'>'+(open?'<div>'+card.emoji+'<span>'+escapeHTML(card.word)+'</span></div>':'❔')+'</button>'}).join('')+'</div>'+(complete?'<div class="mini-game-result"><div style="font-size:42px">🏆</div><h3 style="font:800 23px Baloo 2;margin:5px">All pairs found!</h3><p>You matched all 8 pairs in '+memoryMoves+' moves.</p><button class="primary" onclick="startMiniGame(\'memory\')">Play again ↻</button></div>':'<div style="text-align:center"><button class="mini-btn" onclick="startMiniGame(\'memory\')">Restart game ↻</button></div>');
+ if(complete)awardMiniGame('memory');
+}
+function flipMemoryCard(index){
+ if(memoryBusy||memoryOpen.length>=2||memoryOpen.includes(index)||memoryMatched.includes(index))return;
+ memoryOpen.push(index);renderMemoryGame();
+ if(memoryOpen.length===2){
+  memoryMoves++;const [a,b]=memoryOpen;
+  if(memoryDeck[a].id===memoryDeck[b].id){
+   memoryMatched.push(a,b);memoryOpen=[];say('Great match!');
+   window.setTimeout(renderMemoryGame,180);
+  }else{
+   memoryBusy=true;window.setTimeout(()=>{memoryOpen=[];memoryBusy=false;renderMemoryGame()},850);
+  }
+ }
+}
+function renderShapeGame(){
+ const root=$('miniGameContent');if(!root)return;
+ if(shapeRound>=5){
+  root.innerHTML='<div class="mini-game-result"><div style="font-size:48px">🌟</div><h2 style="font:800 25px Baloo 2">Shape explorer complete!</h2><p>You found '+shapeScore+' out of 5 shapes.</p><button class="primary" onclick="startMiniGame(\'shapes\')">Play again ↻</button></div>';
+  awardMiniGame('shapes');return;
+ }
+ const item=shapeBank[(shapeRound*2+Math.floor(Math.random()*shapeBank.length))%shapeBank.length];shapeCurrent=item;
+ const options=shuffleQuiz([item,...shuffleQuiz(shapeBank.filter(x=>x.name!==item.name)).slice(0,3)]);
+ root.innerHTML='<div style="text-align:center"><div class="eyebrow">SHAPE HUNT · ROUND '+(shapeRound+1)+' OF 5</div><h2 style="font:800 25px Baloo 2;margin:5px">Which shape am I?</h2><p>'+escapeHTML(item.clue)+'</p><div class="quiz-picture">'+item.glyph+'</div><div class="shape-options">'+options.map(option=>'<button class="shape-option" onclick="answerShape(\''+option.name+'\')"><span>'+option.glyph+'</span>'+option.name+'</button>').join('')+'</div><div class="mini-game-stats"><span class="pill">Score: '+shapeScore+' / 5</span></div></div>';
+}
+function answerShape(name){
+ if(!shapeCurrent)return;
+ const correct=name===shapeCurrent.name;if(correct){shapeScore++;say('Brilliant shape spotting!')}else say('Good try. The answer is '+shapeCurrent.name);
+ const root=$('miniGameContent');root.innerHTML='<div class="mini-game-result"><div style="font-size:44px">'+(correct?'🎉':'💛')+'</div><h3 style="font:800 23px Baloo 2">'+(correct?'That is correct!':'Good try!')+'</h3><p>The answer is '+shapeCurrent.name+'. '+escapeHTML(shapeCurrent.clue)+'</p><button class="primary" onclick="nextShapeRound()">'+(shapeRound===4?'See my result':'Next shape ➜')+'</button></div>';
+ shapeRound++;shapeCurrent=null;
+}
+function nextShapeRound(){renderShapeGame()}
+function renderColorGame(){
+ const root=$('miniGameContent');if(!root)return;
+ root.innerHTML='<div style="text-align:center"><div class="eyebrow">COLOUR LAB</div><h2 style="font:800 25px Baloo 2;margin:5px">Become a colour scientist!</h2><p>Choose two colours and discover what they make.</p><div class="mini-game-stats"><span class="pill">'+(colorFirst?'First colour: '+colorFirst.name:'Choose your first colour')+'</span><span class="pill">'+(colorFirst?'Now choose a second':'Mix two colours')+'</span></div><div class="color-options">'+colorBank.map(c=>'<button class="color-option" onclick="pickMixColor(\''+c.name+'\')" aria-label="Choose '+c.name+'"><span class="color-swatch" style="background:'+c.hex+'"></span>'+c.name+'</button>').join('')+'</div>'+(colorFirst?'<div class="mini-game-stats"><button class="mini-btn" onclick="colorFirst=null;renderColorGame()">Start over</button></div>':'')+'<div id="colorMixResult"></div></div>';
+}
+function pickMixColor(name){
+ const picked=colorBank.find(c=>c.name===name);if(!picked)return;
+ if(!colorFirst){colorFirst=picked;renderColorGame();return}
+ const names=[colorFirst.name,picked.name].sort();const key=names.join('|');
+ const result=colorMixes[key]||{name:'A new shade',hex:'#b8a6d9',note:'Mixing colours can create many different shades. Keep experimenting!'};
+ $('colorMixResult').innerHTML='<div class="mini-game-result"><div style="display:flex;align-items:center;justify-content:center;gap:14px"><span class="color-swatch" style="background:'+colorFirst.hex+'"></span><span style="font-size:25px">+</span><span class="color-swatch" style="background:'+picked.hex+'"></span><span style="font-size:25px">=</span><span class="color-swatch" style="background:'+result.hex+'"></span></div><h3 style="font:800 23px Baloo 2;margin:8px">'+escapeHTML(result.name)+'</h3><p>'+escapeHTML(result.note)+'</p><button class="primary" onclick="colorFirst=null;renderColorGame()">Mix again 🎨</button></div>';
+ if(result.name!=='A new shade')awardMiniGame('colors');
+}
+function awardMiniGame(gameId){
+ const today=typeof localDayKey==='function'?localDayKey():new Date().toISOString().slice(0,10);
+ state.miniGameRewards??={};
+ if(state.miniGameRewards[gameId]===today)return;
+ state.miniGameRewards[gameId]=today;state.stars=(Number(state.stars)||0)+3;state.done??=[];
+ state.done.push({key:'mini-'+gameId+'-'+Date.now(),type:'game',subject:'Mini-game playground'});
+ save();say('You earned three stars!');toast('Amazing work! +3 stars ⭐');
+}
+
 
 </script>
 </body></html>

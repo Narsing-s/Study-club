@@ -75,11 +75,37 @@ button:not(:disabled){touch-action:manipulation}
 .voice-note{font-size:12px;color:var(--muted);font-weight:700;line-height:1.5;margin:18px 2px}
 @media(max-width:650px){.voice-launch-grid{grid-template-columns:1fr}.voice-launch{min-height:100px}.voice-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.voice-tile{min-height:98px}}
 @media(prefers-reduced-motion:reduce){.voice-launch,.voice-tile{transition:none}}
+
+/* Mini-game studio: responsive cards, gentle motion and accessible reduced-motion support */
+.game-studio-hero{background:linear-gradient(120deg,#fff0c9,#e7e4ff 55%,#ddf5ff)}
+.game-studio-tabs{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}
+.game-studio-tabs button{background:#fff;border:2px solid #eee8f4;border-radius:15px;padding:11px 15px;font-weight:900;box-shadow:var(--shadow)}
+.game-studio-tabs button.active{background:#f3eaff;border-color:#bda8ff;color:#7056a7}
+.game-studio-panel{background:#fff;border-radius:25px;padding:clamp(16px,3vw,25px);box-shadow:var(--shadow);min-height:280px;animation:cardIn .35s both}
+.memory-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;max-width:680px;margin:18px auto}
+.memory-card{min-height:104px;border-radius:18px;background:linear-gradient(145deg,#eee7ff,#e4f6ff);border:2px solid #e4dcf4;display:grid;place-items:center;font-size:clamp(26px,5vw,42px);font-weight:900;transition:transform .2s,background .2s;box-shadow:0 5px 0 #d9d0eb}
+.memory-card span{display:block;font-size:11px;color:#6f6a86}
+.memory-card.revealed,.memory-card.matched{background:#fff3d4;border-color:#ffd66b;transform:translateY(-3px)}
+.memory-card.matched{background:#def8e9;border-color:#82d5a6;box-shadow:0 4px 0 #b7e7c9}
+.mini-game-stats{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:10px 0}
+.shape-options,.color-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:560px;margin:18px auto}
+.shape-option{background:#f4efff;border:2px solid transparent;border-radius:18px;padding:17px;font:800 18px 'Baloo 2';min-height:88px}
+.shape-option span{display:block;font-size:38px;margin-bottom:5px}
+.shape-option:hover,.color-option:hover{transform:translateY(-3px)}
+.color-option{border-radius:18px;padding:17px;min-height:85px;font-weight:900;border:3px solid #ffffff;box-shadow:0 6px 18px #3d315019;transition:transform .18s}
+.color-swatch{width:38px;height:38px;border-radius:50%;display:block;margin:0 auto 8px;border:2px solid #00000012}
+.mini-game-result{padding:16px;border-radius:18px;background:#f1faef;text-align:center;margin:16px auto;max-width:520px;animation:quizPop .4s}
+.game-launch-card{display:flex;align-items:center;gap:15px;background:linear-gradient(110deg,#f0eaff,#e3f7ff);border:2px solid #e1d5ff;border-radius:22px;padding:16px;box-shadow:var(--shadow)}
+.game-launch-card .game-launch-art{font-size:44px;animation:float 2.5s infinite}
+.game-launch-card>div:nth-child(2){flex:1}
+@media(max-width:520px){.memory-grid{gap:7px}.memory-card{min-height:76px;border-radius:14px}.shape-options,.color-options{gap:8px}.shape-option{padding:12px;font-size:16px}.game-studio-tabs button{flex:1;padding:10px 8px;font-size:12px}}
+@media(prefers-reduced-motion:reduce){.game-studio-panel,.memory-card,.color-option,.game-launch-card .game-launch-art{animation:none!important;transition:none!important}}
+
 </style>
 </head>
 <body>
 <div id="loginScreen" class="login-wrap"><div class="login-card"><div class="login-logo">🦊🌈</div><h1>Welcome to Study Club!</h1><p>A happy place to learn, play and shine ✨</p><div class="tabs"><button id="loginTab" class="active" onclick="setAuthMode('login')">Sign in</button><button id="signupTab" onclick="setAuthMode('signup')">Create account</button></div><form id="authForm"><label class="field"><span>Parent email</span><input id="authEmail" type="email" autocomplete="email" placeholder="parent@example.com" required></label><label class="field"><span>Password</span><input id="authPassword" type="password" minlength="8" autocomplete="current-password" placeholder="At least 8 characters" required></label><label id="confirmField" class="field hide"><span>Confirm password</span><input id="authConfirm" type="password" minlength="8" autocomplete="new-password" placeholder="Type password again"></label><label id="recoveryField" class="field hide"><span>Parent recovery code</span><input id="authRecovery" type="password" minlength="6" placeholder="Create a recovery code (6+ characters)"></label><button class="login-submit" id="authSubmit" type="submit">Sign in and start learning 🚀</button><div class="error" id="authError" role="status"></div></form><form id="passwordResetForm" class="hide" onsubmit="completePasswordReset(event)"><label class="field"><span>New password</span><input id="newAuthPassword" type="password" minlength="8" autocomplete="new-password" required placeholder="At least 8 characters"></label><label class="field"><span>Confirm new password</span><input id="confirmNewAuthPassword" type="password" minlength="8" autocomplete="new-password" required placeholder="Type it again"></label><button class="login-submit" type="submit">Save new password 🔐</button><div class="error" id="passwordResetError" role="status"></div></form><div id="authLinks" style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap"><button class="link-btn" onclick="resetPassword()">Forgot password?</button><button class="link-btn" onclick="resendConfirmation()">Resend confirmation email</button><button class="link-btn" onclick="continueGuest()">Explore as guest</button><button class="link-btn" onclick="openAdminLogin()">🛡️ Admin login</button></div><div class="login-note">A parent or guardian should create and manage the account. Children should use their learner profile with an adult's help. Guest progress stays on this device.</div></div></div>
-<div id="adminLoginScreen" class="login-wrap hide"><div class="login-card"><div class="login-logo">🛡️</div><h1>Study Club Admin</h1><p>Secure owner access to feedback from all signed-in parents.</p><form id="adminAuthForm" onsubmit="adminSubmit(event)"><label class="field"><span>Owner admin email</span><input id="adminEmail" type="email" autocomplete="username" value="narsingbeesetti22@gmail.com" readonly required></label><label class="field"><span>Admin password</span><input id="adminPassword" type="password" minlength="8" autocomplete="current-password" placeholder="Your owner account password" required></label><label class="field hide" id="adminConfirmField"><span>Confirm admin password</span><input id="adminConfirm" type="password" minlength="10" autocomplete="new-password" placeholder="Enter password again"></label><button class="login-submit" id="adminSubmitButton" type="submit">Sign in to admin dashboard</button><div class="error" id="adminAuthError" role="status"></div></form><p class="login-note" id="adminSetupNote">Use the confirmed Supabase Auth owner account. Parent sign-up does not automatically create an admin account.</p><div style="display:flex;justify-content:center"><button class="link-btn" type="button" onclick="closeAdminLogin()">← Back</button></div></div></div>
+<div id="adminLoginScreen" class="login-wrap hide"><div class="login-card"><div class="login-logo">🛡️</div><h1>Study Club Admin</h1><p>Secure owner access to feedback from all signed-in parents.</p><form id="adminAuthForm" onsubmit="adminSubmit(event)"><label class="field"><span>Owner admin email</span><input id="adminEmail" type="email" autocomplete="username" value="narsingbeesetti006@gmail.com" readonly required></label><label class="field"><span>Admin password</span><input id="adminPassword" type="password" minlength="8" autocomplete="current-password" placeholder="Your owner account password" required></label><label class="field hide" id="adminConfirmField"><span>Confirm admin password</span><input id="adminConfirm" type="password" minlength="10" autocomplete="new-password" placeholder="Enter password again"></label><button class="login-submit" id="adminSubmitButton" type="submit">Sign in to admin dashboard</button><div class="error" id="adminAuthError" role="status"></div></form><p class="login-note" id="adminSetupNote">Use the confirmed Supabase Auth owner account. Parent sign-up does not automatically create an admin account.</p><div style="display:flex;justify-content:center"><button class="link-btn" type="button" onclick="closeAdminLogin()">← Back</button></div></div></div>
 <div id="appShell" class="hide"><main class="app">
 <header class="topbar"><div class="brand"><div class="brand-mark">🌈</div><span>Study Club</span></div><div class="top-actions"><button class="icon-btn hide" id="installBtn" aria-label="Install Study Club">⬇ Install</button><button class="icon-btn" id="soundToggle" aria-label="Toggle sound">🔊 Sound</button><button class="icon-btn" id="profileBtn" aria-label="Parent area">👨‍👩‍👧</button></div></header>
 <section id="home" class="screen active">
@@ -93,6 +119,8 @@ button:not(:disabled){touch-action:manipulation}
  <button class="voice-launch voice-launch-te" type="button" onclick="openVoiceLearning('telugu')"><span>అ</span><b>తెలుగు అక్షరమాల</b><small>Telugu vowels and consonants</small></button>
  <button class="voice-launch voice-launch-num" type="button" onclick="openVoiceLearning('numbers')"><span>♾️</span><b>Number infinity</b><small>Explore numbers as far as you like</small></button>
 </div>
+<div class="section-head"><h2>🎮 Mini-game playground</h2><span>Play, think & discover</span></div>
+<div class="game-launch-card"><div class="game-launch-art">🧩</div><div><b>Three playful brain games</b><small class="tiny" style="display:block;margin-top:3px">Memory match · Shape hunt · Colour lab</small></div><button class="primary" type="button" onclick="showMiniGameStudio()">Play now ✨</button></div>
 <div class="section-head"><h2>Today's fun</h2><span>Little steps, big smiles</span></div><div class="daily daily-mission"><div class="daily-row"><div class="daily-badge">🎯</div><div class="mission-copy"><h3 style="margin:0 0 4px">Daily Brain Challenge</h3><p id="dailyChallengeStatus" style="margin:0">Try 10 fun questions and earn stars!</p></div><button class="primary" id="dailyChallengeButton" type="button" onclick="startDailyChallenge()">Start today's challenge 🚀</button></div></div><div class="activities"><div class="daily"><h3>🎯 Your mini mission</h3><p>Complete one tiny activity today.</p><div class="daily-row"><div class="daily-badge">✍️</div><div><b>Letter tracing</b><small>Practise writing with your finger</small></div><button class="mini-btn" onclick="openTrace()">Start</button></div><div class="daily-row"><div class="daily-badge">📖</div><div><b>Story time</b><small>A tiny story with a big idea</small></div><button class="mini-btn" onclick="openStory()">Read</button></div></div><div class="streak"><div class="big">🔥</div><div><b id="streakTitle">You're doing great!</b><p>Every day is a new chance to shine.</p></div></div></div><div class="footer-note">Play kindly • Learn bravely • Shine brightly 💛</div>
 </section>
 <section id="voiceLearning" class="screen">
@@ -103,18 +131,130 @@ button:not(:disabled){touch-action:manipulation}
  <div id="voiceContent"></div>
  <p class="voice-note">Voice playback depends on the voices installed on your device. Enable an English or Telugu text-to-speech voice in device settings if needed.</p>
 </section>
+<section id="gameStudio" class="screen">
+ <button class="back" onclick="showScreen('home')">← Home</button>
+ <div class="lesson-head game-studio-hero"><div><div class="eyebrow">PLAY • THINK • SHINE</div><h2>Mini-game playground 🎮</h2><p>Little games that build memory, observation and creativity.</p></div><div class="lesson-mascot">🧩</div></div>
+ <div class="game-studio-tabs" role="tablist" aria-label="Mini games">
+  <button type="button" id="miniTabMemory" class="active" onclick="startMiniGame('memory')">🧠 Memory match</button>
+  <button type="button" id="miniTabShapes" onclick="startMiniGame('shapes')">🔺 Shape hunt</button>
+  <button type="button" id="miniTabColors" onclick="startMiniGame('colors')">🎨 Colour lab</button>
+ </div>
+ <div id="miniGameContent" class="game-studio-panel" aria-live="polite"></div>
+ <p class="tiny" style="text-align:center;margin:14px 0">A fresh mini-game reward is available once per game each day. Play at your own pace 💛</p>
+</section>
 <section id="grades" class="screen"><button class="back" onclick="showScreen('home')">← Back home</button><div class="section-head"><h2>Pick your learning level</h2></div><div class="grades" id="gradeCards2"></div></section>
 <section id="subjects" class="screen"><button class="back" onclick="showScreen('home')">← Home</button><div class="lesson-head"><div><div class="eyebrow" id="levelLabel">YOUR CLASS</div><h2 id="subjectTitle">Let's explore!</h2><p id="subjectDesc">Choose a fun activity to begin.</p></div><div class="lesson-mascot">🦄</div></div><div class="lesson-grid" id="lessonCards"></div></section>
 <section id="game" class="screen"><button class="back" onclick="showScreen('subjects')">← All activities</button><div class="game-box" id="gameBox"></div></section>
 <section id="progress" class="screen"><div class="section-head"><h2>My little achievements 🏅</h2></div><div class="progress-wrap"><div class="progress-icon">⭐</div><div class="progress-copy"><b id="achieveCount">0 stars collected</b><small>Every try makes your brain stronger!</small><div class="progress-track"><div class="progress-fill" id="progressFill2"></div></div></div></div><div class="section-head"><h2>Learning insights 📊</h2><span>Your recent progress</span></div><div class="insights-grid" id="learningInsights" aria-live="polite"></div><div class="section-head"><h2>Things you've explored</h2></div><div class="lesson-grid" id="historyGrid"></div></section>
-<section id="parent" class="screen"><button class="back" onclick="showScreen('home')">← Home</button><div class="lesson-head"><div><div class="eyebrow">Grown-up corner</div><h2>Parent dashboard</h2><p>Manage your learner and review progress.</p></div><div class="lesson-mascot">🧑‍🏫</div></div><div class="parent-banner"><span id="accountLabel">Guest mode · This device only</span><button class="mini-btn" onclick="signOut()">Sign out</button></div><div class="daily"><h3>👧 Learner profile</h3><p>Set a nickname and choose the learning class.</p><div class="daily-row"><input id="nickname" placeholder="Little learner's name" maxlength="24" style="flex:1;padding:12px;border:2px solid #eee;border-radius:12px;min-width:0"><button class="primary" onclick="saveName()">Save</button></div><div class="daily-row"><select id="parentGrade" style="flex:1;padding:12px;border:2px solid #eee;border-radius:12px;background:#fff"><option value="nursery">Nursery</option><option value="lkg">LKG</option><option value="ukg">UKG</option><option value="class1">Class 1</option></select><button class="mini-btn" onclick="saveGrade()">Save class</button></div><div class="daily-row"><div><b id="parentStats">0 activities completed</b><small>Learning history and stars for this learner.</small></div></div></div><div class="daily" style="margin-top:14px"><h3>🌱 Learning promise</h3><p>Short, happy practice beats pressure. Celebrate effort, read together and let children explore at their own pace.</p></div><div class="daily" style="margin-top:14px"><h3>🛡️ Administrator</h3><p>Review feedback saved in this browser.</p><button class="primary" style="margin-top:12px" onclick="openAdminLogin()">Open admin dashboard</button></div></section>
-<section id="adminDashboard" class="screen"><button class="back" onclick="adminSignOut()">← Admin sign out</button><div class="lesson-head feedback-hero"><div><div class="eyebrow">ADMIN CONTROL ROOM</div><h2>Feedback inbox</h2><p>Review suggestions and reported problems.</p></div><div class="lesson-mascot">🛡️</div></div><div class="parent-banner"><span id="adminAccountLabel">Administrator</span><span class="tag">This browser only</span></div><div class="admin-stats"><div class="daily"><b id="adminFeedbackTotal">0</b><small>Total feedback</small></div><div class="daily"><b id="adminFeedbackNew">0</b><small>New items</small></div><div class="daily"><b id="adminFeedbackAverage">—</b><small>Average rating</small></div></div><div class="daily"><div class="admin-tools"><h3>📬 Submissions</h3><select id="adminFeedbackFilter" class="feedback-input" onchange="renderAdminFeedback()"><option value="all">All feedback</option><option value="new">New only</option><option value="reviewed">Reviewed</option></select><button class="mini-btn" onclick="renderAdminFeedback()">↻ Refresh</button><button class="mini-btn" onclick="exportFeedbackCSV()">⇩ Export CSV</button></div><div id="adminFeedbackList" class="admin-feedback-list"></div></div><p class="feedback-privacy">This static app stores feedback and admin credentials in this browser only. It cannot collect feedback from other devices or provide production-grade admin security without a backend.</p></section>
+<section id="parent" class="screen"><button class="back" onclick="showScreen('home')">← Home</button><div class="lesson-head"><div><div class="eyebrow">Grown-up corner</div><h2>Parent dashboard</h2><p>Manage your learner and review progress.</p></div><div class="lesson-mascot">🧑‍🏫</div></div><div class="parent-banner"><span id="accountLabel">Guest mode · This device only</span><button class="mini-btn" onclick="signOut()">Sign out</button></div><div class="daily"><h3>👧 Learner profile</h3><p>Set a nickname and choose the learning class.</p><div class="daily-row"><input id="nickname" placeholder="Little learner's name" maxlength="24" style="flex:1;padding:12px;border:2px solid #eee;border-radius:12px;min-width:0"><button class="primary" onclick="saveName()">Save</button></div><div class="daily-row"><select id="parentGrade" style="flex:1;padding:12px;border:2px solid #eee;border-radius:12px;background:#fff"><option value="nursery">Nursery</option><option value="lkg">LKG</option><option value="ukg">UKG</option><option value="class1">Class 1</option></select><button class="mini-btn" onclick="saveGrade()">Save class</button></div><div class="daily-row"><div><b id="parentStats">0 activities completed</b><small>Learning history and stars for this learner.</small></div></div></div><div class="daily" style="margin-top:14px"><h3>🌱 Learning promise</h3><p>Short, happy practice beats pressure. Celebrate effort, read together and let children explore at their own pace.</p></div><div class="daily" style="margin-top:14px"><h3>🛡️ Administrator</h3><p>Review feedback submitted by signed-in parents across devices.</p><button class="primary" style="margin-top:12px" onclick="openAdminLogin()">Open admin dashboard</button></div></section>
+<section id="adminDashboard" class="screen"><button class="back" onclick="adminSignOut()">← Admin sign out</button><div class="lesson-head feedback-hero"><div><div class="eyebrow">ADMIN CONTROL ROOM</div><h2>Feedback inbox</h2><p>Review suggestions and reported problems.</p></div><div class="lesson-mascot">🛡️</div></div><div class="parent-banner"><span id="adminAccountLabel">Administrator</span><span class="tag">Cloud synced · Owner only</span></div><div class="admin-stats"><div class="daily"><b id="adminFeedbackTotal">0</b><small>Total feedback</small></div><div class="daily"><b id="adminFeedbackNew">0</b><small>New items</small></div><div class="daily"><b id="adminFeedbackAverage">—</b><small>Average rating</small></div></div><div class="daily"><div class="admin-tools"><h3>📬 Submissions</h3><select id="adminFeedbackFilter" class="feedback-input" onchange="renderAdminFeedback()"><option value="all">All feedback</option><option value="new">New only</option><option value="reviewed">Reviewed</option></select><button class="mini-btn" onclick="renderAdminFeedback()">↻ Refresh</button><button class="mini-btn" onclick="exportFeedbackCSV()">⇩ Export CSV</button></div><div id="adminFeedbackList" class="admin-feedback-list"></div></div><p class="feedback-privacy">Feedback is stored in Supabase. Only the verified owner account can review, export or delete submissions.</p></section>
 <section id="feedbackScreen" class="screen"><button class="back" onclick="showScreen('home')">← Home</button><div class="lesson-head feedback-hero"><div><div class="eyebrow">HELP US GROW</div><h2>Make Study Club even better! 💛</h2><p>Your ideas help us create happier learning adventures.</p></div><div class="lesson-mascot">💌</div></div><form class="feedback-card" id="feedbackForm" onsubmit="submitFeedback(event)"><h3>How was your experience?</h3><p class="feedback-sub">Tap a star to rate Study Club.</p><div class="rating-stars" role="group" aria-label="Rate your experience"><button type="button" class="rating-star" data-rating="1" aria-label="1 star" onclick="setFeedbackRating(1)">★</button><button type="button" class="rating-star" data-rating="2" aria-label="2 stars" onclick="setFeedbackRating(2)">★</button><button type="button" class="rating-star" data-rating="3" aria-label="3 stars" onclick="setFeedbackRating(3)">★</button><button type="button" class="rating-star" data-rating="4" aria-label="4 stars" onclick="setFeedbackRating(4)">★</button><button type="button" class="rating-star" data-rating="5" aria-label="5 stars" onclick="setFeedbackRating(5)">★</button></div><label class="feedback-label" for="feedbackType">What is your feedback about?</label><select id="feedbackType" class="feedback-input"><option>Overall experience</option><option>Lessons and subjects</option><option>Quiz and questions</option><option>Animations and design</option><option>Login and profile</option><option>Bug or problem</option><option>New feature idea</option></select><label class="feedback-label" for="feedbackMessage">Tell us what you think</label><textarea id="feedbackMessage" class="feedback-input feedback-textarea" maxlength="1000" oninput="updateFeedbackCount()" placeholder="What did you enjoy? What should we improve? Share your idea…" required></textarea><div class="feedback-count"><span>Every idea matters!</span><span id="feedbackCharCount">0 / 1000</span></div><button class="primary feedback-submit" type="submit">Send feedback ✨</button><p class="feedback-privacy">Feedback is saved in this browser only. It appears in the local admin inbox on this same device; it is not uploaded to a server.</p></form><div class="feedback-thanks hide" id="feedbackThanks"><div class="thanks-art">🌈</div><h2>Thank you, superstar!</h2><p>Your feedback has been saved on this device.</p><button class="primary" onclick="resetFeedbackForm()">Send another idea</button><button class="mini-btn" onclick="showScreen('home')">Back to learning</button></div></section>
 <section id="trace" class="screen"><button class="back" onclick="showScreen('home')">← Home</button><div class="game-box"><div class="eyebrow">FINGER WRITING STUDIO</div><h2>Let's trace a letter! ✍️</h2><p>Follow the big dotted letter with your finger or mouse.</p><div style="display:flex;justify-content:center;gap:10px;align-items:center"><button class="mini-btn" onclick="changeTrace(-1)">← Previous</button><strong id="traceLabel" style="font:800 32px 'Baloo 2'">A</strong><button class="mini-btn" onclick="changeTrace(1)">Next →</button></div><canvas id="traceCanvas" class="trace-pad" width="660" height="315"></canvas><div class="game-controls"><button class="mini-btn" onclick="clearTrace()">Clear</button><button class="primary" onclick="say('Well done! Keep practising your letter.')">🔊 Encouragement</button></div><p class="tiny">Trace gently. There is no timer and no score — practise at your own pace.</p></div></section>
 <section id="story" class="screen"><button class="back" onclick="showScreen('home')">← Home</button><div class="game-box"><div style="font-size:75px;animation:float 3s infinite" id="storyArt">🐢</div><div class="eyebrow">STORY TIME</div><h2 id="storyTitle">Tara the Tiny Turtle</h2><div class="story-line" id="storyLine"></div><div class="game-controls"><button class="mini-btn" onclick="storyStep(-1)">← Back</button><button class="primary" onclick="storyStep(1)">Next part ✨</button><button class="mini-btn" onclick="sayStory()">🔊 Listen</button></div><p class="tiny" id="storyLesson">Little lesson: steady effort matters.</p></div></section>
 </main><nav class="bottom-nav" id="bottomNav" aria-label="Main navigation"><button class="nav-btn active" data-screen="home" onclick="showScreen('home')"><span>🏠</span>Home</button><button class="nav-btn" data-screen="grades" onclick="showScreen('grades')"><span>📚</span>Learn</button><button class="nav-btn" data-screen="progress" onclick="showScreen('progress')"><span>🏅</span>My stars</button><button class="nav-btn" data-screen="parent" onclick="showScreen('parent')"><span>👨‍👩‍👧</span>Grown-ups</button><button class="nav-btn" data-screen="feedbackScreen" onclick="showScreen('feedbackScreen')"><span>💌</span>Feedback</button></nav></div>
 <div class="toast" id="toast" role="status"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+/* Study Club mini-game playground — additive module; existing lesson and quiz logic remains untouched. */
+let miniGameMode='memory',memoryDeck=[],memoryOpen=[],memoryMatched=[],memoryMoves=0,memoryBusy=false;
+let shapeRound=0,shapeScore=0,shapeCurrent=null,colorFirst=null;
+const memoryPairs=[
+ {emoji:'🍎',word:'Apple'},{emoji:'🐶',word:'Dog'},{emoji:'☀️',word:'Sun'},{emoji:'🚗',word:'Car'},
+ {emoji:'🐟',word:'Fish'},{emoji:'🌸',word:'Flower'},{emoji:'⭐',word:'Star'},{emoji:'🏠',word:'House'}
+];
+const shapeBank=[
+ {name:'Circle',glyph:'⚪',clue:'No corners and perfectly round.'},
+ {name:'Square',glyph:'🟦',clue:'Four equal sides and four corners.'},
+ {name:'Triangle',glyph:'🔺',clue:'Three sides and three corners.'},
+ {name:'Rectangle',glyph:'▭',clue:'Four corners; opposite sides match.'},
+ {name:'Star',glyph:'⭐',clue:'A bright shape with points.'},
+ {name:'Heart',glyph:'❤️',clue:'A shape often used for love.'}
+];
+const colorBank=[
+ {name:'Red',hex:'#ef6474'},{name:'Yellow',hex:'#ffd34f'},{name:'Blue',hex:'#6ab9f4'},
+ {name:'White',hex:'#ffffff'},{name:'Black',hex:'#303449'}
+];
+const colorMixes={
+ 'Red|Yellow':{name:'Orange',hex:'#ff9b45',note:'Red + yellow makes orange.'},
+ 'Blue|Yellow':{name:'Green',hex:'#68c98a',note:'Blue + yellow makes green.'},
+ 'Blue|Red':{name:'Purple',hex:'#a78be8',note:'Blue + red makes purple.'},
+ 'Red|White':{name:'Pink',hex:'#ffabc5',note:'Red + white makes pink.'},
+ 'Black|White':{name:'Grey',hex:'#a6a6ad',note:'Black + white makes grey.'},
+ 'Blue|White':{name:'Sky blue',hex:'#9edaf5',note:'Blue + white makes a lighter blue.'},
+ 'Black|Red':{name:'Dark red',hex:'#9d3446',note:'Black makes red darker.'},
+ 'Black|Yellow':{name:'Olive',hex:'#9b9650',note:'Black makes yellow darker.'}
+};
+function showMiniGameStudio(){startMiniGame('memory');showScreen('gameStudio')}
+function miniGameTabs(){
+ ['memory','shapes','colors'].forEach(mode=>{const el=$('miniTab'+mode[0].toUpperCase()+mode.slice(1));if(el)el.classList.toggle('active',miniGameMode===mode)});
+}
+function startMiniGame(mode){
+ miniGameMode=['memory','shapes','colors'].includes(mode)?mode:'memory';
+ miniGameTabs();
+ if(miniGameMode==='memory'){
+  memoryDeck=shuffleQuiz(memoryPairs.flatMap((pair,id)=>[{...pair,id,side:0},{...pair,id,side:1}]));
+  memoryOpen=[];memoryMatched=[];memoryMoves=0;memoryBusy=false;renderMemoryGame();
+ }else if(miniGameMode==='shapes'){
+  shapeRound=0;shapeScore=0;shapeCurrent=null;renderShapeGame();
+ }else{colorFirst=null;renderColorGame()}
+}
+function renderMemoryGame(){
+ const root=$('miniGameContent');if(!root)return;
+ const complete=memoryMatched.length===memoryDeck.length;
+ root.innerHTML='<div style="text-align:center"><div class="eyebrow">MEMORY MATCH</div><h2 style="font:800 25px Baloo 2;margin:5px">Find all the matching pairs!</h2><p class="tiny">Turn over two cards. Match the same picture and word.</p><div class="mini-game-stats"><span class="pill">Moves: '+memoryMoves+'</span><span class="pill">Pairs: '+(memoryMatched.length/2)+' / 8</span></div></div><div class="memory-grid">'+memoryDeck.map((card,index)=>{const open=memoryOpen.includes(index)||memoryMatched.includes(index);return '<button type="button" class="memory-card '+(memoryMatched.includes(index)?'matched':open?'revealed':'')+'" aria-label="'+(open?escapeHTML(card.word):'Hidden card')+'" '+(open?'disabled':'onclick="flipMemoryCard('+index+')"')+'>'+(open?'<div>'+card.emoji+'<span>'+escapeHTML(card.word)+'</span></div>':'❔')+'</button>'}).join('')+'</div>'+(complete?'<div class="mini-game-result"><div style="font-size:42px">🏆</div><h3 style="font:800 23px Baloo 2;margin:5px">All pairs found!</h3><p>You matched all 8 pairs in '+memoryMoves+' moves.</p><button class="primary" onclick="startMiniGame(\'memory\')">Play again ↻</button></div>':'<div style="text-align:center"><button class="mini-btn" onclick="startMiniGame(\'memory\')">Restart game ↻</button></div>');
+ if(complete)awardMiniGame('memory');
+}
+function flipMemoryCard(index){
+ if(memoryBusy||memoryOpen.length>=2||memoryOpen.includes(index)||memoryMatched.includes(index))return;
+ memoryOpen.push(index);renderMemoryGame();
+ if(memoryOpen.length===2){
+  memoryMoves++;const [a,b]=memoryOpen;
+  if(memoryDeck[a].id===memoryDeck[b].id){
+   memoryMatched.push(a,b);memoryOpen=[];say('Great match!');
+   window.setTimeout(renderMemoryGame,180);
+  }else{
+   memoryBusy=true;window.setTimeout(()=>{memoryOpen=[];memoryBusy=false;renderMemoryGame()},850);
+  }
+ }
+}
+function renderShapeGame(){
+ const root=$('miniGameContent');if(!root)return;
+ if(shapeRound>=5){
+  root.innerHTML='<div class="mini-game-result"><div style="font-size:48px">🌟</div><h2 style="font:800 25px Baloo 2">Shape explorer complete!</h2><p>You found '+shapeScore+' out of 5 shapes.</p><button class="primary" onclick="startMiniGame(\'shapes\')">Play again ↻</button></div>';
+  awardMiniGame('shapes');return;
+ }
+ const item=shapeBank[(shapeRound*2+Math.floor(Math.random()*shapeBank.length))%shapeBank.length];shapeCurrent=item;
+ const options=shuffleQuiz([item,...shuffleQuiz(shapeBank.filter(x=>x.name!==item.name)).slice(0,3)]);
+ root.innerHTML='<div style="text-align:center"><div class="eyebrow">SHAPE HUNT · ROUND '+(shapeRound+1)+' OF 5</div><h2 style="font:800 25px Baloo 2;margin:5px">Which shape am I?</h2><p>'+escapeHTML(item.clue)+'</p><div class="quiz-picture">'+item.glyph+'</div><div class="shape-options">'+options.map(option=>'<button class="shape-option" onclick="answerShape(\''+option.name+'\')"><span>'+option.glyph+'</span>'+option.name+'</button>').join('')+'</div><div class="mini-game-stats"><span class="pill">Score: '+shapeScore+' / 5</span></div></div>';
+}
+function answerShape(name){
+ if(!shapeCurrent)return;
+ const correct=name===shapeCurrent.name;if(correct){shapeScore++;say('Brilliant shape spotting!')}else say('Good try. The answer is '+shapeCurrent.name);
+ const root=$('miniGameContent');root.innerHTML='<div class="mini-game-result"><div style="font-size:44px">'+(correct?'🎉':'💛')+'</div><h3 style="font:800 23px Baloo 2">'+(correct?'That is correct!':'Good try!')+'</h3><p>The answer is '+shapeCurrent.name+'. '+escapeHTML(shapeCurrent.clue)+'</p><button class="primary" onclick="nextShapeRound()">'+(shapeRound===4?'See my result':'Next shape ➜')+'</button></div>';
+ shapeRound++;shapeCurrent=null;
+}
+function nextShapeRound(){renderShapeGame()}
+function renderColorGame(){
+ const root=$('miniGameContent');if(!root)return;
+ root.innerHTML='<div style="text-align:center"><div class="eyebrow">COLOUR LAB</div><h2 style="font:800 25px Baloo 2;margin:5px">Become a colour scientist!</h2><p>Choose two colours and discover what they make.</p><div class="mini-game-stats"><span class="pill">'+(colorFirst?'First colour: '+colorFirst.name:'Choose your first colour')+'</span><span class="pill">'+(colorFirst?'Now choose a second':'Mix two colours')+'</span></div><div class="color-options">'+colorBank.map(c=>'<button class="color-option" onclick="pickMixColor(\''+c.name+'\')" aria-label="Choose '+c.name+'"><span class="color-swatch" style="background:'+c.hex+'"></span>'+c.name+'</button>').join('')+'</div>'+(colorFirst?'<div class="mini-game-stats"><button class="mini-btn" onclick="colorFirst=null;renderColorGame()">Start over</button></div>':'')+'<div id="colorMixResult"></div></div>';
+}
+function pickMixColor(name){
+ const picked=colorBank.find(c=>c.name===name);if(!picked)return;
+ if(!colorFirst){colorFirst=picked;renderColorGame();return}
+ const names=[colorFirst.name,picked.name].sort();const key=names.join('|');
+ const result=colorMixes[key]||{name:'A new shade',hex:'#b8a6d9',note:'Mixing colours can create many different shades. Keep experimenting!'};
+ $('colorMixResult').innerHTML='<div class="mini-game-result"><div style="display:flex;align-items:center;justify-content:center;gap:14px"><span class="color-swatch" style="background:'+colorFirst.hex+'"></span><span style="font-size:25px">+</span><span class="color-swatch" style="background:'+picked.hex+'"></span><span style="font-size:25px">=</span><span class="color-swatch" style="background:'+result.hex+'"></span></div><h3 style="font:800 23px Baloo 2;margin:8px">'+escapeHTML(result.name)+'</h3><p>'+escapeHTML(result.note)+'</p><button class="primary" onclick="colorFirst=null;renderColorGame()">Mix again 🎨</button></div>';
+ if(result.name!=='A new shade')awardMiniGame('colors');
+}
+function awardMiniGame(gameId){
+ const today=typeof localDayKey==='function'?localDayKey():new Date().toISOString().slice(0,10);
+ state.miniGameRewards??={};
+ if(state.miniGameRewards[gameId]===today)return;
+ state.miniGameRewards[gameId]=today;state.stars=(Number(state.stars)||0)+3;state.done??=[];
+ state.done.push({key:'mini-'+gameId+'-'+Date.now(),type:'game',subject:'Mini-game playground'});
+ save();say('You earned three stars!');toast('Amazing work! +3 stars ⭐');
+}
+
+</script>
 <script>
 let session=null,authMode='login',isGuest=false,feedbackRating=0,isAdmin=false,adminModeSetup=false,adminReturnTo='login';
 const grades=[{id:'nursery',name:'Nursery',age:'Ages 3–4',emoji:'🐣',color:'pink'},{id:'lkg',name:'LKG',age:'Ages 4–5',emoji:'🧸',color:'yellow'},{id:'ukg',name:'UKG',age:'Ages 5–6',emoji:'🦋',color:'blue'},{id:'class1',name:'Class 1',age:'Ages 6–7',emoji:'🚀',color:'green'}];
@@ -148,7 +288,7 @@ async function resetPassword(){
  const email=$('authEmail').value.trim().toLowerCase();
  if(!email){$('authError').textContent='Enter the parent email address first.';return}
  try{
-  const {error}=await cloudReady().auth.resetPasswordForEmail(email,{redirectTo:'https://narsing-s.github.io/Study-club/'});
+  const {error}=await cloudReady().auth.resetPasswordForEmail(email,{redirectTo:'https://study-club-lemon.vercel.app/'});
   if(error)throw error;
   $('authError').textContent='If this account exists, a password-reset email has been requested. Open its link on this device, then choose a new password here. Check Inbox and Spam.';
  }catch(error){$('authError').textContent=cloudError(error)}
@@ -174,7 +314,7 @@ async function resendConfirmation(){
  const email=$('authEmail').value.trim().toLowerCase();
  if(!email){$('authError').textContent='Enter the parent email address first.';return}
  try{
-  const {error}=await cloudReady().auth.resend({type:'signup',email,options:{emailRedirectTo:'https://narsing-s.github.io/Study-club/'}});
+  const {error}=await cloudReady().auth.resend({type:'signup',email,options:{emailRedirectTo:'https://study-club-lemon.vercel.app/'}});
   if(error)throw error;
   $('authError').textContent='Supabase accepted the resend request, but this does not confirm that an email was delivered. If custom SMTP is not configured, Supabase may block delivery to ordinary user addresses. Check Supabase Authentication → Logs and your SMTP provider logs before requesting another email.';
  }catch(error){$('authError').textContent=cloudError(error)}
@@ -371,7 +511,7 @@ function finishQuiz(){
 }
 
 function readFeedbackEntries(){try{const value=JSON.parse(localStorage.getItem('studyClubFeedback')||'[]');return Array.isArray(value)?value.map((item,index)=>({...item,id:item.id||('legacy-'+index),reviewed:!!item.reviewed})):[]}catch(error){return []}}
-const STUDY_CLUB_OWNER_ADMIN_EMAIL='narsingbeesetti22@gmail.com';
+const STUDY_CLUB_OWNER_ADMIN_EMAIL='narsingbeesetti006@gmail.com';
 function openAdminLogin(){
  adminReturnTo=$('appShell').classList.contains('hide')?'login':'app';
  $('appShell').classList.add('hide');$('bottomNav').style.display='none';$('loginScreen').classList.add('hide');$('adminLoginScreen').classList.remove('hide');
@@ -542,7 +682,7 @@ async function authSubmit(e){
   if(authMode==='signup'){
    if(password.length<8)throw new Error('Choose a password with at least 8 characters.');
    if(password!==$('authConfirm').value)throw new Error('Your passwords do not match.');
-   const {data,error}=await db.auth.signUp({email,password,options:{data:{display_name:'Little Star'},emailRedirectTo:'https://narsing-s.github.io/Study-club/'}});
+   const {data,error}=await db.auth.signUp({email,password,options:{data:{display_name:'Little Star'},emailRedirectTo:'https://study-club-lemon.vercel.app/'}});
    if(error)throw error;
    if(!data.session){$('authError').textContent='Account created. Please confirm your email, then sign in. Your existing device data has not been deleted.';return}
    session=data.session;isGuest=false;state={stars:0,done:[],grade:'nursery',name:'Little Star',storyIndex:0};

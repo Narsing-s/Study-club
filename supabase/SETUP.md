@@ -61,7 +61,7 @@ Dashboard shortcuts:
 
 Each signed-in parent is identified by the Supabase Auth user ID. Learners and progress are stored against that ID and checked by RLS. The app also keeps a per-email local cache for that parent's progress. Guest progress is stored separately on the device.
 
-The app no longer imports the browser's old shared progress key into a newly signed-in account. This prevents one parent's local progress from appearing in another parent's account on a shared device. Older shared local progress remains available in guest mode; it is not deleted by this change.
+The app no longer imports the browser's old shared progress key into a newly signed-in account or guest session. This prevents one parent's legacy local progress from appearing in another parent's account on a shared device. The old key is left untouched in browser storage; it is not deleted, but it is not automatically assigned to any account.
 
 The currently visible class selector contains Nursery, LKG, UKG, and Class 1. The database accepts additional class labels for future expansion, but that does not mean those classes are currently available in the app UI.
 

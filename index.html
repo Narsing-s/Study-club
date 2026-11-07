@@ -74,6 +74,7 @@ button:not(:disabled){touch-action:manipulation}
 <section id="story" class="screen"><button class="back" onclick="showScreen('home')">← Home</button><div class="game-box"><div style="font-size:75px;animation:float 3s infinite" id="storyArt">🐢</div><div class="eyebrow">STORY TIME</div><h2 id="storyTitle">Tara the Tiny Turtle</h2><div class="story-line" id="storyLine"></div><div class="game-controls"><button class="mini-btn" onclick="storyStep(-1)">← Back</button><button class="primary" onclick="storyStep(1)">Next part ✨</button><button class="mini-btn" onclick="sayStory()">🔊 Listen</button></div><p class="tiny" id="storyLesson">Little lesson: steady effort matters.</p></div></section>
 </main><nav class="bottom-nav" id="bottomNav" aria-label="Main navigation"><button class="nav-btn active" data-screen="home" onclick="showScreen('home')"><span>🏠</span>Home</button><button class="nav-btn" data-screen="grades" onclick="showScreen('grades')"><span>📚</span>Learn</button><button class="nav-btn" data-screen="progress" onclick="showScreen('progress')"><span>🏅</span>My stars</button><button class="nav-btn" data-screen="parent" onclick="showScreen('parent')"><span>👨‍👩‍👧</span>Grown-ups</button><button class="nav-btn" data-screen="feedbackScreen" onclick="showScreen('feedbackScreen')"><span>💌</span>Feedback</button></nav></div>
 <div class="toast" id="toast" role="status"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 let session=null,authMode='login',isGuest=false,feedbackRating=0,isAdmin=false,adminModeSetup=false,adminReturnTo='login';
 const grades=[{id:'nursery',name:'Nursery',age:'Ages 3–4',emoji:'🐣',color:'pink'},{id:'lkg',name:'LKG',age:'Ages 4–5',emoji:'🧸',color:'yellow'},{id:'ukg',name:'UKG',age:'Ages 5–6',emoji:'🦋',color:'blue'},{id:'class1',name:'Class 1',age:'Ages 6–7',emoji:'🚀',color:'green'}];
@@ -399,6 +400,140 @@ if(quizInteractionRoot&&!quizInteractionRoot.dataset.quizEventsBound){
   if(nextButton&&quizInteractionRoot.contains(nextButton)){event.preventDefault();nextQuestion()}
  });
 }
+
+/* Study Club cloud integration — Supabase Auth + RLS-protected data */
+const STUDY_CLUB_SUPABASE_URL='https://wozvcabjepdjkcuasqko.supabase.co';
+const STUDY_CLUB_SUPABASE_KEY='sb_publishable_cvUQ6H24JbYRZEcLdmjw-w_f-YvDn2_';
+const studyClubSupabase=window.supabase?.createClient
+ ? window.supabase.createClient(STUDY_CLUB_SUPABASE_URL,STUDY_CLUB_SUPABASE_KEY)
+ : null;
+const STUDY_CLUB_CLASS_NAMES={nursery:'Nursery',lkg:'LKG',ukg:'UKG',class1:'Class 1'};
+function cloudReady(){if(!studyClubSupabase)throw new Error('Cloud services could not load. Check your internet connection and refresh.');return studyClubSupabase}
+function cloudError(error){const message=String(error?.message||error||'Cloud request failed');if(/relation .* does not exist|could not find the table/i.test(message))return 'The Study Club database tables are not installed yet. Run the migration from supabase/migrations in this Supabase project, then refresh.';if(/row-level security|permission denied|violates row-level/i.test(message))return 'Cloud access was blocked by database security. Please confirm the Study Club migration and owner email verification.';return message}
+async function cloudEnsureParent(user){
+ const db=cloudReady();
+ const {error}=await db.from('parent_profiles').upsert({id:user.id,display_name:state.name||''},{onConflict:'id'});
+ if(error)throw error;
+}
+async function loadCloud(){
+ const db=cloudReady(),user=session?.user;
+ if(!user?.id)return;
+ await cloudEnsureParent(user);
+ const {data:learners,error}=await db.from('learner_profiles').select('id,nickname,class_level').eq('parent_id',user.id).order('created_at',{ascending:true}).limit(1);
+ if(error)throw error;
+ let learner=learners?.[0];
+ if(!learner){
+  const {data,error:createError}=await db.from('learner_profiles').insert({parent_id:user.id,nickname:state.name||'Little Star',class_level:STUDY_CLUB_CLASS_NAMES[state.grade]||'Nursery'}).select('id,nickname,class_level').single();
+  if(createError)throw createError;learner=data;
+ }
+ localStorage.setItem('studyClubCloudLearnerId',learner.id);
+ const {data:progress,error:progressError}=await db.from('learning_progress').select('progress').eq('learner_id',learner.id).maybeSingle();
+ if(progressError)throw progressError;
+ if(progress?.progress&&typeof progress.progress==='object'){
+  const remote=progress.progress;
+  state={...remote,name:learner.nickname||remote.name||'Little Star',grade:Object.keys(STUDY_CLUB_CLASS_NAMES).find(k=>STUDY_CLUB_CLASS_NAMES[k]===learner.class_level)||remote.grade||'nursery'};
+  state.stars??=0;state.done??=[];state.storyIndex??=0;
+  localStorage.setItem('studyClubProgress:'+user.email,JSON.stringify(state));
+ }
+}
+async function syncCloud(){
+ const user=session?.user;
+ if(!user?.id)return;
+ try{
+  const db=cloudReady();await cloudEnsureParent(user);
+  let learnerId=localStorage.getItem('studyClubCloudLearnerId');
+  if(learnerId){
+   const {data,error}=await db.from('learner_profiles').update({nickname:state.name||'Little Star',class_level:STUDY_CLUB_CLASS_NAMES[state.grade]||'Nursery'}).eq('id',learnerId).eq('parent_id',user.id).select('id').maybeSingle();
+   if(error)throw error;if(!data)learnerId=null;
+  }
+  if(!learnerId){
+   const {data,error}=await db.from('learner_profiles').insert({parent_id:user.id,nickname:state.name||'Little Star',class_level:STUDY_CLUB_CLASS_NAMES[state.grade]||'Nursery'}).select('id').single();
+   if(error)throw error;learnerId=data.id;localStorage.setItem('studyClubCloudLearnerId',learnerId);
+  }
+  const {error:saveError}=await db.from('learning_progress').upsert({parent_id:user.id,learner_id:learnerId,progress:state,updated_at:new Date().toISOString()},{onConflict:'learner_id'});
+  if(saveError)throw saveError;
+ }catch(error){console.warn('Study Club cloud sync:',error);toast('Progress saved on this device. Cloud sync: '+cloudError(error))}
+}
+async function authSubmit(e){
+ e.preventDefault();$('authError').textContent='';
+ const email=$('authEmail').value.trim().toLowerCase(),password=$('authPassword').value;
+ if(!email||!password){$('authError').textContent='Enter your parent email and password.';return}
+ try{
+  const db=cloudReady();
+  if(authMode==='signup'){
+   if(password.length<8)throw new Error('Choose a password with at least 8 characters.');
+   if(password!==$('authConfirm').value)throw new Error('Your passwords do not match.');
+   const {data,error}=await db.auth.signUp({email,password,options:{data:{display_name:'Little Star'}}});
+   if(error)throw error;
+   if(!data.session){$('authError').textContent='Account created. Please confirm your email, then sign in. Your existing device data has not been deleted.';return}
+   session=data.session;isGuest=false;state={stars:0,done:[],grade:'nursery',name:'Little Star',storyIndex:0};
+   await cloudEnsureParent(session.user);await loadCloud();await enterApp(false);return;
+  }
+  const {data,error}=await db.auth.signInWithPassword({email,password});
+  if(error)throw error;
+  session=data.session;isGuest=false;
+  const local=JSON.parse(localStorage.getItem('studyClubProgress')||'null');
+  await cloudEnsureParent(session.user);
+  await loadCloud();
+  if(!state.done?.length&&local?.done?.length){state=local;await syncCloud()}
+  await enterApp(false);
+ }catch(error){$('authError').textContent=cloudError(error)}
+}
+async function signOut(){
+ try{if(studyClubSupabase)await studyClubSupabase.auth.signOut()}catch(error){console.warn(error)}
+ session=null;isGuest=false;localStorage.removeItem('studyClubCloudLearnerId');
+ $('appShell').classList.add('hide');$('bottomNav').style.display='none';$('loginScreen').classList.remove('hide');setAuthMode('login');toast('Signed out safely.')
+}
+async function adminSubmit(event){
+ event.preventDefault();$('adminAuthError').textContent='';
+ const email=$('adminEmail').value.trim().toLowerCase(),password=$('adminPassword').value;
+ try{
+  if(email!==STUDY_CLUB_OWNER_ADMIN_EMAIL)throw new Error('This email is not authorized for administrator access.');
+  const db=cloudReady(),{data,error}=await db.auth.signInWithPassword({email,password});
+  if(error)throw error;
+  if(!data.user?.email_confirmed_at)throw new Error('Please confirm the owner email before opening the admin dashboard.');
+  const {data:owner,error:ownerError}=await db.from('parent_profiles').select('id').eq('id',data.user.id).maybeSingle();
+  if(ownerError)throw ownerError;
+  session=data.session;isAdmin=true;
+  $('adminLoginScreen').classList.add('hide');$('loginScreen').classList.add('hide');$('appShell').classList.remove('hide');$('bottomNav').style.display='none';
+  $('adminAccountLabel').textContent='Verified owner · '+STUDY_CLUB_OWNER_ADMIN_EMAIL;
+  if(!owner)await cloudEnsureParent(data.user);
+  await renderAdminFeedback();showScreen('adminDashboard');
+ }catch(error){$('adminAuthError').textContent=cloudError(error)}
+}
+async function renderAdminFeedback(){
+ if(!isAdmin)return;
+ try{
+  const {data,error}=await cloudReady().from('study_club_feedback').select('*').order('created_at',{ascending:false});
+  if(error)throw error;
+  const entries=data||[];
+  $('adminFeedbackTotal').textContent=entries.length;
+  $('adminFeedbackNew').textContent=entries.filter(x=>!x.reviewed).length;
+  $('adminFeedbackAverage').textContent=entries.length?(entries.reduce((a,x)=>a+Number(x.rating||0),0)/entries.length).toFixed(1)+' / 5':'—';
+  const filter=$('adminFeedbackFilter').value,visible=entries.filter(x=>filter==='new'?!x.reviewed:filter==='reviewed'?x.reviewed:true);
+  $('adminFeedbackList').innerHTML=visible.length?visible.map(item=>'<article class="admin-feedback-item"><div class="admin-feedback-top"><span class="tag">'+escapeHTML(item.category||'General')+'</span><span class="tag">'+('⭐'.repeat(Math.max(0,Math.min(5,Number(item.rating)||0))))+'</span><span class="tiny">'+escapeHTML(new Date(item.created_at).toLocaleString())+'</span></div><p>'+escapeHTML(item.message||'')+'</p><div class="tiny">Learner: '+escapeHTML(item.learner_nickname||'Not provided')+' · Class: '+escapeHTML(item.learner_class||'—')+' · From: '+escapeHTML(item.submitter_label||'Parent')+'</div><div class="game-controls" style="justify-content:flex-start;margin-top:10px"><button class="mini-btn" onclick="toggleFeedbackReviewed(\''+item.id+'\')">'+(item.reviewed?'Mark as new':'Mark reviewed')+'</button><button class="mini-btn" onclick="deleteFeedbackEntry(\''+item.id+'\')">Delete</button></div></article>').join(''):'<div class="feedback-empty"><div style="font-size:42px">📭</div><b>No cloud feedback yet</b><p class="tiny">Feedback submitted by signed-in parents will appear here.</p></div>';
+ }catch(error){$('adminFeedbackList').textContent=cloudError(error)}
+}
+async function toggleFeedbackReviewed(id){
+ try{const {error}=await cloudReady().from('study_club_feedback').update({reviewed:true}).eq('id',id);if(error)throw error;await renderAdminFeedback()}catch(error){toast(cloudError(error))}
+}
+async function deleteFeedbackEntry(id){
+ if(!confirm('Delete this feedback entry from the cloud?'))return;
+ try{const {error}=await cloudReady().from('study_club_feedback').delete().eq('id',id);if(error)throw error;await renderAdminFeedback()}catch(error){toast(cloudError(error))}
+}
+async function submitFeedback(event){
+ if(event)event.preventDefault();
+ const message=$('feedbackMessage').value.trim();
+ if(!feedbackRating){toast('Please choose a star rating first ⭐');return}
+ if(!message){toast('Please write a little feedback 💛');$('feedbackMessage').focus();return}
+ if(!session?.user?.id){toast('Please sign in with a parent account to send feedback to the admin. Guest feedback stays on this device.');return}
+ try{
+  const {error}=await cloudReady().from('study_club_feedback').insert({parent_id:session.user.id,learner_nickname:state.name||'',learner_class:STUDY_CLUB_CLASS_NAMES[state.grade]||'Nursery',submitter_label:session.user.email||'Parent',rating:feedbackRating,category:$('feedbackType').value,message});
+  if(error)throw error;
+  $('feedbackForm').classList.add('hide');$('feedbackThanks').classList.remove('hide');say('Thank you for helping Study Club grow!');
+ }catch(error){toast('Feedback was not sent: '+cloudError(error))}
+}
+
 $('authForm').addEventListener('submit',authSubmit);
 $('soundToggle').onclick=()=>{sound=!sound;$('soundToggle').textContent=sound?'🔊 Sound':'🔇 Muted';if(!sound&&'speechSynthesis'in window)speechSynthesis.cancel()};
 $('profileBtn').onclick=()=>showScreen('parent');

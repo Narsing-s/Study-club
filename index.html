@@ -472,7 +472,7 @@ async function authSubmit(e){
   if(authMode==='signup'){
    if(password.length<8)throw new Error('Choose a password with at least 8 characters.');
    if(password!==$('authConfirm').value)throw new Error('Your passwords do not match.');
-   const {data,error}=await db.auth.signUp({email,password,options:{data:{display_name:'Little Star'}}});
+   const {data,error}=await db.auth.signUp({email,password,options:{data:{display_name:'Little Star'},emailRedirectTo:'https://narsing-s.github.io/Study-club/'}});
    if(error)throw error;
    if(!data.session){$('authError').textContent='Account created. Please confirm your email, then sign in. Your existing device data has not been deleted.';return}
    session=data.session;isGuest=false;state={stars:0,done:[],grade:'nursery',name:'Little Star',storyIndex:0};

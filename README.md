@@ -57,3 +57,13 @@ The current curriculum is an expandable early-learning foundation for Nursery th
 - Added more motion polish across the hero, cards, buttons and answer choices, while respecting the device's reduced-motion accessibility preference.
 - Cached answer-choice sets for challenge mode so long rounds avoid rebuilding the full answer list on every question.
 - The questions are procedurally varied practice prompts, not 40,000 individually authored or officially syllabus-verified items. The supported class list remains Nursery, LKG, UKG and Class 1.
+
+
+## Local administrator feedback inbox and maintenance
+- Added a separate Admin login entry from the sign-in page and the grown-ups area.
+- First-time admin setup creates a password-hashed admin credential in the current browser; later visits require that local admin email and password.
+- Admin dashboard includes feedback totals, average rating, new/reviewed filters, mark-reviewed controls, deletion and CSV export.
+- Feedback records include the learner class, learner nickname, submitter label and timestamp. Up to 500 recent submissions are retained locally.
+- Fixed guest progress persistence so guest activity is saved back to the guest-specific local profile.
+- Added extra age-appropriate UKG and Class 1 questions covering patterns, shapes, place value, time, money and measurement.
+- **Important security/data limitation:** this is still a static GitHub Pages app. Admin credentials and feedback are local to one browser and are not secure server-side authentication or shared cloud storage. Feedback from other devices will not reach this inbox until a protected backend/database is configured.

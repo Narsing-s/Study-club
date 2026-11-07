@@ -359,6 +359,7 @@ async function signOut(){session=null;isGuest=false;$('appShell').classList.add(
 function showScreen(id){
  const target=$(id);if(!target){toast('This section is not available yet.');return}
  if(id!=='game'&&quizAdvanceTimer){clearTimeout(quizAdvanceTimer);quizAdvanceTimer=null}
+  if(id!=='voiceLearning'&&'speechSynthesis'in window)window.speechSynthesis.cancel();
  document.querySelectorAll('.screen').forEach(screen=>screen.classList.remove('active'));
  target.classList.add('active');
  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.screen===id));
@@ -803,6 +804,7 @@ const voiceTeluguConsonants=[
 ];
 let voiceLearningMode='english',voiceSelectedIndex=0,voiceNumberStart=1;
 function openVoiceLearning(mode){
+ if('speechSynthesis'in window)window.speechSynthesis.cancel();
  voiceLearningMode=['english','telugu','numbers'].includes(mode)?mode:'english';
  voiceSelectedIndex=0;renderVoiceLearning();showScreen('voiceLearning');
 }
@@ -833,21 +835,22 @@ function voiceNumberWords(value){
  return parts.join(' ')||'zero';
 }
 function playVoiceLetter(index){
+ if('speechSynthesis'in window)window.speechSynthesis.cancel();
  voiceSelectedIndex=index;
  const item=voiceLearningMode==='english'?voiceEnglishLetters[index]:[...voiceTeluguVowels,...voiceTeluguConsonants][index];
  if(!item)return;
- const spoken=voiceLearningMode==='english'?item[0]+'. '+item[1]+'. Sound '+item[2]:item[0]+'. '+item[1]+'. '+item[2];
+ const spoken=voiceLearningMode==='english'?item[0]+'. '+item[1]:item[0]+'. '+item[1]+'. '+item[2];
  speakVoiceLearning(spoken,voiceLearningMode==='english'?'en-IN':'te-IN');
  renderVoiceLearning();
 }
 function playVoiceSequence(){
- if(voiceLearningMode==='numbers'){const values=Array.from({length:20},(_,i)=>voiceNumberStart+i);speakVoiceLearning(values.map(n=>n+'. '+voiceNumberWords(n)).join('. '),'en-IN');return}
+ if(voiceLearningMode==='numbers'){const values=Array.from({length:20},(_,i)=>voiceNumberStart+i);speakVoiceLearning(values.map(n=>voiceNumberWords(n)).join('. '),'en-IN');return}
  if(voiceLearningMode==='english'){speakVoiceLearning(voiceEnglishLetters.map(item=>item[0]+', '+item[1]).join('. '),'en-IN');return}
  speakVoiceLearning([...voiceTeluguVowels,...voiceTeluguConsonants].map(item=>item[0]+', '+item[1]).join('. '),'te-IN');
 }
 function playVoiceNumber(number){
  const value=Number(number);if(!Number.isSafeInteger(value)||value<0){toast('Choose a valid whole number.');return}
- speakVoiceLearning(value+'. '+voiceNumberWords(value),'en-IN');
+ speakVoiceLearning(voiceNumberWords(value),'en-IN');
 }
 function shiftVoiceNumbers(amount){
  const next=voiceNumberStart+amount;
@@ -862,11 +865,12 @@ function goToVoiceNumber(){
 function renderVoiceLearning(){
  const title=$('voiceTitle'),description=$('voiceDescription'),mascot=$('voiceMascot'),content=$('voiceContent'),playAll=$('voicePlayAll'),help=$('voiceHelp');
  if(!title||!content)return;
+ const voiceTabs=document.querySelector('.voice-tabs');if(voiceTabs)voiceTabs.classList.add('hide');
  document.querySelectorAll('.voice-tabs button').forEach((button,index)=>button.classList.toggle('active',['english','telugu','numbers'][index]===voiceLearningMode));
  if(voiceLearningMode==='english'){
   const selected=voiceEnglishLetters[voiceSelectedIndex]||voiceEnglishLetters[0];
-  title.textContent='English alphabet A–Z';description.textContent='Tap a letter to hear its name, example word and phonics sound.';mascot.textContent='🔤';playAll.textContent='🔊 Hear A to Z';help.textContent='26 letters · Tap any tile to listen';
-  content.innerHTML='<div class="voice-selected"><div><div class="tiny">LETTER OF THE MOMENT</div><strong class="voice-big">'+selected[0]+'</strong><div>'+selected[1]+' · '+selected[2]+'</div></div><button class="primary" onclick="playVoiceLetter('+voiceSelectedIndex+')">🔊 Listen</button></div><div class="voice-grid">'+voiceEnglishLetters.map((item,index)=>'<button class="voice-tile" type="button" onclick="playVoiceLetter('+index+')"><span class="voice-glyph">'+item[0]+'</span><span class="voice-word">'+item[1]+'</span><span class="voice-hint">'+item[2]+'</span></button>').join('')+'</div>';
+  title.textContent='English alphabet A–Z';description.textContent='Tap a letter to hear its name and example word.';mascot.textContent='🔤';playAll.textContent='🔊 Hear A to Z';help.textContent='26 letters · Tap any tile to listen';
+  content.innerHTML='<div class="voice-selected"><div><div class="tiny">LETTER OF THE MOMENT</div><strong class="voice-big">'+selected[0]+'</strong><div>'+selected[1]+'</div></div><button class="primary" onclick="playVoiceLetter('+voiceSelectedIndex+')">🔊 Listen</button></div><div class="voice-grid">'+voiceEnglishLetters.map((item,index)=>'<button class="voice-tile" type="button" onclick="playVoiceLetter('+index+')"><span class="voice-glyph">'+item[0]+'</span><span class="voice-word">'+item[1]+'</span></button>').join('')+'</div>'
  }else if(voiceLearningMode==='telugu'){
   const all=[...voiceTeluguVowels,...voiceTeluguConsonants],selected=all[voiceSelectedIndex]||all[0];
   const makeTiles=(items,offset)=>items.map((item,index)=>'<button class="voice-tile" type="button" onclick="playVoiceLetter('+(offset+index)+')"><span class="voice-glyph">'+item[0]+'</span><span class="voice-word">'+item[1]+'</span><span class="voice-hint">'+item[2]+'</span></button>').join('');

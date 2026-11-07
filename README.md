@@ -3,7 +3,7 @@
 A colourful, animated, mobile-first learning web app and installable PWA for Nursery, LKG, UKG and Class 1.
 
 ## Included
-- Parent account creation and sign-in without Supabase or any backend.
+- Parent account creation and sign-in through Supabase Auth, plus a guest mode for trying the app.
 - Passwords are salted and hashed in the browser using PBKDF2; password recovery uses the parent recovery code created during sign-up.
 - Guest mode for trying the app without an account.
 - Four early-learning levels and fourteen learning areas: English phonics, numbers and maths, colours and shapes, animals, first words, nature and science, rhymes and stories, brain games, Telugu letters and words, general knowledge, body and health, safety, transport, and everyday maths.
@@ -11,7 +11,7 @@ A colourful, animated, mobile-first learning web app and installable PWA for Nur
 - Searchable subject catalogue, animated screen/card transitions, install-app prompt when supported by the browser, and a learner-friendly quiz flow that advances after feedback, with an optional early Next button.
 - Lesson completion tracking with one-time stars, finger/mouse letter tracing and short value-based stories.
 - Parent area for learner nickname, class and progress.
-- Animated feedback screen with 1–5 star rating, feedback categories, message form and thank-you state. Feedback is stored locally on the current device only; it is not transmitted to the developers.
+- Animated feedback screen with 1–5 star rating, feedback categories, message form and thank-you state. Signed-in feedback is sent to the protected Supabase feedback inbox.
 - Responsive mobile/desktop layout, reduced-motion support, installable PWA shell and basic offline app-shell caching.
 
 ## Parent login and privacy

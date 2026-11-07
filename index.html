@@ -15,7 +15,7 @@
 @keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}@keyframes twinkle{0%,100%{transform:scale(.7) rotate(0);opacity:.5}50%{transform:scale(1.2) rotate(25deg);opacity:1}}@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}@keyframes wiggle{0%,90%,100%{transform:rotate(0)}93%{transform:rotate(-9deg)}97%{transform:rotate(9deg)}}@keyframes flame{50%{transform:scale(1.12) rotate(5deg)}}@media(max-width:760px){.app{padding:12px 14px 100px}.hero{padding:22px 19px;min-height:185px}.hero-art{font-size:74px}.grades,.subjects{grid-template-columns:repeat(2,1fr)}.activities{grid-template-columns:1fr}.lesson-grid{grid-template-columns:repeat(2,1fr)}.brand{font-size:22px}.top-actions .icon-btn{padding:9px 10px}}@media(max-width:390px){.hero-art{font-size:58px}.hero h1{font-size:31px}.lesson-card{padding:13px}.lesson-card .pic{font-size:42px}.login-card{padding:22px}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 .screen.active{animation:screenEnter .38s cubic-bezier(.2,.8,.2,1)}@keyframes screenEnter{from{opacity:.35;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}.feedback-hero{background:linear-gradient(120deg,#ffe4ef,#e8e4ff 58%,#e0f6ff)}.feedback-card,.feedback-thanks{background:#fff;border-radius:26px;padding:clamp(18px,4vw,30px);box-shadow:var(--shadow);max-width:720px;margin:0 auto;text-align:left;animation:cardIn .45s both}.feedback-card h3,.feedback-thanks h2{font:800 25px 'Baloo 2';margin:0}.feedback-sub{color:var(--muted);font-weight:700;margin:5px 0 12px}.rating-stars{display:flex;gap:8px;justify-content:center;padding:8px 0 22px}.rating-star{background:#f5f1fa;color:#d1cbdc;border-radius:15px;width:52px;height:52px;font-size:34px;transition:transform .18s,background .18s,color .18s}.rating-star.selected{color:#f4ae27;background:#fff4d5;transform:translateY(-4px) rotate(-5deg);animation:twinkle .35s}.feedback-label{display:block;font-weight:900;font-size:14px;margin:13px 0 6px}.feedback-input{display:block;width:100%;border:2px solid #eeeaf3;border-radius:14px;padding:13px;background:#fff;color:var(--ink);font:700 15px Nunito,system-ui,sans-serif}.feedback-textarea{min-height:130px;resize:vertical}.feedback-count{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12px;font-weight:800;margin:7px 2px 16px}.feedback-submit{width:100%;justify-content:center}.feedback-privacy{font-size:11px;color:var(--muted);text-align:center;margin:12px 0 0}.feedback-thanks{text-align:center;padding:35px 20px}.thanks-art{font-size:76px;animation:float 2.2s infinite}.feedback-thanks p{color:var(--muted);font-weight:800}.feedback-thanks .mini-btn{margin-left:8px}@media(max-width:520px){.bottom-nav{gap:2px;justify-content:space-around}.nav-btn{min-width:0;font-size:10px}.nav-btn span{font-size:19px}.rating-star{width:46px;height:48px;font-size:30px}}@media(prefers-reduced-motion:reduce){.screen.active,.rating-star.selected,.thanks-art{animation:none!important}}@keyframes quizPop{0%{opacity:0;transform:translateY(18px) scale(.94)}65%{transform:translateY(-3px) scale(1.02)}100%{opacity:1;transform:translateY(0) scale(1)}}.quiz-picture{font-size:clamp(68px,13vw,100px);margin:16px auto;animation:quizPop .55s cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 10px 12px #6d5bc522)}.quiz-progress{height:9px;background:#eeeaf8;border-radius:99px;overflow:hidden;margin:12px auto 20px;max-width:440px}.quiz-progress span{display:block;height:100%;background:linear-gradient(90deg,#ffbd59,#ff7da7,#8d83f6);border-radius:inherit;transition:width .45s ease}.auto-next-hint{display:block;margin-top:8px;color:#796c9d;animation:fade .3s ease}.choice{transition:transform .18s ease,box-shadow .18s ease,background .18s ease}.choice:not(:disabled):hover{transform:translateY(-3px) scale(1.025);box-shadow:0 8px 20px #51408c22}.choice:disabled{opacity:.82}.choice.correct{animation:quizPop .35s ease}@media(prefers-reduced-motion:reduce){.quiz-picture,.choice.correct{animation:none!important}}\n/* study-club-advanced-controls */
 .subject-search{animation:cardIn .35s both}.subject-search input::-webkit-search-cancel-button{cursor:pointer}
-</style>
+.quiz-review{max-width:560px;margin:18px auto;text-align:left;background:#fff8e8;border-radius:16px;padding:13px 16px}.quiz-review summary{font-weight:900;cursor:pointer}.quiz-review-list p{padding:10px 0;border-bottom:1px solid #eee5d8;margin:0}.confetti-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none}.game-box{position:relative;overflow:hidden}.confetti-layer span{position:absolute;top:-12%;left:calc(var(--i)*5%);font-size:22px;color:#f0a84a;animation:confettiDrop 1.9s ease-in calc(var(--i)*.035s) both}.confetti-layer span:nth-child(3n){color:#e77fa6}.confetti-layer span:nth-child(3n + 1){color:#8b83d9}@keyframes confettiDrop{to{transform:translateY(520px) rotate(540deg);opacity:0}}@media(prefers-reduced-motion:reduce){.confetti-layer{display:none!important}}</style>
 </head>
 <body>
 <div id="loginScreen" class="login-wrap"><div class="login-card"><div class="login-logo">🦊🌈</div><h1>Welcome to Study Club!</h1><p>A happy place to learn, play and shine ✨</p><div class="tabs"><button id="loginTab" class="active" onclick="setAuthMode('login')">Sign in</button><button id="signupTab" onclick="setAuthMode('signup')">Create account</button></div><form id="authForm"><label class="field"><span>Parent email</span><input id="authEmail" type="email" autocomplete="email" placeholder="parent@example.com" required></label><label class="field"><span>Password</span><input id="authPassword" type="password" minlength="8" autocomplete="current-password" placeholder="At least 8 characters" required></label><label id="confirmField" class="field hide"><span>Confirm password</span><input id="authConfirm" type="password" minlength="8" autocomplete="new-password" placeholder="Type password again"></label><label id="recoveryField" class="field hide"><span>Parent recovery code</span><input id="authRecovery" type="password" minlength="6" placeholder="Create a recovery code (6+ characters)"></label><button class="login-submit" id="authSubmit" type="submit">Sign in and start learning 🚀</button><div class="error" id="authError" role="status"></div></form><div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap"><button class="link-btn" onclick="resetPassword()">Forgot password?</button><button class="link-btn" onclick="continueGuest()">Explore as guest</button></div><div class="login-note">A parent or guardian should create and manage the account. Children should use their learner profile with an adult's help. Guest progress stays on this device.</div></div></div>
@@ -102,7 +102,16 @@ async function enterApp(loadRemote){$('loginScreen').classList.add('hide');$('ap
 async function syncCloud(){const key=isGuest?'studyClubGuestProgress':session?'studyClubProgress:'+session.user.email:'studyClubProgress';localStorage.setItem(key,JSON.stringify(state));if(session){const accounts=JSON.parse(localStorage.getItem('studyClubAccounts')||'{}');if(accounts[session.user.email]){accounts[session.user.email].progress=state;localStorage.setItem('studyClubAccounts',JSON.stringify(accounts))}}}
 async function loadCloud(){}
 async function signOut(){session=null;isGuest=false;$('appShell').classList.add('hide');$('bottomNav').style.display='none';$('loginScreen').classList.remove('hide');setAuthMode('login');toast('Signed out safely.')}
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.screen===id));if(id==='progress')renderHistory();if(id==='parent'){$('nickname').value=state.name;$('parentGrade').value=state.grade;$('parentStats').textContent=state.done.length+' activities completed · '+state.stars+' stars'}window.scrollTo({top:0,behavior:'smooth'})}
+function showScreen(id){
+ const target=$(id);if(!target){toast('This section is not available yet.');return}
+ if(id!=='game'&&quizAdvanceTimer){clearTimeout(quizAdvanceTimer);quizAdvanceTimer=null}
+ document.querySelectorAll('.screen').forEach(screen=>screen.classList.remove('active'));
+ target.classList.add('active');
+ document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.screen===id));
+ if(id==='progress')renderHistory();
+ if(id==='parent'){$('nickname').value=state.name;$('parentGrade').value=state.grade;$('parentStats').textContent=state.done.length+' activities completed · '+state.stars+' stars'}
+ window.scrollTo({top:0,behavior:'smooth'});
+}
 function gradeHTML(){return grades.map(g=>'<button class="grade '+g.color+(state.grade===g.id?' active':'')+'" onclick="chooseGrade(\''+g.id+'\')"><span class="emoji">'+g.emoji+'</span><b>'+g.name+'</b><small>'+g.age+'</small></button>').join('')}
 function renderGrades(){$('gradeCards').innerHTML=gradeHTML();$('gradeCards2').innerHTML=gradeHTML()}
 function chooseGrade(id){state.grade=id;save();renderGrades();renderSubjects();toast('Wonderful! '+grades.find(g=>g.id===id).name+' selected 🎉');showScreen('home');setTimeout(()=>{let section=$('subjectCards');if(section)section.scrollIntoView({behavior:'smooth',block:'start'})},120)}
@@ -111,65 +120,73 @@ function filterSubjects(value){renderSubjects(value.trim())}
 function clearSubjectSearch(){const input=$('subjectSearch');if(input)input.value='';renderSubjects('')}
 function itemsForGrade(id){const limits={nursery:5,lkg:8,ukg:12,class1:99};const letterLimits={nursery:5,lkg:10,ukg:20,class1:26};const source=content[id]||[];return source.slice(0,id==='letters'?letterLimits[state.grade]:limits[state.grade]);}
 function openSubject(id){currentSubject=id;let s=subjects.find(x=>x.id===id);$('subjectTitle').textContent=s.name;$('subjectDesc').textContent=s.desc;$('levelLabel').textContent=grades.find(g=>g.id===state.grade).name+' • '+state.name;let items=itemsForGrade(id);$('lessonCards').innerHTML=items.map((it,i)=>'<article class="lesson-card"><span class="pic">'+it[0]+'</span><b>'+it[1]+'</b><small>'+it[2]+'</small><button class="play" onclick="learnItem('+i+')">▶ Learn</button></article>').join('')+'<article class="lesson-card" style="background:#fff5d9"><span class="pic">🎯</span><b>Quick quiz</b><small>Show what you know!</small><button class="play" onclick="startQuiz()">Play quiz</button></article>'+(id==='letters'?'<article class="lesson-card" style="background:#e8f6ff"><span class="pic">✍️</span><b>Trace letters</b><small>Practise with your finger</small><button class="play" onclick="openTrace()">Start tracing</button></article>':'')+(id==='rhymes'?'<article class="lesson-card" style="background:#f1eaff"><span class="pic">📖</span><b>Story corner</b><small>Listen and learn values</small><button class="play" onclick="openStory()">Read story</button></article>':'');showScreen('subjects')}
-function learnItem(i){let item=content[currentSubject][i],speech=item[1]+'. '+(item[2]||'');$('gameBox').innerHTML='<div class="eyebrow">LET\'S LEARN</div><div style="font-size:100px;margin:12px;animation:float 2s infinite">'+item[0]+'</div><h2>'+item[1]+'</h2><p style="font-size:20px">'+(item[2]||'Say it with me!')+'</p><div class="game-controls"><button class="primary" onclick="say('+JSON.stringify(speech).replace(/</g,'\\u003c')+')">🔊 Listen again</button><button class="mini-btn" onclick="showScreen(\'subjects\')">More to learn</button></div>';showScreen('game');say(speech)}
+function learnItem(i){
+ const item=itemsForGrade(currentSubject)[i];if(!item){toast('This lesson is not available for this class yet.');return}
+ const speech=item[1]+'. '+(item[2]||'');
+ $('gameBox').innerHTML='<div class="eyebrow">LET\'S LEARN</div><div style="font-size:100px;margin:12px;animation:float 2s infinite">'+escapeHTML(item[0])+'</div><h2>'+escapeHTML(item[1])+'</h2><p style="font-size:20px">'+escapeHTML(item[2]||'Say it with me!')+'</p><div class="game-controls"><button class="primary" onclick="say('+JSON.stringify(speech).replace(/</g,'\\u003c')+')">🔊 Listen again</button><button class="mini-btn" onclick="openSubject(currentSubject)">More to learn</button></div>';
+ showScreen('game');say(speech);
+}
 function shuffleQuiz(list){const copy=[...list];for(let i=copy.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]]}return copy}
-let quizAnswered=false,quizAdvanceTimer=null,quizRoundId=0;
+let quizAnswered=false,quizAdvanceTimer=null,quizRoundId=0,quizFinishedRound=0,quizMissed=[];
 function startQuiz(){
  if(quizAdvanceTimer){clearTimeout(quizAdvanceTimer);quizAdvanceTimer=null}
  const all=itemsForGrade(currentSubject);
  const unique=all.filter((item,i)=>all.findIndex(x=>x[1]===item[1]&&x[0]===item[0])===i);
  if(!unique.length){toast('No quiz questions are available for this lesson yet.');return}
- quizRoundId++;
+ quizRoundId++;quizFinishedRound=0;quizMissed=[];
  quizItems=shuffleQuiz(unique.flatMap(item=>[{item,mode:'picture'},{item,mode:'clue'}]));
  quizIndex=0;quizScore=0;quizAnswered=false;renderQuestion();showScreen('game');
 }
+function escapeHTML(value){return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
 function renderQuestion(){
  quizAnswered=false;
- const question=quizItems[quizIndex],item=question.item,correct=item[1];
+ const question=quizItems[quizIndex];if(!question){finishQuiz();return}
+ const item=question.item,correct=item[1];
  const subjectNames=[...new Set(itemsForGrade(currentSubject).map(x=>x[1]).filter(Boolean))];
  const distractors=shuffleQuiz(subjectNames.filter(name=>name!==correct)).slice(0,3);
  const choices=shuffleQuiz([...new Set([correct,...distractors])]);
  const prompt=question.mode==='picture'?'Look at the picture. What is it?':(item[2]?'Which one matches this clue: '+item[2]:'Choose the correct name.');
- $('gameBox').innerHTML='<div class="pill">Question '+(quizIndex+1)+' of '+quizItems.length+'</div><div class="quiz-progress"><span style="width:'+(quizIndex/quizItems.length*100)+'%"></span></div><div class="game-prompt">'+prompt+'</div><div class="quiz-picture" aria-label="Question picture">'+(question.mode==='picture'?item[0]:'💡')+'</div><div class="choice-grid">'+choices.map(c=>'<button class="choice" onclick="answer(this,'+JSON.stringify(c).replace(/</g,'\\u003c')+','+JSON.stringify(correct).replace(/</g,'\\u003c')+')">'+c+'</button>').join('')+'</div><div class="feedback" id="feedback" aria-live="polite"></div><div class="game-controls"><button class="primary" id="nextBtn" style="display:none" onclick="nextQuestion()">Next question ➜</button></div>';
+ $('gameBox').innerHTML='<div class="pill">Question '+(quizIndex+1)+' of '+quizItems.length+'</div><div class="quiz-progress" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="'+quizItems.length+'" aria-valuenow="'+(quizIndex+1)+'"><span style="width:'+((quizIndex+1)/quizItems.length*100)+'%"></span></div><div class="game-prompt">'+escapeHTML(prompt)+'</div><div class="quiz-picture" aria-label="Question picture">'+(question.mode==='picture'?escapeHTML(item[0]):'💡')+'</div><div class="choice-grid">'+choices.map(c=>'<button type="button" class="choice" onclick="answer(this)">'+escapeHTML(c)+'</button>').join('')+'</div><div class="feedback" id="feedback" aria-live="polite"></div><div class="game-controls"><button type="button" class="primary" id="nextBtn" style="display:none" onclick="nextQuestion()">Next question ➜</button></div>';
 }
-function answer(btn,choice,correct){
- if(quizAnswered||!btn||btn.disabled)return;
+function answer(btn){
+ if(quizAnswered||!btn||btn.disabled||!quizItems[quizIndex])return;
  quizAnswered=true;
- const ok=choice===correct;
+ const choice=btn.textContent.trim(),correct=quizItems[quizIndex].item[1],ok=choice===correct;
  btn.classList.add(ok?'correct':'wrong');
  $('feedback').textContent=ok?'🌟 Amazing! That is right!':'💛 Good try! The answer is '+correct;
- if(ok){quizScore++;say('Amazing! Correct!')}else say('Good try. '+correct);
+ if(ok){quizScore++;say('Amazing! Correct!')}else{quizMissed.push({question:quizItems[quizIndex].item[1],selected:choice,correct});say('Good try. '+correct)}
  document.querySelectorAll('#gameBox .choice').forEach(b=>{b.disabled=true;b.classList.add('answered');if(b.textContent.trim()===correct)b.classList.add('correct')});
- const next=$('nextBtn');
- if(next){next.textContent=quizIndex===quizItems.length-1?'Show my score 🏆':'Next question now ➜';next.style.display='inline-block'}
- // Automatically continue after feedback; the child can also tap Next now.
- const thisRound=quizRoundId;
- if(quizAdvanceTimer)clearTimeout(quizAdvanceTimer);
- quizAdvanceTimer=setTimeout(()=>{if(thisRound===quizRoundId&&quizAnswered)nextQuestion()},1200);
+ const next=$('nextBtn');if(next){next.textContent=quizIndex===quizItems.length-1?'Show my score 🏆':'Next question now ➜';next.style.display='inline-block'}
+ const round=quizRoundId;if(quizAdvanceTimer)clearTimeout(quizAdvanceTimer);
+ quizAdvanceTimer=setTimeout(()=>{quizAdvanceTimer=null;if(round===quizRoundId&&quizAnswered)nextQuestion()},1400);
 }
 function nextQuestion(){
- if(!quizAnswered)return;
+ if(!quizAnswered||!quizItems.length)return;
  if(quizAdvanceTimer){clearTimeout(quizAdvanceTimer);quizAdvanceTimer=null}
- quizAnswered=false;
- quizIndex++;
+ quizAnswered=false;quizIndex++;
  if(quizIndex<quizItems.length){renderQuestion();return}
  finishQuiz();
 }
 function finishQuiz(){
+ if(!quizItems.length||quizFinishedRound===quizRoundId)return;
+ quizFinishedRound=quizRoundId;
  const total=quizItems.length,earned=quizScore*2,percent=Math.round(quizScore/total*100);
- state.stars+=earned;
- state.done.push({key:currentSubject+'-'+Date.now(),subject:subjects.find(s=>s.id===currentSubject).name,score:quizScore,total,grade:state.grade,date:new Date().toISOString()});
+ state.stars+=earned;state.done??=[];
+ state.done.push({key:currentSubject+'-'+Date.now(),type:'quiz',subject:subjects.find(s=>s.id===currentSubject)?.name||currentSubject,score:quizScore,total,percent,grade:state.grade,date:new Date().toISOString()});
  save();
- $('gameBox').innerHTML='<div class="quiz-result" style="animation:cardIn .5s both;text-align:center;padding:12px"><div style="font-size:96px;animation:float 2s infinite">🏆</div><div class="pill">QUIZ COMPLETED</div><h2>Your score</h2><div style="font-size:54px;font-weight:1000;color:var(--purple)">'+quizScore+' / '+total+'</div><p style="font-size:23px;font-weight:900">'+percent+'% correct</p><div class="quiz-progress"><span style="width:100%"></span></div><h2>⭐ +'+earned+' stars</h2><p>'+(percent>=80?'Amazing work! You are a superstar!':percent>=50?'Great effort! Keep practising!':'Good try! Practise again and you will improve!')+'</p><div class="game-controls"><button class="primary" onclick="startQuiz()">Play again 🔁</button><button class="mini-btn" onclick="openSubject(currentSubject)">Back to lessons</button><button class="mini-btn" onclick="showScreen(\'progress\')">View my progress ⭐</button></div></div>';
+ const review=quizMissed.length?'<details class="quiz-review"><summary>Review '+quizMissed.length+' question'+(quizMissed.length===1?'':'s')+' to practise again</summary><div class="quiz-review-list">'+quizMissed.map(m=>'<p><b>'+escapeHTML(m.question)+'</b><br><span class="tiny">Your answer: '+escapeHTML(m.selected)+'</span><br><span class="tiny">Correct answer: '+escapeHTML(m.correct)+'</span></p>').join('')+'</div></details>':'<p class="tiny">Perfect round! You got every question right. 🌟</p>';
+ const confetti=Array.from({length:20},(_,i)=>'<span style="--i:'+i+'">✦</span>').join('');
+ $('gameBox').innerHTML='<div class="confetti-layer" aria-hidden="true">'+confetti+'</div><div class="quiz-result" style="animation:cardIn .5s both;text-align:center;padding:12px"><div style="font-size:96px;animation:float 2s infinite">🏆</div><div class="pill">QUIZ COMPLETED</div><h2>Your score</h2><div style="font-size:54px;font-weight:1000;color:var(--purple)">'+quizScore+' / '+total+'</div><p style="font-size:23px;font-weight:900">'+percent+'% correct</p><div class="quiz-progress"><span style="width:100%"></span></div><h2>⭐ +'+earned+' stars</h2><p>'+(percent>=80?'Amazing work! You are a superstar!':percent>=50?'Great effort! Keep practising!':'Good try! Practise again and you will improve!')+'</p>'+review+'<div class="game-controls"><button class="primary" onclick="startQuiz()">Play again 🔁</button><button class="mini-btn" onclick="openSubject(currentSubject)">Back to lessons</button><button class="mini-btn" onclick="showScreen(\'progress\')">View my progress ⭐</button></div></div>';
  say('Quiz complete! You scored '+quizScore+' out of '+total+'. You earned '+earned+' stars!');
 }
-let feedbackRating=0;
 function setFeedbackRating(value){feedbackRating=value;document.querySelectorAll('.rating-star').forEach(btn=>{const active=Number(btn.dataset.rating)<=value;btn.classList.toggle('selected',active);btn.setAttribute('aria-pressed',String(Number(btn.dataset.rating)===value))});}
 function updateFeedbackCount(){$('feedbackCharCount').textContent=$('feedbackMessage').value.length+' / 1000';}
 function submitFeedback(event){if(event)event.preventDefault();const message=$('feedbackMessage').value.trim();if(!feedbackRating){toast('Please choose a star rating first ⭐');return}if(!message){toast('Please write a little feedback 💛');$('feedbackMessage').focus();return}const entries=JSON.parse(localStorage.getItem('studyClubFeedback')||'[]');entries.push({rating:feedbackRating,type:$('feedbackType').value,message,grade:state.grade,learner:state.name,createdAt:new Date().toISOString()});localStorage.setItem('studyClubFeedback',JSON.stringify(entries.slice(-50)));$('feedbackForm').classList.add('hide');$('feedbackThanks').classList.remove('hide');say('Thank you for helping Study Club grow!');}
 function resetFeedbackForm(){$('feedbackForm').reset();$('feedbackForm').classList.remove('hide');$('feedbackThanks').classList.add('hide');feedbackRating=0;setFeedbackRating(0);updateFeedbackCount();}
 function updateProgress(){let n=state.done.length;$('progressText').textContent=n+' activities completed · Keep going!';$('progressFill').style.width=Math.min(100,n*7)+'%';$('starCount').textContent='⭐ '+state.stars;$('achieveCount').textContent=state.stars+' stars collected';$('progressFill2').style.width=Math.min(100,state.stars/2)+'%';$('streakTitle').textContent=n?'You are a learning star!':'Your adventure starts today!'}
-function renderHistory(){$('historyGrid').innerHTML=state.done.length?state.done.slice().reverse().map(d=>'<article class="lesson-card"><span class="pic">🌟</span><b>'+d.subject+'</b><small>'+d.score+'/'+d.total+' correct · '+(d.grade||'')+'</small></article>').join(''):'<div class="daily" style="grid-column:1/-1"><h3>Your adventure is waiting!</h3><p>Finish a mini quiz to see your achievements here.</p></div>'}
+function renderHistory(){
+ $('historyGrid').innerHTML=state.done.length?state.done.slice().reverse().map(d=>'<article class="lesson-card"><span class="pic">'+(d.type==='lesson'?'📘':'🌟')+'</span><b>'+escapeHTML(d.subject||'Learning activity')+'</b><small>'+(d.type==='lesson'?'Lesson completed · +1 star':(d.score+'/'+d.total+' correct · '+(d.percent??Math.round(d.score/d.total*100))+'%'))+' · '+escapeHTML(d.grade||'')+'</small></article>').join(''):'<div class="daily" style="grid-column:1/-1"><h3>Your adventure is waiting!</h3><p>Finish a mini quiz to see your achievements here.</p></div>';
+}
 function saveName(){let v=$('nickname').value.trim();if(v){state.name=v;save();$('welcomeLine').textContent='Welcome, '+v+'! Ready for a little adventure?';toast('Name saved! Hello, '+v+' 💛')}}
 function saveGrade(){state.grade=$('parentGrade').value;save();renderGrades();toast('Learning class updated!')}
 function openTrace(){traceLetter=0;showScreen('trace');drawTrace()}

@@ -145,17 +145,7 @@ async function resetPassword(){
  }catch(err){$('authError').textContent=err.message||'Password reset failed.'}
 }
 function continueGuest(){isGuest=true;session=null;state=JSON.parse(localStorage.getItem('studyClubGuestProgress')||'{}');state.stars??=0;state.done??=[];state.grade??='nursery';state.name??='Little Star';enterApp(false)}
-async function enterApp(loadRemote){$('loginScreen').classList.add('hide');$('appShell').classList.remove('hide');$('bottomNav').style.display='flex';if(loadRemote&&session)await loadCloud();$('accountLabel').textContent=session?'Signed in: '+session.user.email:'Guest mode · This device only';$('welcomeLine').textContent='Welcome, '+state.name+'! Choose your class to begin exploring.';// Restore a valid cloud session after refresh without changing guest/local progress.
-if(studyClubSupabase){
- studyClubSupabase.auth.getSession().then(async({data,error})=>{
-  if(error||!data?.session)return;
-  session=data.session;isGuest=false;
-  state=JSON.parse(localStorage.getItem('studyClubProgress:'+session.user.email)||'null')||{stars:0,done:[],grade:'nursery',name:'Little Star',storyIndex:0};
-  try{await loadCloud();await enterApp(false)}
-  catch(err){console.warn('Cloud session restore:',err);toast('Signed in, but cloud data could not load: '+cloudError(err))}
- }).catch(error=>console.warn('Supabase session restore failed:',error));
-}
-renderGrades();renderSubjects();updateProgress();showScreen('grades')}
+async function enterApp(loadRemote){$('loginScreen').classList.add('hide');$('appShell').classList.remove('hide');$('bottomNav').style.display='flex';if(loadRemote&&session)await loadCloud();$('accountLabel').textContent=session?'Signed in: '+session.user.email:'Guest mode · This device only';$('welcomeLine').textContent='Welcome, '+state.name+'! Choose your class to begin exploring.';renderGrades();renderSubjects();updateProgress();showScreen('grades')}
 async function syncCloud(){const key=isGuest?'studyClubGuestProgress':session?'studyClubProgress:'+session.user.email:'studyClubProgress';localStorage.setItem(key,JSON.stringify(state));if(session){const accounts=JSON.parse(localStorage.getItem('studyClubAccounts')||'{}');if(accounts[session.user.email]){accounts[session.user.email].progress=state;localStorage.setItem('studyClubAccounts',JSON.stringify(accounts))}}}
 async function loadCloud(){}
 async function signOut(){session=null;isGuest=false;$('appShell').classList.add('hide');$('bottomNav').style.display='none';$('loginScreen').classList.remove('hide');setAuthMode('login');toast('Signed out safely.')}
@@ -501,6 +491,18 @@ async function authSubmit(e){
   await enterApp(false);
  }catch(error){$('authError').textContent=cloudError(error)}
 }
+async function restoreCloudSession(){
+ if(!studyClubSupabase)return;
+ try{
+  const {data,error}=await studyClubSupabase.auth.getSession();
+  if(error)throw error;
+  if(!data?.session)return;
+  session=data.session;isGuest=false;
+  state=JSON.parse(localStorage.getItem('studyClubProgress:'+session.user.email)||'null')||{stars:0,done:[],grade:'nursery',name:'Little Star',storyIndex:0};
+  await loadCloud();
+  await enterApp(false);
+ }catch(error){console.warn('Supabase session restore failed:',error);$('authError').textContent='Your saved sign-in could not be restored: '+cloudError(error)}
+}
 async function signOut(){
  try{if(studyClubSupabase)await studyClubSupabase.auth.signOut()}catch(error){console.warn(error)}
  session=null;isGuest=false;localStorage.removeItem('studyClubCloudLearnerId');
@@ -564,6 +566,7 @@ async function submitFeedback(event){
 }
 
 $('authForm').addEventListener('submit',authSubmit);
+restoreCloudSession();
 $('soundToggle').onclick=()=>{sound=!sound;$('soundToggle').textContent=sound?'🔊 Sound':'🔇 Muted';if(!sound&&'speechSynthesis'in window)speechSynthesis.cancel()};
 $('profileBtn').onclick=()=>showScreen('parent');
 let installPrompt=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;$('installBtn').classList.remove('hide')});$('installBtn').onclick=async()=>{if(!installPrompt){toast('Use your browser menu and choose Install app or Add to Home screen.');return}installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$('installBtn').classList.add('hide')};window.addEventListener('appinstalled',()=>{$('installBtn').classList.add('hide');toast('Study Club installed! 🎉')});

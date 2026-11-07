@@ -146,7 +146,7 @@ const challengeBank={
  class1:[['➗','4','What is 20 ÷ 5?'],['✖️','24','What is 6 × 4?'],['🪐','Jupiter','Which is the largest planet in our solar system?'],['💧','Evaporation','What is the process called when liquid water changes into vapour?'],['🌿','Producer','What do we call a green plant that makes its own food?'],['📐','Right angle','What is an angle of exactly 90 degrees called?'],['🫀','Heart','Which organ pumps blood around the body?'],['🌏','Asia','Which is the largest continent?'],['📚','Noun','Which part of speech names a person, place, animal or thing?'],['🧪','Solid','Which state of matter has a fixed shape?'],['🕰️','60 minutes','How many minutes are in one hour?'],['🌦️','Weather','What do we call the day-to-day condition of the atmosphere?'],['➗','7','What is 42 divided by 6?'],['🔢','100','What is the smallest three-digit whole number?'],['🪴','Photosynthesis','What is the process plants use to make food with sunlight?'],['🌬️','Oxygen','Which gas do humans need to breathe?'],['🧊','Melting','What do we call the change from a solid to a liquid?'],['📖','Adjective','Which part of speech describes a noun?']]
 };
 function itemsForGrade(id){const limits={nursery:5,lkg:8,ukg:12,class1:99};const letterLimits={nursery:5,lkg:10,ukg:20,class1:26};const source=content[id]||[];return source.slice(0,id==='letters'?letterLimits[state.grade]:limits[state.grade]);}
-const challengeBankCache={};
+const challengeBankCache={},challengeAnswerCache={};
 function challengeItemsForGrade(){
  const grade=state.grade||'nursery';
  if(challengeBankCache[grade])return challengeBankCache[grade];
@@ -238,7 +238,7 @@ function renderQuestion(){
  const question=quizItems[quizIndex];if(!question){finishQuiz();return}
  const item=question.item,correct=item[1];
  const optionPool=quizMode==='challenge'?challengeItemsForGrade():itemsForGrade(currentSubject);
- const subjectNames=[...new Set(optionPool.map(x=>x[1]).filter(Boolean))];
+ const subjectNames=quizMode==='challenge'?(challengeAnswerCache[state.grade]||(challengeAnswerCache[state.grade]=[...new Set(optionPool.map(x=>x[1]).filter(Boolean))])):[...new Set(optionPool.map(x=>x[1]).filter(Boolean))];
  const distractors=shuffleQuiz(subjectNames.filter(name=>name!==correct)).slice(0,3);
  const choices=shuffleQuiz([...new Set([correct,...distractors])]);
  const prompt=question.mode==='picture'?'Look at the picture. What is it?':(item[2]?'Which one matches this clue: '+item[2]:'Choose the correct name.');

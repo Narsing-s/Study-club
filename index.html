@@ -53,7 +53,7 @@ button:not(:disabled){touch-action:manipulation}
 </head>
 <body>
 <div id="loginScreen" class="login-wrap"><div class="login-card"><div class="login-logo">🦊🌈</div><h1>Welcome to Study Club!</h1><p>A happy place to learn, play and shine ✨</p><div class="tabs"><button id="loginTab" class="active" onclick="setAuthMode('login')">Sign in</button><button id="signupTab" onclick="setAuthMode('signup')">Create account</button></div><form id="authForm"><label class="field"><span>Parent email</span><input id="authEmail" type="email" autocomplete="email" placeholder="parent@example.com" required></label><label class="field"><span>Password</span><input id="authPassword" type="password" minlength="8" autocomplete="current-password" placeholder="At least 8 characters" required></label><label id="confirmField" class="field hide"><span>Confirm password</span><input id="authConfirm" type="password" minlength="8" autocomplete="new-password" placeholder="Type password again"></label><label id="recoveryField" class="field hide"><span>Parent recovery code</span><input id="authRecovery" type="password" minlength="6" placeholder="Create a recovery code (6+ characters)"></label><button class="login-submit" id="authSubmit" type="submit">Sign in and start learning 🚀</button><div class="error" id="authError" role="status"></div></form><div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap"><button class="link-btn" onclick="resetPassword()">Forgot password?</button><button class="link-btn" onclick="continueGuest()">Explore as guest</button><button class="link-btn" onclick="openAdminLogin()">🛡️ Admin login</button></div><div class="login-note">A parent or guardian should create and manage the account. Children should use their learner profile with an adult's help. Guest progress stays on this device.</div></div></div>
-<div id="adminLoginScreen" class="login-wrap hide"><div class="login-card"><div class="login-logo">🛡️</div><h1>Study Club Admin</h1><p>Administrator access to feedback on this device.</p><form id="adminAuthForm" onsubmit="adminSubmit(event)"><label class="field"><span>Admin email</span><input id="adminEmail" type="email" autocomplete="username" placeholder="admin@example.com" required></label><label class="field"><span>Admin password</span><input id="adminPassword" type="password" minlength="10" autocomplete="current-password" placeholder="At least 10 characters" required></label><label class="field hide" id="adminConfirmField"><span>Confirm admin password</span><input id="adminConfirm" type="password" minlength="10" autocomplete="new-password" placeholder="Enter password again"></label><button class="login-submit" id="adminSubmitButton" type="submit">Sign in to admin dashboard</button><div class="error" id="adminAuthError" role="status"></div></form><p class="login-note" id="adminSetupNote">Local-only admin access. Feedback from other devices cannot sync without a backend.</p><div style="display:flex;justify-content:center"><button class="link-btn" type="button" onclick="closeAdminLogin()">← Back</button></div></div></div>
+<div id="adminLoginScreen" class="login-wrap hide"><div class="login-card"><div class="login-logo">🛡️</div><h1>Study Club Admin</h1><p>Administrator access to feedback on this device.</p><form id="adminAuthForm" onsubmit="adminSubmit(event)"><label class="field"><span>Owner admin email</span><input id="adminEmail" type="email" autocomplete="username" value="narsingbeesetti22@gmail.com" readonly required></label><label class="field"><span>Admin password</span><input id="adminPassword" type="password" minlength="10" autocomplete="current-password" placeholder="At least 10 characters" required></label><label class="field hide" id="adminConfirmField"><span>Confirm admin password</span><input id="adminConfirm" type="password" minlength="10" autocomplete="new-password" placeholder="Enter password again"></label><button class="login-submit" id="adminSubmitButton" type="submit">Sign in to admin dashboard</button><div class="error" id="adminAuthError" role="status"></div></form><p class="login-note" id="adminSetupNote">Local-only admin access. Feedback from other devices cannot sync without a backend.</p><div style="display:flex;justify-content:center"><button class="link-btn" type="button" onclick="closeAdminLogin()">← Back</button></div></div></div>
 <div id="appShell" class="hide"><main class="app">
 <header class="topbar"><div class="brand"><div class="brand-mark">🌈</div><span>Study Club</span></div><div class="top-actions"><button class="icon-btn hide" id="installBtn" aria-label="Install Study Club">⬇ Install</button><button class="icon-btn" id="soundToggle" aria-label="Toggle sound">🔊 Sound</button><button class="icon-btn" id="profileBtn" aria-label="Parent area">👨‍👩‍👧</button></div></header>
 <section id="home" class="screen active">
@@ -294,13 +294,16 @@ function finishQuiz(){
 }
 
 function readFeedbackEntries(){try{const value=JSON.parse(localStorage.getItem('studyClubFeedback')||'[]');return Array.isArray(value)?value.map((item,index)=>({...item,id:item.id||('legacy-'+index),reviewed:!!item.reviewed})):[]}catch(error){return []}}
+const STUDY_CLUB_OWNER_ADMIN_EMAIL='narsingbeesetti22@gmail.com';
 function openAdminLogin(){
  adminReturnTo=$('appShell').classList.contains('hide')?'login':'app';
  $('appShell').classList.add('hide');$('bottomNav').style.display='none';$('loginScreen').classList.add('hide');$('adminLoginScreen').classList.remove('hide');
- adminModeSetup=!localStorage.getItem('studyClubAdmin');
- $('adminConfirmField').classList.toggle('hide',!adminModeSetup);
- $('adminSubmitButton').textContent=adminModeSetup?'Create local admin account':'Sign in to admin dashboard';
- $('adminSetupNote').textContent=adminModeSetup?'First-time setup creates an administrator on this browser only. This is not secure hosted authentication. Feedback from other devices will not sync.':'Admin credentials and feedback remain on this browser. Multi-device administration requires a protected backend.';
+ adminModeSetup=false;
+ $('adminEmail').value=STUDY_CLUB_OWNER_ADMIN_EMAIL;
+ $('adminEmail').readOnly=true;
+ $('adminConfirmField').classList.add('hide');
+ $('adminSubmitButton').textContent='Sign in to admin dashboard';
+ $('adminSetupNote').textContent='Owner-only sign-in for '+STUDY_CLUB_OWNER_ADMIN_EMAIL+'. The existing password hash is kept on this browser. Admin access is device-local; secure owner-only access across devices requires server-side authentication.';
  $('adminAuthError').textContent='';
 }
 function closeAdminLogin(){
@@ -312,20 +315,16 @@ async function adminSubmit(event){
  event.preventDefault();$('adminAuthError').textContent='';
  const email=$('adminEmail').value.trim().toLowerCase(),password=$('adminPassword').value;
  try{
-  let admin=null;
-  if(adminModeSetup){
-   if(password.length<10)throw new Error('Use an admin password with at least 10 characters.');
-   if(password!==$('adminConfirm').value)throw new Error('Admin passwords do not match.');
-   if(localStorage.getItem('studyClubAdmin'))throw new Error('An admin account already exists on this browser. Please sign in.');
-   const salt=Array.from(crypto.getRandomValues(new Uint8Array(16))).map(v=>v.toString(16).padStart(2,'0')).join('');
-   admin={email:email,salt:salt,passwordHash:await localPasswordHash(password,salt),createdAt:new Date().toISOString()};
+  if(email!==STUDY_CLUB_OWNER_ADMIN_EMAIL)throw new Error('This email is not authorized for administrator access.');
+  const admin=JSON.parse(localStorage.getItem('studyClubAdmin')||'null');
+  if(!admin||!admin.salt||!admin.passwordHash)throw new Error('No saved admin password exists in this browser. Contact the site owner to configure secure admin access; public admin registration is disabled.');
+  if(admin.email!==STUDY_CLUB_OWNER_ADMIN_EMAIL){
+   admin.email=STUDY_CLUB_OWNER_ADMIN_EMAIL;
    localStorage.setItem('studyClubAdmin',JSON.stringify(admin));
-  }else{
-   admin=JSON.parse(localStorage.getItem('studyClubAdmin')||'null');
-   if(!admin||admin.email!==email||admin.passwordHash!==await localPasswordHash(password,admin.salt))throw new Error('Admin email or password is incorrect.');
   }
+  if(admin.passwordHash!==await localPasswordHash(password,admin.salt))throw new Error('Admin email or password is incorrect.');
   isAdmin=true;$('adminLoginScreen').classList.add('hide');$('loginScreen').classList.add('hide');$('appShell').classList.remove('hide');$('bottomNav').style.display='none';
-  $('adminAccountLabel').textContent='Signed in as '+admin.email;renderAdminFeedback();showScreen('adminDashboard');
+  $('adminAccountLabel').textContent='Signed in as '+STUDY_CLUB_OWNER_ADMIN_EMAIL;renderAdminFeedback();showScreen('adminDashboard');
  }catch(error){$('adminAuthError').textContent=error.message||'Admin sign-in failed.'}
 }
 function adminSignOut(){isAdmin=false;$('appShell').classList.add('hide');$('bottomNav').style.display='none';$('loginScreen').classList.remove('hide');setAuthMode('login')}

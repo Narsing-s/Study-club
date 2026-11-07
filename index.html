@@ -52,7 +52,7 @@ button:not(:disabled){touch-action:manipulation}
 </style>
 </head>
 <body>
-<div id="loginScreen" class="login-wrap"><div class="login-card"><div class="login-logo">🦊🌈</div><h1>Welcome to Study Club!</h1><p>A happy place to learn, play and shine ✨</p><div class="tabs"><button id="loginTab" class="active" onclick="setAuthMode('login')">Sign in</button><button id="signupTab" onclick="setAuthMode('signup')">Create account</button></div><form id="authForm"><label class="field"><span>Parent email</span><input id="authEmail" type="email" autocomplete="email" placeholder="parent@example.com" required></label><label class="field"><span>Password</span><input id="authPassword" type="password" minlength="8" autocomplete="current-password" placeholder="At least 8 characters" required></label><label id="confirmField" class="field hide"><span>Confirm password</span><input id="authConfirm" type="password" minlength="8" autocomplete="new-password" placeholder="Type password again"></label><label id="recoveryField" class="field hide"><span>Parent recovery code</span><input id="authRecovery" type="password" minlength="6" placeholder="Create a recovery code (6+ characters)"></label><button class="login-submit" id="authSubmit" type="submit">Sign in and start learning 🚀</button><div class="error" id="authError" role="status"></div></form><div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap"><button class="link-btn" onclick="resetPassword()">Forgot password?</button><button class="link-btn" onclick="continueGuest()">Explore as guest</button><button class="link-btn" onclick="openAdminLogin()">🛡️ Admin login</button></div><div class="login-note">A parent or guardian should create and manage the account. Children should use their learner profile with an adult's help. Guest progress stays on this device.</div></div></div>
+<div id="loginScreen" class="login-wrap"><div class="login-card"><div class="login-logo">🦊🌈</div><h1>Welcome to Study Club!</h1><p>A happy place to learn, play and shine ✨</p><div class="tabs"><button id="loginTab" class="active" onclick="setAuthMode('login')">Sign in</button><button id="signupTab" onclick="setAuthMode('signup')">Create account</button></div><form id="authForm"><label class="field"><span>Parent email</span><input id="authEmail" type="email" autocomplete="email" placeholder="parent@example.com" required></label><label class="field"><span>Password</span><input id="authPassword" type="password" minlength="8" autocomplete="current-password" placeholder="At least 8 characters" required></label><label id="confirmField" class="field hide"><span>Confirm password</span><input id="authConfirm" type="password" minlength="8" autocomplete="new-password" placeholder="Type password again"></label><label id="recoveryField" class="field hide"><span>Parent recovery code</span><input id="authRecovery" type="password" minlength="6" placeholder="Create a recovery code (6+ characters)"></label><button class="login-submit" id="authSubmit" type="submit">Sign in and start learning 🚀</button><div class="error" id="authError" role="status"></div></form><div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap"><button class="link-btn" onclick="resetPassword()">Forgot password?</button><button class="link-btn" onclick="resendConfirmation()">Resend confirmation email</button><button class="link-btn" onclick="continueGuest()">Explore as guest</button><button class="link-btn" onclick="openAdminLogin()">🛡️ Admin login</button></div><div class="login-note">A parent or guardian should create and manage the account. Children should use their learner profile with an adult's help. Guest progress stays on this device.</div></div></div>
 <div id="adminLoginScreen" class="login-wrap hide"><div class="login-card"><div class="login-logo">🛡️</div><h1>Study Club Admin</h1><p>Administrator access to feedback on this device.</p><form id="adminAuthForm" onsubmit="adminSubmit(event)"><label class="field"><span>Owner admin email</span><input id="adminEmail" type="email" autocomplete="username" value="narsingbeesetti22@gmail.com" readonly required></label><label class="field"><span>Admin password</span><input id="adminPassword" type="password" minlength="10" autocomplete="current-password" placeholder="At least 10 characters" required></label><label class="field hide" id="adminConfirmField"><span>Confirm admin password</span><input id="adminConfirm" type="password" minlength="10" autocomplete="new-password" placeholder="Enter password again"></label><button class="login-submit" id="adminSubmitButton" type="submit">Sign in to admin dashboard</button><div class="error" id="adminAuthError" role="status"></div></form><p class="login-note" id="adminSetupNote">Local-only admin access. Feedback from other devices cannot sync without a backend.</p><div style="display:flex;justify-content:center"><button class="link-btn" type="button" onclick="closeAdminLogin()">← Back</button></div></div></div>
 <div id="appShell" class="hide"><main class="app">
 <header class="topbar"><div class="brand"><div class="brand-mark">🌈</div><span>Study Club</span></div><div class="top-actions"><button class="icon-btn hide" id="installBtn" aria-label="Install Study Club">⬇ Install</button><button class="icon-btn" id="soundToggle" aria-label="Toggle sound">🔊 Sound</button><button class="icon-btn" id="profileBtn" aria-label="Parent area">👨‍👩‍👧</button></div></header>
@@ -96,13 +96,23 @@ transport:[['🚗','Car','A car travels on roads.'],['🚌','Bus','A bus carries
 daily:[['🕒','Clock','A clock tells us the time.'],['📅','Calendar','A calendar shows days and months.'],['🪙','Coins','Coins are one kind of money.'],['🛍️','Shopping','We compare prices when shopping.'],['➕','Addition','Addition means putting groups together.'],['➖','Subtraction','Subtraction means taking away.'],['📏','Length','A ruler can measure length.'],['⚖️','Weight','A scale can measure weight.'],['🌅','Morning','Morning comes before afternoon.'],['🌙','Evening and night','Night comes after evening.'],['🔺','Shapes around us','Look for circles, squares and triangles.'],['🔢','Number order','Numbers go 1, 2, 3 and onward.']]
 };
 const stories=[{title:'Tara the Tiny Turtle',art:'🐢',lines:['Tara was a little turtle who wanted to reach the big green hill.','The path was long. Tara took one small step at a time.','A rabbit raced past, but Tara kept moving steadily.','At sunset, Tara reached the hill and smiled proudly.'],lesson:'Little lesson: steady effort and patience help us grow.'},{title:'Milo Shares His Mango',art:'🥭',lines:['Milo found a sweet, golden mango under a tree.','His friend Mira looked hungry after playing.','Milo cut the mango and shared it with Mira.','They smiled. Sharing made the mango taste even sweeter!'],lesson:'Little lesson: kindness and sharing make friendships stronger.'},{title:'The Little Seed',art:'🌱',lines:['A tiny seed rested in soft, dark soil.','Rain gave it water and the sun gave it warmth.','A small green shoot pushed up through the soil.','Soon it became a plant with bright flowers.'],lesson:'Little lesson: living things need care, water and sunlight.'}];
-let state=JSON.parse(localStorage.getItem('studyClubProgress')||'{}');state.stars??=0;state.done??=[];state.grade??='nursery';state.name??='Little Star';state.storyIndex??=0;let sound=true,currentSubject='letters',quizIndex=0,quizScore=0,quizItems=[],traceLetter=0,storyPage=0,quizMode='subject',quizLabel='';
+let state=JSON.parse(localStorage.getItem('studyClubGuestProgress')||localStorage.getItem('studyClubProgress')||'{}');state.stars??=0;state.done??=[];state.grade??='nursery';state.name??='Little Star';state.storyIndex??=0;let sound=true,currentSubject='letters',quizIndex=0,quizScore=0,quizItems=[],traceLetter=0,storyPage=0,quizMode='subject',quizLabel='';
 const $=id=>document.getElementById(id);
-function save(){localStorage.setItem('studyClubProgress',JSON.stringify(state));updateProgress();if(session||isGuest)syncCloud()}
+function save(){const key=session?.user?.email?'studyClubProgress:'+session.user.email:'studyClubGuestProgress';localStorage.setItem(key,JSON.stringify(state));updateProgress();if(session||isGuest)syncCloud()}
 function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>$('toast').classList.remove('show'),2200)}
 function say(text){if(!sound||!('speechSynthesis'in window))return;speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);u.rate=.82;u.pitch=1.18;speechSynthesis.speak(u)}
 function setAuthMode(mode){authMode=mode;$('loginTab').classList.toggle('active',mode==='login');$('signupTab').classList.toggle('active',mode==='signup');$('confirmField').classList.toggle('hide',mode!=='signup');$('recoveryField').classList.toggle('hide',mode!=='signup');$('authPassword').autocomplete=mode==='login'?'current-password':'new-password';$('authSubmit').textContent=mode==='login'?'Sign in and start learning 🚀':'Create parent account ✨';$('authError').textContent=''}
 async function localPasswordHash(password,salt){if(!crypto?.subtle)throw new Error('Open this app in a modern browser using HTTPS.');const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(password),'PBKDF2',false,['deriveBits']);const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:new TextEncoder().encode(salt),iterations:180000,hash:'SHA-256'},key,256);return Array.from(new Uint8Array(bits)).map(v=>v.toString(16).padStart(2,'0')).join('')}
+async function resendConfirmation(){
+ $('authError').textContent='';
+ const email=$('authEmail').value.trim().toLowerCase();
+ if(!email){$('authError').textContent='Enter the parent email address first.';return}
+ try{
+  const {error}=await cloudReady().auth.resend({type:'signup',email,options:{emailRedirectTo:'https://narsing-s.github.io/Study-club/'}});
+  if(error)throw error;
+  $('authError').textContent='If this address has a pending confirmation, a fresh email has been requested. Check Inbox and Spam.';
+ }catch(error){$('authError').textContent=cloudError(error)}
+}
 async function authSubmit(e){
  e.preventDefault();$('authError').textContent='';
  const email=$('authEmail').value.trim().toLowerCase(),password=$('authPassword').value;
@@ -140,6 +150,7 @@ if(studyClubSupabase){
  studyClubSupabase.auth.getSession().then(async({data,error})=>{
   if(error||!data?.session)return;
   session=data.session;isGuest=false;
+  state=JSON.parse(localStorage.getItem('studyClubProgress:'+session.user.email)||'null')||{stars:0,done:[],grade:'nursery',name:'Little Star',storyIndex:0};
   try{await loadCloud();await enterApp(false)}
   catch(err){console.warn('Cloud session restore:',err);toast('Signed in, but cloud data could not load: '+cloudError(err))}
  }).catch(error=>console.warn('Supabase session restore failed:',error));
@@ -418,7 +429,7 @@ const studyClubSupabase=window.supabase?.createClient
  : null;
 const STUDY_CLUB_CLASS_NAMES={nursery:'Nursery',lkg:'LKG',ukg:'UKG',class1:'Class 1'};
 function cloudReady(){if(!studyClubSupabase)throw new Error('Cloud services could not load. Check your internet connection and refresh.');return studyClubSupabase}
-function cloudError(error){const message=String(error?.message||error||'Cloud request failed');if(/relation .* does not exist|could not find the table/i.test(message))return 'The Study Club database tables are not installed yet. Run the migration from supabase/migrations in this Supabase project, then refresh.';if(/row-level security|permission denied|violates row-level/i.test(message))return 'Cloud access was blocked by database security. Please confirm the Study Club migration and owner email verification.';return message}
+function cloudError(error){const message=String(error?.message||error||'Cloud request failed');if(/rate limit|email rate limit|too many requests/i.test(message))return 'Supabase has temporarily limited authentication emails for the whole project. This affects all new users, not just this account. Wait for the limit window to reset or configure custom SMTP in Supabase Authentication → SMTP Settings for reliable multi-user email delivery.';if(/relation .* does not exist|could not find the table/i.test(message))return 'The Study Club database tables are not installed yet. Run the migration from supabase/migrations in this Supabase project, then refresh.';if(/row-level security|permission denied|violates row-level/i.test(message))return 'Cloud access was blocked by database security. Please confirm the Study Club migration and owner email verification.';return message}
 async function cloudEnsureParent(user){
  const db=cloudReady();
  const {error}=await db.from('parent_profiles').upsert({id:user.id,display_name:state.name||''},{onConflict:'id'});
@@ -443,11 +454,14 @@ async function loadCloud(){
   state={...remote,name:learner.nickname||remote.name||'Little Star',grade:Object.keys(STUDY_CLUB_CLASS_NAMES).find(k=>STUDY_CLUB_CLASS_NAMES[k]===learner.class_level)||remote.grade||'nursery'};
   state.stars??=0;state.done??=[];state.storyIndex??=0;
   localStorage.setItem('studyClubProgress:'+user.email,JSON.stringify(state));
+ }else{
+  await syncCloud();
  }
 }
 async function syncCloud(){
  const user=session?.user;
  if(!user?.id)return;
+ localStorage.setItem('studyClubProgress:'+user.email,JSON.stringify(state));
  try{
   const db=cloudReady();await cloudEnsureParent(user);
   let learnerId=localStorage.getItem('studyClubCloudLearnerId');
@@ -481,10 +495,9 @@ async function authSubmit(e){
   const {data,error}=await db.auth.signInWithPassword({email,password});
   if(error)throw error;
   session=data.session;isGuest=false;
-  const local=JSON.parse(localStorage.getItem('studyClubProgress')||'null');
+  state=JSON.parse(localStorage.getItem('studyClubProgress:'+email)||'null')||{stars:0,done:[],grade:'nursery',name:'Little Star',storyIndex:0};
   await cloudEnsureParent(session.user);
   await loadCloud();
-  if(!state.done?.length&&local?.done?.length){state=local;await syncCloud()}
   await enterApp(false);
  }catch(error){$('authError').textContent=cloudError(error)}
 }

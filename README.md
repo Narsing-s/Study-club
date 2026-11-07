@@ -33,3 +33,8 @@ A GitHub Pages workflow is included. Enable **Settings → Pages → Build and d
 
 ## Learning note
 The current curriculum is an expandable early-learning foundation for Nursery through Class 1, not a complete official syllabus or a guarantee of exam results. Content is organised by class level and includes a mix of language, numeracy, discovery, safety and reasoning topics. A parent or teacher should review content and guide the child. Speech playback depends on the device's available voices.
+
+
+## New learning features
+- Class-based Brain Challenge rounds with mixed reasoning, maths, science and everyday-knowledge questions.
+- Personal-best quiz percentages saved locally for each class and subject.

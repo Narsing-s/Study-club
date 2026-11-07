@@ -67,3 +67,9 @@ The current curriculum is an expandable early-learning foundation for Nursery th
 - Fixed guest progress persistence so guest activity is saved back to the guest-specific local profile.
 - Added extra age-appropriate UKG and Class 1 questions covering patterns, shapes, place value, time, money and measurement.
 - **Important security/data limitation:** this is still a static GitHub Pages app. Admin credentials and feedback are local to one browser and are not secure server-side authentication or shared cloud storage. Feedback from other devices will not reach this inbox until a protected backend/database is configured.
+
+
+## Daily challenge and learning insights
+- Added an optional 10-question Daily Brain Challenge using the existing challenge quiz flow; it marks as completed for the current local calendar day after the round is finished.
+- Added a local learning insights view with study streak, quiz accuracy, activity totals, a seven-day activity chart and a suggested subject to practise based on quiz history.
+- These additions reuse existing learner progress records and do not change login, lesson, quiz progression, feedback or account storage formats. No cloud sync is implied.

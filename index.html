@@ -49,6 +49,32 @@ button:not(:disabled){touch-action:manipulation}
 .week-bar{width:100%;max-width:28px;min-height:4px;border-radius:9px 9px 4px 4px;background:linear-gradient(180deg,#a58aff,#8ed8ff);transition:height .35s ease}
 @media(max-width:520px){.insights-grid{grid-template-columns:1fr 1fr}.insight-card{padding:13px}.week-bars{gap:5px}}
 
+
+/* Voice learning studio: isolated, additive styles. */
+.voice-launch-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.voice-launch{min-height:140px;padding:18px;border-radius:22px;text-align:left;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s}
+.voice-launch:hover{transform:translateY(-4px);box-shadow:0 15px 28px #4a416022}
+.voice-launch>span{font-size:34px}.voice-launch b{font:800 19px 'Baloo 2'}.voice-launch small{font-weight:800;color:#626980}
+.voice-launch-en{background:#ffe4ed}.voice-launch-te{background:#e8e4ff}.voice-launch-num{background:#e1f6e9}
+.voice-hero{background:linear-gradient(120deg,#e6f6ff,#f8eaff,#fff1d7)}
+.voice-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.voice-tabs button{background:#fff;border-radius:13px;padding:10px 14px;font-weight:900;box-shadow:var(--shadow)}
+.voice-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#fff;border-radius:18px;padding:13px;margin:12px 0;box-shadow:var(--shadow)}
+.voice-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:10px}
+.voice-tile{background:#fff;border:2px solid #f0eaf4;border-radius:18px;min-height:108px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;box-shadow:var(--shadow);transition:transform .18s,border-color .18s}
+.voice-tile:hover,.voice-tile:focus-visible{transform:translateY(-3px);border-color:#bda8ff}
+.voice-tile .voice-glyph{font:800 34px 'Baloo 2';line-height:1.2}
+.voice-tile .voice-word{font-size:13px;font-weight:900;text-align:center}
+.voice-tile .voice-hint{font-size:11px;color:var(--muted);font-weight:800;text-align:center}
+.voice-selected{margin:14px 0;background:linear-gradient(120deg,#fff0f5,#eaf6ff);border-radius:20px;padding:17px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.voice-selected strong{font:800 22px 'Baloo 2'}.voice-selected .voice-big{font:800 42px 'Baloo 2'}
+.voice-section-title{font:800 21px 'Baloo 2';margin:20px 2px 10px}
+.number-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#fff;padding:14px;border-radius:18px;margin:12px 0;box-shadow:var(--shadow)}
+.number-tools input{width:145px;max-width:45vw;border:2px solid #eeeaf3;border-radius:12px;padding:10px;font-weight:900}
+.number-tools button{background:#f2edff;border-radius:12px;padding:10px 12px;font-weight:900}
+.voice-note{font-size:12px;color:var(--muted);font-weight:700;line-height:1.5;margin:18px 2px}
+@media(max-width:650px){.voice-launch-grid{grid-template-columns:1fr}.voice-launch{min-height:100px}.voice-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.voice-tile{min-height:98px}}
+@media(prefers-reduced-motion:reduce){.voice-launch,.voice-tile{transition:none}}
 </style>
 </head>
 <body>
@@ -61,7 +87,21 @@ button:not(:disabled){touch-action:manipulation}
 <div class="section-head"><h2>Choose your class</h2><span>Pick your learning level</span></div><div class="grades" id="gradeCards"></div>
 <div class="progress-wrap"><div class="progress-icon">🏆</div><div class="progress-copy"><b>Your learning adventure</b><small id="progressText">0 activities completed · Keep going!</small><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div></div><strong id="starCount">⭐ 0</strong></div>
 <div class="section-head"><h2>Explore subjects</h2><span>Tap to discover</span></div><label class="subject-search"><span>🔎</span><input id="subjectSearch" type="search" placeholder="Find a subject or topic…" oninput="filterSubjects(this.value)" aria-label="Search subjects"><button type="button" onclick="clearSubjectSearch()" aria-label="Clear search">✕</button></label><div class="subjects" id="subjectCards"></div><p class="tiny" id="subjectSearchEmpty" hidden>No matching subject yet. Try another word.</p>
+<div class="section-head"><h2>🎧 Voice learning studio</h2><span>Listen, speak & explore</span></div>
+<div class="voice-launch-grid">
+ <button class="voice-launch voice-launch-en" type="button" onclick="openVoiceLearning('english')"><span>🔤</span><b>English A–Z</b><small>Hear every letter and phonics sound</small></button>
+ <button class="voice-launch voice-launch-te" type="button" onclick="openVoiceLearning('telugu')"><span>అ</span><b>తెలుగు అక్షరమాల</b><small>Telugu vowels and consonants</small></button>
+ <button class="voice-launch voice-launch-num" type="button" onclick="openVoiceLearning('numbers')"><span>♾️</span><b>Number infinity</b><small>Explore numbers as far as you like</small></button>
+</div>
 <div class="section-head"><h2>Today's fun</h2><span>Little steps, big smiles</span></div><div class="daily daily-mission"><div class="daily-row"><div class="daily-badge">🎯</div><div class="mission-copy"><h3 style="margin:0 0 4px">Daily Brain Challenge</h3><p id="dailyChallengeStatus" style="margin:0">Try 10 fun questions and earn stars!</p></div><button class="primary" id="dailyChallengeButton" type="button" onclick="startDailyChallenge()">Start today's challenge 🚀</button></div></div><div class="activities"><div class="daily"><h3>🎯 Your mini mission</h3><p>Complete one tiny activity today.</p><div class="daily-row"><div class="daily-badge">✍️</div><div><b>Letter tracing</b><small>Practise writing with your finger</small></div><button class="mini-btn" onclick="openTrace()">Start</button></div><div class="daily-row"><div class="daily-badge">📖</div><div><b>Story time</b><small>A tiny story with a big idea</small></div><button class="mini-btn" onclick="openStory()">Read</button></div></div><div class="streak"><div class="big">🔥</div><div><b id="streakTitle">You're doing great!</b><p>Every day is a new chance to shine.</p></div></div></div><div class="footer-note">Play kindly • Learn bravely • Shine brightly 💛</div>
+</section>
+<section id="voiceLearning" class="screen">
+ <button class="back" onclick="showScreen('home')">← Home</button>
+ <div class="lesson-head voice-hero"><div><div class="eyebrow">LISTEN • SAY • LEARN</div><h2 id="voiceTitle">Voice learning studio</h2><p id="voiceDescription">Tap a card to hear it aloud.</p></div><div class="lesson-mascot" id="voiceMascot">🎧</div></div>
+ <div class="voice-tabs"><button type="button" onclick="openVoiceLearning('english')">🔤 English A–Z</button><button type="button" onclick="openVoiceLearning('telugu')">అ తెలుగు</button><button type="button" onclick="openVoiceLearning('numbers')">♾️ Numbers</button></div>
+ <div class="voice-toolbar"><button class="primary" id="voicePlayAll" type="button" onclick="playVoiceSequence()">🔊 Play all</button><span class="tiny" id="voiceHelp">Tap any card to listen.</span></div>
+ <div id="voiceContent"></div>
+ <p class="voice-note">Voice playback depends on the voices installed on your device. Enable an English or Telugu text-to-speech voice in device settings if needed.</p>
 </section>
 <section id="grades" class="screen"><button class="back" onclick="showScreen('home')">← Back home</button><div class="section-head"><h2>Pick your learning level</h2></div><div class="grades" id="gradeCards2"></div></section>
 <section id="subjects" class="screen"><button class="back" onclick="showScreen('home')">← Home</button><div class="lesson-head"><div><div class="eyebrow" id="levelLabel">YOUR CLASS</div><h2 id="subjectTitle">Let's explore!</h2><p id="subjectDesc">Choose a fun activity to begin.</p></div><div class="lesson-mascot">🦄</div></div><div class="lesson-grid" id="lessonCards"></div></section>
@@ -609,5 +649,93 @@ let installPrompt=null;window.addEventListener('beforeinstallprompt',e=>{e.preve
 renderGrades();renderSubjects();updateProgress();
 // Parent accounts are stored only on this device; no online auth service is required.
 if('serviceWorker'in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+
+/* Study Club voice-learning studio. Kept separate from existing lesson and quiz flows. */
+const voiceEnglishLetters=[
+ ['A','Apple','/a/'],['B','Ball','/b/'],['C','Cat','/k/'],['D','Dog','/d/'],['E','Egg','/e/'],['F','Fish','/f/'],['G','Goat','/g/'],['H','Hat','/h/'],['I','Ink','/i/'],['J','Jam','/j/'],['K','Kite','/k/'],['L','Lion','/l/'],['M','Mango','/m/'],['N','Nest','/n/'],['O','Orange','/o/'],['P','Pen','/p/'],['Q','Queen','/kw/'],['R','Rabbit','/r/'],['S','Sun','/s/'],['T','Tiger','/t/'],['U','Umbrella','/u/'],['V','Van','/v/'],['W','Watch','/w/'],['X','Box','/ks/'],['Y','Yak','/y/'],['Z','Zebra','/z/']
+];
+const voiceTeluguVowels=[
+ ['అ','అమ్మ','amma','Mother'],['ఆ','ఆవు','aavu','Cow'],['ఇ','ఇల్లు','illu','House'],['ఈ','ఈగ','eega','Fly'],['ఉ','ఉడుత','uduta','Squirrel'],['ఊ','ఊయల','uyala','Cradle'],['ఋ','ఋషి','rushi','Sage'],['ౠ','ౠ','ruu','Rare vowel'],['ఌ','ఌ','lu','Rare vowel'],['ౡ','ౡ','luu','Rare vowel'],['ఎ','ఎలుక','eluka','Mouse'],['ఏ','ఏనుగు','enugu','Elephant'],['ఐ','ఐదు','aidu','Five'],['ఒ','ఒంటె','onte','Camel'],['ఓ','ఓడ','oda','Boat'],['ఔ','ఔషధం','aushadham','Medicine'],['అం','అంకె','anke','Number'],['అః','అః','aha','Visarga']
+];
+const voiceTeluguConsonants=[
+ ['క','కమలం','kamalam','Lotus'],['ఖ','ఖడ్గం','khadgam','Sword'],['గ','గడియారం','gadiyaaram','Clock'],['ఘ','ఘటం','ghatam','Pot'],['ఙ','ఙ','nga','Letter'],['చ','చిలుక','chiluka','Parrot'],['ఛ','ఛత్రం','chatram','Umbrella'],['జ','జింక','jinka','Deer'],['ఝ','ఝరి','jhari','Waterfall'],['ఞ','ఞ','nya','Letter'],['ట','టమాటా','tamaata','Tomato'],['ఠ','ఠ','tha','Letter'],['డ','డబ్బా','dabba','Box'],['ఢ','ఢంకా','dhanka','Drum'],['ణ','ణ','na','Letter'],['త','తల','tala','Head'],['థ','థర్మామీటర్','thermometer','Thermometer'],['ద','దీపం','deepam','Lamp'],['ధ','ధనం','dhanam','Wealth'],['న','నక్క','nakka','Fox'],['ప','పండు','pandu','Fruit'],['ఫ','ఫలం','phalam','Fruit'],['బ','బంతి','banti','Ball'],['భ','భవనం','bhavanam','Building'],['మ','మామిడి','mamidi','Mango'],['య','యజ్ఞం','yagnam','Ritual'],['ర','రథం','ratham','Chariot'],['ల','లత','latha','Creeper'],['వ','వాన','vaana','Rain'],['శ','శంఖం','shankham','Conch'],['ష','షట్కోణం','shatkonam','Hexagon'],['స','సీతాకోకచిలుక','seetakokachiluka','Butterfly'],['హ','హంస','hamsa','Swan'],['ళ','ళ','La','Letter'],['క్ష','క్షమ','kshama','Forgiveness'],['ఱ','ఱ','Ra','Rare letter']
+];
+let voiceLearningMode='english',voiceSelectedIndex=0,voiceNumberStart=1;
+function openVoiceLearning(mode){
+ voiceLearningMode=['english','telugu','numbers'].includes(mode)?mode:'english';
+ voiceSelectedIndex=0;renderVoiceLearning();showScreen('voiceLearning');
+}
+function speakVoiceLearning(text,lang){
+ if(!sound){toast('Turn sound on to hear the pronunciation 🔊');return}
+ if(!('speechSynthesis'in window)||!('SpeechSynthesisUtterance'in window)){toast('Voice playback is not supported in this browser.');return}
+ try{
+  window.speechSynthesis.cancel();
+  const utterance=new SpeechSynthesisUtterance(String(text));
+  utterance.lang=lang;utterance.rate=lang==='te-IN'?.78:.82;utterance.pitch=1.12;
+  const voices=window.speechSynthesis.getVoices();
+  const voice=voices.find(item=>item.lang?.toLowerCase()===lang.toLowerCase())||voices.find(item=>item.lang?.toLowerCase().startsWith(lang.slice(0,2).toLowerCase()));
+  if(voice)utterance.voice=voice;
+  window.speechSynthesis.speak(utterance);
+ }catch(error){console.warn('Voice playback unavailable:',error);toast('Could not start voice playback on this device.')}
+}
+function voiceNumberWords(value){
+ const n=Math.floor(Number(value));
+ if(!Number.isSafeInteger(n)||n<0)return 'Number '+String(value);
+ const ones=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+ const tens=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+ const underThousand=x=>{let out=[];if(x>=100){out.push(ones[Math.floor(x/100)]+' hundred');x%=100}if(x>=20)out.push(tens[Math.floor(x/10)]+(x%10?'-'+ones[x%10]:''));else if(x>0)out.push(ones[x]);return out.join(' ')};
+ if(n<1000)return underThousand(n)||'zero';
+ let rest=n,parts=[];
+ for(const [size,label] of [[10000000,'crore'],[100000,'lakh'],[1000,'thousand']]){if(rest>=size){const count=Math.floor(rest/size);parts.push(underThousand(count)+' '+label);rest%=size}}
+ if(rest)parts.push(underThousand(rest));
+ return parts.join(' ')||'zero';
+}
+function playVoiceLetter(index){
+ voiceSelectedIndex=index;
+ const item=voiceLearningMode==='english'?voiceEnglishLetters[index]:[...voiceTeluguVowels,...voiceTeluguConsonants][index];
+ if(!item)return;
+ const spoken=voiceLearningMode==='english'?item[0]+'. '+item[1]+'. Sound '+item[2]:item[0]+'. '+item[1]+'. '+item[2];
+ speakVoiceLearning(spoken,voiceLearningMode==='english'?'en-IN':'te-IN');
+ renderVoiceLearning();
+}
+function playVoiceSequence(){
+ if(voiceLearningMode==='numbers'){const values=Array.from({length:20},(_,i)=>voiceNumberStart+i);speakVoiceLearning(values.map(n=>n+'. '+voiceNumberWords(n)).join('. '),'en-IN');return}
+ if(voiceLearningMode==='english'){speakVoiceLearning(voiceEnglishLetters.map(item=>item[0]+', '+item[1]).join('. '),'en-IN');return}
+ speakVoiceLearning([...voiceTeluguVowels,...voiceTeluguConsonants].map(item=>item[0]+', '+item[1]).join('. '),'te-IN');
+}
+function playVoiceNumber(number){
+ const value=Number(number);if(!Number.isSafeInteger(value)||value<0){toast('Choose a valid whole number.');return}
+ speakVoiceLearning(value+'. '+voiceNumberWords(value),'en-IN');
+}
+function shiftVoiceNumbers(amount){
+ const next=voiceNumberStart+amount;
+ if(!Number.isSafeInteger(next)||next<1){toast('You have reached the beginning of the number journey.');return}
+ voiceNumberStart=next;renderVoiceLearning();
+}
+function goToVoiceNumber(){
+ const value=Number($('voiceNumberStartInput')?.value);
+ if(!Number.isSafeInteger(value)||value<1){toast('Enter a whole number greater than zero.');return}
+ voiceNumberStart=Math.min(value,Number.MAX_SAFE_INTEGER-19);renderVoiceLearning();
+}
+function renderVoiceLearning(){
+ const title=$('voiceTitle'),description=$('voiceDescription'),mascot=$('voiceMascot'),content=$('voiceContent'),playAll=$('voicePlayAll'),help=$('voiceHelp');
+ if(!title||!content)return;
+ document.querySelectorAll('.voice-tabs button').forEach((button,index)=>button.classList.toggle('active',['english','telugu','numbers'][index]===voiceLearningMode));
+ if(voiceLearningMode==='english'){
+  const selected=voiceEnglishLetters[voiceSelectedIndex]||voiceEnglishLetters[0];
+  title.textContent='English alphabet A–Z';description.textContent='Tap a letter to hear its name, example word and phonics sound.';mascot.textContent='🔤';playAll.textContent='🔊 Hear A to Z';help.textContent='26 letters · Tap any tile to listen';
+  content.innerHTML='<div class="voice-selected"><div><div class="tiny">LETTER OF THE MOMENT</div><strong class="voice-big">'+selected[0]+'</strong><div>'+selected[1]+' · '+selected[2]+'</div></div><button class="primary" onclick="playVoiceLetter('+voiceSelectedIndex+')">🔊 Listen</button></div><div class="voice-grid">'+voiceEnglishLetters.map((item,index)=>'<button class="voice-tile" type="button" onclick="playVoiceLetter('+index+')"><span class="voice-glyph">'+item[0]+'</span><span class="voice-word">'+item[1]+'</span><span class="voice-hint">'+item[2]+'</span></button>').join('')+'</div>';
+ }else if(voiceLearningMode==='telugu'){
+  const all=[...voiceTeluguVowels,...voiceTeluguConsonants],selected=all[voiceSelectedIndex]||all[0];
+  const makeTiles=(items,offset)=>items.map((item,index)=>'<button class="voice-tile" type="button" onclick="playVoiceLetter('+(offset+index)+')"><span class="voice-glyph">'+item[0]+'</span><span class="voice-word">'+item[1]+'</span><span class="voice-hint">'+item[2]+'</span></button>').join('');
+  title.textContent='తెలుగు అక్షరమాల';description.textContent='అచ్చులు మరియు హల్లులు · Telugu vowels and consonants.';mascot.textContent='అ';playAll.textContent='🔊 అక్షరాలు వినండి';help.textContent=all.length+' letters · Telugu voice depends on device support';
+  content.innerHTML='<div class="voice-selected"><div><div class="tiny">ఎంచుకున్న అక్షరం · SELECTED LETTER</div><strong class="voice-big">'+selected[0]+'</strong><div>'+selected[1]+' · '+selected[3]+'</div></div><button class="primary" onclick="playVoiceLetter('+voiceSelectedIndex+')">🔊 వినండి</button></div><h3 class="voice-section-title">అచ్చులు · Vowels</h3><div class="voice-grid">'+makeTiles(voiceTeluguVowels,0)+'</div><h3 class="voice-section-title">హల్లులు · Consonants</h3><div class="voice-grid">'+makeTiles(voiceTeluguConsonants,voiceTeluguVowels.length)+'</div>';
+ }else{
+  title.textContent='Number infinity';description.textContent='There is no final lesson. Choose any starting number and keep exploring.';mascot.textContent='♾️';playAll.textContent='🔊 Count 20 numbers';help.textContent='Pick any positive whole number and keep going';
+  const numbers=Array.from({length:20},(_,i)=>voiceNumberStart+i);
+  content.innerHTML='<div class="number-tools"><button type="button" onclick="shiftVoiceNumbers(-20)">← Previous 20</button><label for="voiceNumberStartInput" class="tiny">Start at</label><input id="voiceNumberStartInput" type="number" min="1" step="1" value="'+voiceNumberStart+'"><button type="button" onclick="goToVoiceNumber()">Go</button><button type="button" onclick="shiftVoiceNumbers(20)">Next 20 →</button></div><div class="voice-selected"><div><div class="tiny">YOUR NUMBER JOURNEY</div><strong class="voice-big">'+voiceNumberStart+' – '+numbers[numbers.length-1]+'</strong><div>Tap a number to hear how it is spoken.</div></div><span style="font-size:38px">🔢</span></div><div class="voice-grid">'+numbers.map(n=>'<button class="voice-tile" type="button" onclick="playVoiceNumber('+n+')"><span class="voice-glyph">'+n+'</span><span class="voice-word">'+voiceNumberWords(n)+'</span><span class="voice-hint">🔊 Listen</span></button>').join('')+'</div>';
+ }
+}
+
 </script>
 </body></html>

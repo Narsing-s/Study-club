@@ -1,18 +1,19 @@
 # Study Club — Supabase setup
 
-Study Club is hosted as a static GitHub Pages app. Supabase provides parent authentication, cloud learner progress, and owner-only feedback administration. The browser uses only the project's publishable key; Row Level Security (RLS) protects the data.
+Study Club is deployed as a static web app on Vercel (with GitHub Pages retained as an alternate deployment). Supabase provides parent authentication, cloud learner progress, and owner-only feedback administration. The browser uses only the project's publishable key; Row Level Security (RLS) protects the data.
 
 ## Project
 
 - Supabase project URL: `https://wozvcabjepdjkcuasqko.supabase.co`
-- GitHub Pages URL: `https://narsing-s.github.io/Study-club/`
-- Owner/admin email: `narsingbeesetti22@gmail.com`
+- Primary live URL: `https://study-club-lemon.vercel.app/`
+- Alternate GitHub Pages URL: `https://narsing-s.github.io/Study-club/`
+- Owner/admin email: `narsingbeesetti006@gmail.com`
 
 ## 1. Apply the database migration
 
 In the Supabase dashboard for the project above, open **SQL Editor** and run the complete file:
 
-`supabase/migrations/20261107000100_cloud_accounts_progress_feedback.sql`
+`supabase/migrations/20261107000100_cloud_accounts_progress_feedback.sql` and then `supabase/migrations/20261107000200_update_study_club_owner_email.sql`
 
 This creates:
 - `parent_profiles`: one parent identity per Supabase Auth user
@@ -28,14 +29,15 @@ RLS is enabled. Parents can manage only their own learner and progress records. 
 
 In **Authentication → URL Configuration** set:
 
-- Site URL: `https://narsing-s.github.io/Study-club/`
-- Additional Redirect URL: `https://narsing-s.github.io/Study-club/**`
+- Site URL: `https://study-club-lemon.vercel.app/`
+- Additional Redirect URL: `https://study-club-lemon.vercel.app/**`
+- Optional alternate redirect: `https://narsing-s.github.io/Study-club/**`
 
-Save the settings. New sign-up confirmation emails explicitly redirect to the GitHub Pages URL. If a confirmation email was generated before this redirect fix, request a fresh one from the app.
+Save the settings. New sign-up confirmation emails explicitly redirect to the Vercel live URL. Add that URL to Supabase's allow-list before testing confirmation links. If a confirmation email was generated before this redirect fix, request a fresh one from the app.
 
 ## 3. Configure owner admin
 
-Create the Supabase Auth user `narsingbeesetti22@gmail.com` in **Authentication → Users → Add user → Create new user**. Set a strong password that you keep private, and use the dashboard's **Auto Confirm User** option for this owner account only (or confirm it through the normal email flow after SMTP is working). This avoids depending on the currently blocked test-email sender for the site owner; it does not turn off email confirmation for other users. Then use that same email and password in **Admin login**. The owner check is enforced by `public.is_study_club_owner()` and requires the exact email to be confirmed; changing the email typed in the browser cannot grant admin access. If the owner user already exists, do not create a duplicate—check its confirmation status and reset/set its password from the dashboard.
+Create the Supabase Auth user `narsingbeesetti006@gmail.com` in **Authentication → Users → Add user → Create new user**. Set a strong password that you keep private, and use the dashboard's **Auto Confirm User** option for this owner account only (or confirm it through the normal email flow after SMTP is working). This avoids depending on the currently blocked test-email sender for the site owner; it does not turn off email confirmation for other users. Then use that same email and password in **Admin login**. The owner check is enforced by `public.is_study_club_owner()` and requires the exact email to be confirmed; changing the email typed in the browser cannot grant admin access. If the owner user already exists, do not create a duplicate—check its confirmation status and reset/set its password from the dashboard.
 
 ## 4. Configure email delivery for multiple users
 

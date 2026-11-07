@@ -23,9 +23,9 @@ A colourful, animated, mobile-first learning web app and installable PWA for Nur
 - Local browser caches are retained to make the app responsive, but cloud data is the shared account source of truth.
 
 ## Owner administration
-- Admin sign-in uses the verified Supabase Auth owner identity `narsingbeesetti006@gmail.com`.
+- Admin sign-in uses the verified Supabase Auth owner identity `narsingbeesetti22@gmail.com`.
 - The owner email is checked both in the app and by the database function `public.is_study_club_owner()`; client-side email text alone cannot grant access.
-- Apply both SQL migrations in order from [supabase/SETUP.md](supabase/SETUP.md). The second migration updates the owner allow-list.
+- Apply the cloud foundation migration from [supabase/SETUP.md](supabase/SETUP.md).
 - The admin dashboard reads feedback submitted by signed-in parents across devices. The owner account must exist in Supabase Auth, have a password, and be confirmed.
 - If the owner account does not exist yet, create it once in Supabase Authentication → Users. Do not create duplicate accounts or share the password.
 
@@ -80,7 +80,7 @@ The current curriculum is an expandable early-learning foundation for Nursery th
 
 ## Cloud backend foundation (Supabase)
 - `supabase/migrations/20261107000100_cloud_accounts_progress_feedback.sql` creates parent profiles, learner profiles, learning progress and feedback tables with RLS.
-- `supabase/migrations/20261107000200_update_study_club_owner_email.sql` updates the verified owner allow-list to `narsingbeesetti006@gmail.com`.
+- The verified owner email must match the confirmed Supabase Auth user configured for this project.
 - Both migrations must be run manually in the Supabase SQL Editor; committing SQL files to GitHub does not execute them.
 - Auth confirmation redirects to the Vercel app at `https://study-club-lemon.vercel.app/`. Add this URL to Supabase Authentication → URL Configuration.
 - Setup, SMTP, redirects and security instructions are in [supabase/SETUP.md](supabase/SETUP.md).

@@ -139,8 +139,7 @@ function answer(btn,choice,correct){
  document.querySelectorAll('#gameBox .choice').forEach(b=>{b.disabled=true;b.classList.add('answered')});
  const next=$('nextBtn');
  if(next){next.textContent=quizIndex===quizItems.length-1?'See my result 🏆':'Next question ➜';next.style.display='inline-block'}
- // Give the learner a moment to see the feedback, then move forward automatically.
- // Deliberately wait for the learner to press Next; never skip a question automatically.
+ // Learners control the pace: the next question opens only after Next is pressed.
 }
 function nextQuestion(){
  if(!quizAnswered)return;

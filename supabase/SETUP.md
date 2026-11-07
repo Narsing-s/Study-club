@@ -39,7 +39,7 @@ Create the Supabase Auth user `narsingbeesetti22@gmail.com` and complete email c
 
 ## 4. Configure email delivery for multiple users
 
-Supabase's built-in test email service has a very low project-wide sending limit. The limit is shared by all users, so it can block registrations for everyone even when each person uses a different email address.
+Supabase's built-in test email service is not suitable for public sign-ups: it currently sends only to addresses belonging to the project's organization team and is limited to 2 emails per hour across the entire project. The limit is shared by all users, so it can block registrations for everyone even when each person uses a different email address.
 
 For a public or multi-user app, configure a real SMTP provider:
 
@@ -47,7 +47,7 @@ For a public or multi-user app, configure a real SMTP provider:
 2. In Supabase, open **Project Settings → Authentication → SMTP Settings** (or **Authentication → SMTP Settings**, depending on dashboard layout).
 3. Enable custom SMTP and enter the provider's SMTP host, port, username, password, and verified sender address.
 4. Save and test with a small number of sign-ups.
-5. Review **Authentication → Rate Limits**. The effective sending capacity is controlled by both Supabase settings and the SMTP provider's own quota.
+5. Review **Authentication → Rate Limits**. Supabase's initial email limit with custom SMTP is 30 emails per hour and can be adjusted there; the SMTP provider's own quota and sending policies still apply.
 
 Do not paste SMTP credentials into this repository, HTML, JavaScript, or chat. Add them only in the Supabase dashboard. Do not disable email confirmation to work around rate limits.
 

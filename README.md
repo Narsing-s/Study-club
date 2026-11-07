@@ -41,3 +41,10 @@ The current curriculum is an expandable early-learning foundation for Nursery th
 
 - Expanded the mixed Brain Challenge bank for all four current class levels, with additional arithmetic, nature, science, language and everyday-reasoning questions.
 - Added a replayable spoken quiz prompt button so learners can hear a question again before choosing an answer.
+
+
+## Expanded 4,000-question practice bank
+- Each currently supported class (Nursery, LKG, UKG and Class 1) has a 1,000-question Brain Challenge bank.
+- The bank combines the existing hand-written questions with distinct, age-level question variations generated from number ranges, objects and arithmetic/story contexts. Question wording and answer combinations are varied; this is a practice bank, not a claim of official syllabus coverage.
+- Learners can choose 10, 20, 50, 100 or all 1,000 questions for a round. Questions are shuffled, and the selected round size is preserved when replaying.
+- The existing quick quizzes, lessons, profiles, progress, stars, stories, tracing and local account features remain in place.

@@ -38,3 +38,6 @@ The current curriculum is an expandable early-learning foundation for Nursery th
 ## New learning features
 - Class-based Brain Challenge rounds with mixed reasoning, maths, science and everyday-knowledge questions.
 - Personal-best quiz percentages saved locally for each class and subject.
+
+- Expanded the mixed Brain Challenge bank for all four current class levels, with additional arithmetic, nature, science, language and everyday-reasoning questions.
+- Added a replayable spoken quiz prompt button so learners can hear a question again before choosing an answer.

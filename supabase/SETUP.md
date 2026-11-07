@@ -1,27 +1,73 @@
-# Study Club cloud setup
+# Study Club — Supabase setup
 
-This repository is a static GitHub Pages app. The cloud migration below creates a secure Supabase data layer, but it does not activate cloud sync until the project URL and publishable key are configured in the app integration.
+Study Club is hosted as a static GitHub Pages app. Supabase provides parent authentication, cloud learner progress, and owner-only feedback administration. The browser uses only the project's publishable key; Row Level Security (RLS) protects the data.
 
-## 1. Create a Supabase project
-1. Create a free Supabase project.
-2. Keep email confirmation enabled in Authentication settings.
-3. In Authentication > Providers > Email, use email/password sign-in.
-4. In Project Settings > API Keys, copy the Project URL and the **publishable** key (or legacy anon key).
+## Project
 
-## 2. Apply the database migration
-Open SQL Editor in the Supabase dashboard and run the complete file:
+- Supabase project URL: `https://wozvcabjepdjkcuasqko.supabase.co`
+- GitHub Pages URL: `https://narsing-s.github.io/Study-club/`
+- Owner/admin email: `narsingbeesetti22@gmail.com`
+
+## 1. Apply the database migration
+
+In the Supabase dashboard for the project above, open **SQL Editor** and run the complete file:
+
 `supabase/migrations/20261107000100_cloud_accounts_progress_feedback.sql`
 
-The migration creates parent profiles, learner profiles, JSON progress storage, and feedback storage. Row Level Security is enabled on every table. Parents can access only their own learners and progress. Feedback is visible, editable and deletable only by the owner identity.
+This creates:
+- `parent_profiles`: one parent identity per Supabase Auth user
+- `learner_profiles`: learner records owned by a parent
+- `learning_progress`: cloud progress tied to the learner and parent
+- `study_club_feedback`: feedback submitted by signed-in parents
 
-## 3. Configure the owner account
-Create/sign up the Supabase Auth user using **narsingbeesetti22@gmail.com**, complete email confirmation, and then use that account for the owner admin sign-in. Other accounts do not satisfy the owner policy.
+RLS is enabled. Parents can manage only their own learner and progress records. Only the verified owner identity can read, review, or delete feedback. Do not disable RLS.
 
-## 4. Keys and safety
-- The Project URL and publishable/anon key are designed for browser use when RLS is enabled.
-- Never put a Supabase secret key or service-role key in HTML, JavaScript, GitHub Pages, or chat.
-- Do not disable RLS.
-- Do not treat a browser-only password check as administrator security.
+**Important:** committing the migration to GitHub does not run it in Supabase. It must be applied once in the SQL Editor.
 
-## Current activation status
-The migration is the backend foundation only. The current Study Club login, progress and feedback screens still use the existing local-browser storage until the cloud client is configured and connected. Existing local accounts and data are not migrated or overwritten by applying this SQL. Cloud sync should be enabled only after the app has been wired to the project URL and publishable key and tested with separate parent and owner accounts.
+## 2. Configure Auth redirect URLs
+
+In **Authentication → URL Configuration** set:
+
+- Site URL: `https://narsing-s.github.io/Study-club/`
+- Additional Redirect URL: `https://narsing-s.github.io/Study-club/**`
+
+Save the settings. New sign-up confirmation emails explicitly redirect to the GitHub Pages URL. If a confirmation email was generated before this redirect fix, request a fresh one from the app.
+
+## 3. Configure owner admin
+
+Create the Supabase Auth user `narsingbeesetti22@gmail.com` and complete email confirmation. Use that same confirmed account in **Admin login**. The owner check is enforced in the database function `public.is_study_club_owner()`; changing the email typed in the browser cannot grant admin access.
+
+## 4. Configure email delivery for multiple users
+
+Supabase's built-in test email service has a very low project-wide sending limit. The limit is shared by all users, so it can block registrations for everyone even when each person uses a different email address.
+
+For a public or multi-user app, configure a real SMTP provider:
+
+1. Choose an SMTP email provider and verify the sender identity/domain required by that provider.
+2. In Supabase, open **Project Settings → Authentication → SMTP Settings** (or **Authentication → SMTP Settings**, depending on dashboard layout).
+3. Enable custom SMTP and enter the provider's SMTP host, port, username, password, and verified sender address.
+4. Save and test with a small number of sign-ups.
+5. Review **Authentication → Rate Limits**. The effective sending capacity is controlled by both Supabase settings and the SMTP provider's own quota.
+
+Do not paste SMTP credentials into this repository, HTML, JavaScript, or chat. Add them only in the Supabase dashboard. Do not disable email confirmation to work around rate limits.
+
+Dashboard shortcuts:
+- [Auth URL Configuration](https://supabase.com/dashboard/project/wozvcabjepdjkcuasqko/auth/url-configuration)
+- [SMTP Settings](https://supabase.com/dashboard/project/wozvcabjepdjkcuasqko/auth/smtp)
+- [Auth Rate Limits](https://supabase.com/dashboard/project/wozvcabjepdjkcuasqko/auth/rate-limits)
+- [Auth Users](https://supabase.com/dashboard/project/wozvcabjepdjkcuasqko/auth/users)
+
+## 5. Multi-user data and local progress
+
+Each signed-in parent is identified by the Supabase Auth user ID. Learners and progress are stored against that ID and checked by RLS. The app also keeps a per-email local cache for that parent's progress. Guest progress is stored separately on the device.
+
+The app no longer imports the browser's old shared progress key into a newly signed-in account. This prevents one parent's local progress from appearing in another parent's account on a shared device. Older shared local progress remains available in guest mode; it is not deleted by this change.
+
+The currently visible class selector contains Nursery, LKG, UKG, and Class 1. The database accepts additional class labels for future expansion, but that does not mean those classes are currently available in the app UI.
+
+## 6. Keys and security
+
+- The project URL and publishable key in the client are intended for browser use when RLS is correctly enabled.
+- Never put a Supabase secret key or service-role key in GitHub Pages, HTML, JavaScript, or chat.
+- Keep email confirmation enabled.
+- Never grant admin privileges based only on a client-side email field.

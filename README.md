@@ -15,11 +15,19 @@ A colourful, animated, mobile-first learning web app and installable PWA for Nur
 - Responsive mobile/desktop layout, reduced-motion support, installable PWA shell and basic offline app-shell caching.
 
 ## Parent login and privacy
-Parent login is fully device-local. No external authentication service, backend, database, API key or account configuration is needed. Create a parent account from the sign-in screen, use an email address as the local account label, choose a password of at least 8 characters and set a recovery code of at least 6 characters. Keep the recovery code safe.
+- Parent sign-up and sign-in use Supabase Auth when the configured Supabase client is available.
+- Guest mode remains available and stores guest progress on the current device.
+- Signed-in parent progress and learner profiles sync through Supabase tables protected by Row Level Security (RLS).
+- The browser uses only the Supabase publishable key. Never place a service-role or secret key in this repository.
+- Email confirmation depends on the configured Supabase Auth redirect allow-list and SMTP provider. Public multi-user sign-up requires custom SMTP; the built-in test sender is rate-limited.
+- Local browser caches are retained to make the app responsive, but cloud data is the shared account source of truth.
 
-**Important limitation:** accounts and progress are stored only in the current browser on the current device. They do not sync to other phones or computers, and clearing browser site data can erase them. Password reset works on that same device using the recovery code. This is a device-local profile system, not a hosted identity service or multi-device cloud account. Do not use it for sensitive data.
-
-Guest progress is also stored locally. Use a modern browser over HTTPS for secure password hashing; GitHub Pages provides HTTPS.
+## Owner administration
+- Admin sign-in uses the verified Supabase Auth owner identity `narsingbeesetti006@gmail.com`.
+- The owner email is checked both in the app and by the database function `public.is_study_club_owner()`; client-side email text alone cannot grant access.
+- Apply both SQL migrations in order from [supabase/SETUP.md](supabase/SETUP.md). The second migration updates the owner allow-list.
+- The admin dashboard reads feedback submitted by signed-in parents across devices. The owner account must exist in Supabase Auth, have a password, and be confirmed.
+- If the owner account does not exist yet, create it once in Supabase Authentication → Users. Do not create duplicate accounts or share the password.
 
 ## Run locally
 Serve the repository folder:
@@ -59,15 +67,10 @@ The current curriculum is an expandable early-learning foundation for Nursery th
 - The questions are procedurally varied practice prompts, not 40,000 individually authored or officially syllabus-verified items. The supported class list remains Nursery, LKG, UKG and Class 1.
 
 
-## Local administrator feedback inbox and maintenance
-- Added a separate Admin login entry from the sign-in page and the grown-ups area.
-- First-time admin setup creates a password-hashed admin credential in the current browser; later visits require that local admin email and password.
-- Admin dashboard includes feedback totals, average rating, new/reviewed filters, mark-reviewed controls, deletion and CSV export.
-- Feedback records include the learner class, learner nickname, submitter label and timestamp. Up to 500 recent submissions are retained locally.
-- Fixed guest progress persistence so guest activity is saved back to the guest-specific local profile.
-- Added extra age-appropriate UKG and Class 1 questions covering patterns, shapes, place value, time, money and measurement.
-- **Important security/data limitation:** this is still a static GitHub Pages app. Admin credentials and feedback are local to one browser and are not secure server-side authentication or shared cloud storage. Feedback from other devices will not reach this inbox until a protected backend/database is configured.
-
+## Admin dashboard and cloud feedback
+- Feedback from authenticated parents is stored in Supabase and protected by RLS.
+- The owner dashboard includes total/new feedback counts, average rating, filters, review status, deletion and CSV export.
+- Owner-level access is verified by the Supabase database policy, not by a browser-local password record.
 
 ## Daily challenge and learning insights
 - Added an optional 10-question Daily Brain Challenge using the existing challenge quiz flow; it marks as completed for the current local calendar day after the round is finished.
@@ -76,8 +79,17 @@ The current curriculum is an expandable early-learning foundation for Nursery th
 
 
 ## Cloud backend foundation (Supabase)
-- Added `supabase/migrations/20261107000100_cloud_accounts_progress_feedback.sql` for parent accounts, learner profiles, JSON learning progress and feedback.
-- Row Level Security is enabled for every cloud table. Parents can manage only their own learner profiles and progress; only a confirmed Supabase Auth identity for `narsingbeesetti22@gmail.com` can read/manage the feedback inbox and use owner-level access.
-- Setup steps and key-safety guidance are in [supabase/SETUP.md](supabase/SETUP.md).
-- **Not yet connected:** the live app still uses its existing local-browser login, progress and feedback storage. The SQL migration must be applied and the Supabase Project URL + publishable key connected in the app before cloud accounts, cross-device progress or shared feedback become active. No service-role/secret key belongs in browser code.
-- Existing local data is not deleted or migrated by this backend foundation.
+- `supabase/migrations/20261107000100_cloud_accounts_progress_feedback.sql` creates parent profiles, learner profiles, learning progress and feedback tables with RLS.
+- `supabase/migrations/20261107000200_update_study_club_owner_email.sql` updates the verified owner allow-list to `narsingbeesetti006@gmail.com`.
+- Both migrations must be run manually in the Supabase SQL Editor; committing SQL files to GitHub does not execute them.
+- Auth confirmation redirects to the Vercel app at `https://study-club-lemon.vercel.app/`. Add this URL to Supabase Authentication → URL Configuration.
+- Setup, SMTP, redirects and security instructions are in [supabase/SETUP.md](supabase/SETUP.md).
+
+## Voice learning and mini-game playground
+- English A–Z phonics with spoken example words.
+- Telugu vowels and consonants with device-supported Telugu speech.
+- Number infinity mode for exploring consecutive numbers from a chosen starting point.
+- Three new mini-games: memory matching, shape hunt and colour mixing lab.
+- Mini-game rewards add three stars per game once per local calendar day and are saved with learner progress.
+- Existing class selection, subjects, lessons, quiz progression, 40,000-question practice bank, stories, tracing, daily challenge and progress views remain available.
+

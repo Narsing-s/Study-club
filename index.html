@@ -685,6 +685,7 @@ function voiceNumberWords(value){
  const tens=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
  const underThousand=x=>{let out=[];if(x>=100){out.push(ones[Math.floor(x/100)]+' hundred');x%=100}if(x>=20)out.push(tens[Math.floor(x/10)]+(x%10?'-'+ones[x%10]:''));else if(x>0)out.push(ones[x]);return out.join(' ')};
  if(n<1000)return underThousand(n)||'zero';
+ if(n>999999999)return n.toLocaleString('en-IN');
  let rest=n,parts=[];
  for(const [size,label] of [[10000000,'crore'],[100000,'lakh'],[1000,'thousand']]){if(rest>=size){const count=Math.floor(rest/size);parts.push(underThousand(count)+' '+label);rest%=size}}
  if(rest)parts.push(underThousand(rest));

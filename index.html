@@ -121,7 +121,14 @@ function clearSubjectSearch(){const input=$('subjectSearch');if(input)input.valu
 function itemsForGrade(id){const limits={nursery:5,lkg:8,ukg:12,class1:99};const letterLimits={nursery:5,lkg:10,ukg:20,class1:26};const source=content[id]||[];return source.slice(0,id==='letters'?letterLimits[state.grade]:limits[state.grade]);}
 function openSubject(id){currentSubject=id;let s=subjects.find(x=>x.id===id);$('subjectTitle').textContent=s.name;$('subjectDesc').textContent=s.desc;$('levelLabel').textContent=grades.find(g=>g.id===state.grade).name+' • '+state.name;let items=itemsForGrade(id);$('lessonCards').innerHTML=items.map((it,i)=>'<article class="lesson-card"><span class="pic">'+it[0]+'</span><b>'+it[1]+'</b><small>'+it[2]+'</small><button class="play" onclick="learnItem('+i+')">▶ Learn</button></article>').join('')+'<article class="lesson-card" style="background:#fff5d9"><span class="pic">🎯</span><b>Quick quiz</b><small>Show what you know!</small><button class="play" onclick="startQuiz()">Play quiz</button></article>'+(id==='letters'?'<article class="lesson-card" style="background:#e8f6ff"><span class="pic">✍️</span><b>Trace letters</b><small>Practise with your finger</small><button class="play" onclick="openTrace()">Start tracing</button></article>':'')+(id==='rhymes'?'<article class="lesson-card" style="background:#f1eaff"><span class="pic">📖</span><b>Story corner</b><small>Listen and learn values</small><button class="play" onclick="openStory()">Read story</button></article>':'');showScreen('subjects')}
 function learnItem(i){
- const item=itemsForGrade(currentSubject)[i];if(!item){toast('This lesson is not available for this class yet.');return}
+ const item=itemsForGrade(currentSubject)[i];
+ if(!item){toast('This lesson is not available for this class yet.');return}
+ const lessonKey='lesson-'+state.grade+'-'+currentSubject+'-'+i;
+ state.done??=[];
+ if(!state.done.some(entry=>entry.key===lessonKey)){
+  state.done.push({key:lessonKey,type:'lesson',subject:subjects.find(subject=>subject.id===currentSubject)?.name||currentSubject,title:item[1],score:1,total:1,grade:state.grade,date:new Date().toISOString()});
+  state.stars+=1;save();toast('Lesson completed! +1 star ⭐');
+ }
  const speech=item[1]+'. '+(item[2]||'');
  $('gameBox').innerHTML='<div class="eyebrow">LET\'S LEARN</div><div style="font-size:100px;margin:12px;animation:float 2s infinite">'+escapeHTML(item[0])+'</div><h2>'+escapeHTML(item[1])+'</h2><p style="font-size:20px">'+escapeHTML(item[2]||'Say it with me!')+'</p><div class="game-controls"><button class="primary" onclick="say('+JSON.stringify(speech).replace(/</g,'\\u003c')+')">🔊 Listen again</button><button class="mini-btn" onclick="openSubject(currentSubject)">More to learn</button></div>';
  showScreen('game');say(speech);

@@ -65,18 +65,10 @@ jobs:
       - name: Pull Vercel environment
         run: vercel pull --yes --environment="${{ inputs.target }}"
 
-      - name: Build for production
-        if: inputs.target == 'production'
-        run: vercel build --prod
-
-      - name: Build preview
-        if: inputs.target == 'preview'
-        run: vercel build
-
       - name: Deploy production
         if: inputs.target == 'production'
-        run: vercel deploy --prebuilt --prod --yes
+        run: vercel deploy --prod --yes
 
       - name: Deploy preview
         if: inputs.target == 'preview'
-        run: vercel deploy --prebuilt --yes
+        run: vercel deploy --yes

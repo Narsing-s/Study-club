@@ -93,3 +93,9 @@ The current curriculum is an expandable early-learning foundation for Nursery th
 - Mini-game rewards add three stars per game once per local calendar day and are saved with learner progress.
 - Existing class selection, subjects, lessons, quiz progression, 40,000-question practice bank, stories, tracing, daily challenge and progress views remain available.
 
+
+
+## Dancing Rhymes Studio
+- Open `rhymes.html` from the deployed Study Club site for a dedicated nursery-rhyme experience.
+- Includes original age-friendly rhymes, floating dancing cartoon characters, read-along speech using the browser's built-in voice, line highlighting, and playback speed controls.
+- No external audio files or paid media services are required. Speech availability depends on the browser/device voice support.
